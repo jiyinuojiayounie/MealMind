@@ -1,0 +1,57 @@
+{
+  "language": "Interface language",
+  "skip": "Skip to content",
+  "navigation": "Primary navigation",
+  "nav": { "today": "Today", "log": "Log", "pantry": "Pantry", "profile": "Profile" },
+  "feature": {
+    "plan": "Meal planning",
+    "log": "Food logging",
+    "pantry": "My pantry",
+    "profile": "Personal settings"
+  },
+  "welcome": {
+    "title": "What should we eat today?",
+    "intro": "Make everyday meals easier, with Chinese home cooking at the center.",
+    "profile": "Set up my nutrition profile",
+    "profileDetail": "Explore the optional profile for food preferences and nutrition guidance.",
+    "direct": "Get started directly",
+    "directDetail": "Open Today and explore without setting up a profile."
+  },
+  "today": {
+    "title": "Your meals today",
+    "assistant": "MealMind Assistant",
+    "assistantHint": "Assistant preview. AI requests are unavailable in this version.",
+    "assistantExample": "What can I cook with eggs?",
+    "direct": "Start with meal planning",
+    "shortcuts": "Quick actions",
+    "overview": "Daily meal overview",
+    "empty": "No meal planned",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner"
+  },
+  "preview": "Feature preview",
+  "back": "Back to Today",
+  "pages": {
+    "plan": {
+      "intro": "Plan a full day or a single meal.",
+      "status": "Meal generation and nutrition estimates are unavailable in this version.",
+      "options": "Ingredient modes",
+      "existing": "Use existing ingredients",
+      "update": "Update my ingredients",
+      "flexible": "Plan freely"
+    },
+    "log": {
+      "intro": "Record what you ate with a photo or a short description.",
+      "status": "Photo recognition and food log saving are unavailable in this version."
+    },
+    "pantry": {
+      "intro": "Keep a snapshot of the ingredients you have on hand.",
+      "status": "Ingredient snapshots cannot be saved or updated in this version."
+    },
+    "profile": {
+      "intro": "A nutrition profile is optional. You can explore the app as a guest.",
+      "status": "Profile editing, registration, and sign-in are unavailable in this version."
+    }
+  }
+}

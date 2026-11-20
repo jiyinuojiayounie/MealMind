@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f7f5ee;
+  --color-surface: #fffdf8;
+  --color-ink: #222d24;
+  --color-muted: #505e53;
+  --color-sage: #e2eadc;
+  --color-forest: #30513b;
+  --color-border: #d8dfd3;
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink antialiased;
+    font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  h1 {
+    @apply text-3xl font-semibold leading-tight sm:text-5xl;
+    text-wrap: balance;
+  }
+
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  h3 {
+    @apply mt-4 font-semibold;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 4px;
+  }
+}
+
+@layer components {
+  .frame {
+    @apply mx-auto w-full max-w-4xl px-5 sm:px-8;
+  }
+
+  .site-header {
+    @apply border-b border-border bg-surface;
+  }
+
+  .header-inner {
+    @apply flex flex-wrap items-center justify-between gap-2 py-3;
+  }
+
+  .wordmark {
+    @apply inline-flex min-h-11 items-center text-xl font-bold text-forest;
+  }
+
+  .language-switcher {
+    @apply flex gap-1 rounded-full bg-paper p-1;
+  }
+
+  .language-switcher button {
+    @apply min-h-11 cursor-pointer rounded-full px-2.5 text-sm font-medium;
+  }
+
+  .language-switcher button[aria-pressed="true"] {
+    @apply bg-sage text-forest;
+  }
+
+  .content {
+    @apply pt-8 sm:pt-12;
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  }
+
+  .site-nav {
+    @apply fixed inset-x-0 bottom-0 border-t border-border bg-surface;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-inner {
+    @apply grid grid-cols-4 gap-1 py-2;
+  }
+
+  .nav-inner a {
+    @apply flex min-h-12 items-center justify-center rounded-xl px-1 text-center text-sm font-semibold text-muted;
+  }
+
+  .nav-inner a:hover,
+  .nav-inner a[aria-current="page"] {
+    @apply bg-sage text-forest;
+  }
+
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-20 focus:rounded-lg focus:bg-surface focus:p-3;
+  }
+
+  .card {
+    @apply rounded-2xl border border-border bg-surface;
+  }
+
+  .welcome {
+    @apply pt-3 sm:pt-10;
+  }
+
+  .intro {
+    @apply mt-3 max-w-xl text-base leading-relaxed text-muted;
+  }
+
+  .welcome-choices {
+    @apply mt-8 auto-rows-fr;
+  }
+
+  .choice {
+    @apply flex min-h-40 flex-col gap-2 bg-sage p-5 text-forest hover:border-forest sm:p-6;
+  }
+
+  .choice strong {
+    @apply text-xl;
+  }
+
+  .choice span:not(.arrow) {
+    @apply text-muted;
+  }
+
+  .choice .arrow {
+    @apply mt-auto self-end;
+  }
+
+  .arrow {
+    @apply text-lg text-forest;
+  }
+
+  .date-label {
+    @apply mb-2 text-sm font-semibold text-forest;
+  }
+
+  .assistant {
+    @apply grid grid-cols-1 justify-items-start gap-3 bg-sage p-5 sm:p-6;
+  }
+
+  .assistant p,
+  .preview p {
+    @apply text-muted;
+  }
+
+  .assistant-input {
+    @apply w-full min-w-0 rounded-xl border border-border bg-surface px-3 py-3 text-base;
+  }
+
+  .assistant-input::placeholder {
+    @apply text-muted;
+  }
+
+  .text-link {
+    @apply inline-flex min-h-11 items-center gap-2 font-semibold text-forest underline underline-offset-4;
+  }
+
+  .shortcut {
+    @apply flex min-h-20 items-center justify-between gap-2 p-3 font-semibold hover:border-forest sm:p-4;
+  }
+
+  .meal-list li {
+    @apply flex flex-wrap items-center justify-between gap-1 px-4 py-3;
+  }
+
+  .meal-list li + li {
+    @apply border-t border-border;
+  }
+
+  .meal-list span {
+    @apply text-sm text-muted;
+  }
+
+  .preview {
+    @apply grid gap-2 p-5 sm:p-6;
+  }
+
+  .mode-list {
+    @apply list-disc space-y-1 pl-5;
+  }
+}

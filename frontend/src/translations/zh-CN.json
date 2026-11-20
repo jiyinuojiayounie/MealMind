@@ -1,0 +1,57 @@
+{
+  "language": "界面语言",
+  "skip": "跳到主要内容",
+  "navigation": "主导航",
+  "nav": { "today": "今日", "log": "记录", "pantry": "食材", "profile": "我的" },
+  "feature": {
+    "plan": "餐食规划",
+    "log": "餐食记录",
+    "pantry": "我的食材",
+    "profile": "个人设置"
+  },
+  "welcome": {
+    "title": "今天吃什么？",
+    "intro": "从熟悉的中式家常菜出发，让每天做饭和吃饭都轻松一点。",
+    "profile": "建立我的营养档案",
+    "profileDetail": "了解可选档案，日后可用于记录偏好和提供营养参考。",
+    "direct": "直接开始",
+    "directDetail": "进入今日首页，无需建立档案即可浏览。"
+  },
+  "today": {
+    "title": "今天的餐食",
+    "assistant": "MealMind 助手",
+    "assistantHint": "助手功能预览。当前版本暂不支持发送 AI 请求。",
+    "assistantExample": "鸡蛋和番茄可以做什么？",
+    "direct": "直接开始规划",
+    "shortcuts": "快捷操作",
+    "overview": "今日餐单",
+    "empty": "暂无安排",
+    "breakfast": "早餐",
+    "lunch": "午餐",
+    "dinner": "晚餐"
+  },
+  "preview": "功能预览",
+  "back": "返回今日",
+  "pages": {
+    "plan": {
+      "intro": "规划全天餐食或单独一顿。",
+      "status": "当前版本暂不支持生成餐单或估算营养。",
+      "options": "食材模式",
+      "existing": "使用现有食材",
+      "update": "更新我的食材",
+      "flexible": "自由搭配"
+    },
+    "log": {
+      "intro": "用照片或简短描述记录吃过的餐食。",
+      "status": "当前版本暂不支持照片识别或保存餐食记录。"
+    },
+    "pantry": {
+      "intro": "用食材快照记录手边的食材。",
+      "status": "当前版本暂不支持保存或更新食材快照。"
+    },
+    "profile": {
+      "intro": "营养档案为可选项，你可以以游客身份浏览应用。",
+      "status": "当前版本暂不支持档案编辑、注册或登录。"
+    }
+  }
+}

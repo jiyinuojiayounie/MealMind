@@ -1,0 +1,36 @@
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
+import { featurePaths } from '../types/navigation'
+import type { Feature } from '../types/navigation'
+
+type Props = { feature: Exclude<Feature, 'today'> }
+
+const ingredientModes = ['existing', 'update', 'flexible'] as const
+
+export function FeaturePreview({ feature }: Props) {
+  const { t } = useTranslation()
+
+  return (
+    <div className="grid gap-6">
+      <div>
+        <h1>{t(`feature.${feature}`)}</h1>
+        <p className="intro">{t(`pages.${feature}.intro`)}</p>
+      </div>
+      <section className="card preview" aria-labelledby="preview-title">
+        <h2 id="preview-title">{t('preview')}</h2>
+        <p>{t(`pages.${feature}.status`)}</p>
+        {feature === 'plan' && (
+          <>
+            <h3>{t('pages.plan.options')}</h3>
+            <ul className="mode-list">
+              {ingredientModes.map((mode) => <li key={mode}>{t(`pages.plan.${mode}`)}</li>)}
+            </ul>
+          </>
+        )}
+      </section>
+      <Link className="text-link justify-self-start" to={featurePaths.today}>
+        <span aria-hidden="true">←</span> {t('back')}
+      </Link>
+    </div>
+  )
+}
