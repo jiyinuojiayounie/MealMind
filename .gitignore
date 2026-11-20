@@ -1,0 +1,48 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+.pypirc
+credentials.json
+service-account*.json
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+
+# Frontend and build output
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+*.tsbuildinfo
+*.log
+
+# Supabase CLI state
+supabase/.temp/
+supabase/.branches/
+
+# macOS and editor temporary files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+~$*
+*.swp
