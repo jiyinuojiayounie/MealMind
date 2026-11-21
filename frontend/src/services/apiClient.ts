@@ -3,22 +3,55 @@ const baseUrl = (
   (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '')
 ).replace(/\/+$/, '')
 
-export async function getJson<T>(
+export class ApiError extends Error {
+  readonly status: number
+
+  constructor(status: number) {
+    super(`API request failed with HTTP ${status}`)
+    this.status = status
+  }
+}
+
+type JsonRequest = {
+  body?: object
+  signal?: AbortSignal
+  timeoutMs: number
+}
+
+async function requestJson<T>(
   path: `/${string}`,
   parse: (data: unknown) => T,
-  signal?: AbortSignal,
+  { body, signal, timeoutMs }: JsonRequest,
 ): Promise<T> {
-  const timeout = AbortSignal.timeout(5_000)
+  const timeout = AbortSignal.timeout(timeoutMs)
   const response = await fetch(`${baseUrl}${path}`, {
-    headers: { Accept: 'application/json' },
+    method: body ? 'POST' : 'GET',
+    headers: body
+      ? { Accept: 'application/json', 'Content-Type': 'application/json' }
+      : { Accept: 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
     credentials: 'omit',
     cache: 'no-store',
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   })
 
-  if (!response.ok) {
-    throw new Error(`API request failed with HTTP ${response.status}`)
-  }
-
+  if (!response.ok) throw new ApiError(response.status)
   return parse(await response.json())
+}
+
+export function getJson<T>(
+  path: `/${string}`,
+  parse: (data: unknown) => T,
+  signal?: AbortSignal,
+): Promise<T> {
+  return requestJson(path, parse, { signal, timeoutMs: 5_000 })
+}
+
+export function postJson<T>(
+  path: `/${string}`,
+  body: object,
+  parse: (data: unknown) => T,
+  signal?: AbortSignal,
+): Promise<T> {
+  return requestJson(path, parse, { body, signal, timeoutMs: 35_000 })
 }

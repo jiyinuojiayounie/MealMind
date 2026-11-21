@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
+from app.api.meal_plans import router as meal_plans_router
 from app.core.settings import Settings
 
 
@@ -12,9 +13,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[str(origin).rstrip("/") for origin in settings.cors_origins],
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
     )
     app.include_router(health_router, prefix="/api/v1")
+    app.include_router(meal_plans_router, prefix="/api/v1")
     return app
 
 

@@ -4,7 +4,7 @@ MealMind is a mobile-first, Simplified Chinese and English meal planning assista
 
 ## Project status
 
-The Day 2 frontend runs locally with bilingual navigation and feature previews. The FastAPI backend serves a health endpoint used by the frontend in development. Business features and external service integrations are pending.
+The frontend runs locally with bilingual navigation and feature previews. FastAPI serves health checks and a Gemini-backed meal planning endpoint. The frontend checks API reachability in development and generates meal plans when requested from Today → Meal planning.
 
 | Directory | Purpose |
 | --- | --- |
@@ -53,6 +53,30 @@ The expected response is HTTP 200 with `{"service":"mealmind-api","status":"ok"}
 Both servers run with defaults. Override backend settings with environment variables or a `backend/.env` file. Set `MEALMIND_CORS_ORIGINS` to a JSON array of exact frontend origins if Vite runs on a different host or port. The defaults allow `http://localhost:5173` and `http://127.0.0.1:5173`.
 
 From `backend/`, run `.venv/bin/python -m pytest` to test the API.
+
+## Generate a meal plan
+
+With both servers running, open Today → Meal planning. Enter your requirements and select **Generate meal plan** to send a request to Gemini through FastAPI.
+
+Set `GEMINI_API_KEY` in the Git-ignored `backend/.env` file and restart FastAPI. Optionally override `GEMINI_MODEL`. The default, `gemini-3.1-flash-lite`, supports structured output and is listed for standard text generation on Google's [free tier](https://aistudio.google.com/docs/pricing#gemini-3.1-flash-lite). Eligibility and quotas depend on the Google project. This app does not change billing settings.
+
+```sh
+curl -fsS http://127.0.0.1:8000/api/v1/meal-plans/generate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "user_request": "Make a simple Chinese-style dinner with tomatoes and eggs.",
+    "language": "en-US",
+    "scope": "single_meal",
+    "meal_type": "dinner",
+    "available_ingredients": ["tomatoes", "eggs", "water", "salt"],
+    "ingredient_mode": "existing",
+    "cooking_time_limit": 20
+  }'
+```
+
+The response contains a title, meals with dishes and approximate ingredient quantities and units, cooking instructions, estimated preparation minutes per meal, an explanation, and any additional ingredients. `meal_type` is optional for `single_meal` and must be omitted or null for `full_day`. For a full day, the time limit applies to each meal. Existing mode requires an ingredient list and rejects unlisted structured ingredients, including unlisted staples. Available ingredient labels are preserved across languages so the backend can compare them against the request.
+
+Invalid input returns HTTP 422. Missing credentials return 503, provider or invalid output errors return 502, and transport timeouts return 504. Each generation makes at most one provider attempt. For local troubleshooting, set `MEALMIND_GEMINI_DIAGNOSTICS=true` in `backend/.env` and restart FastAPI to log upstream HTTP codes and sanitized diagnostic summaries. API tests mock Gemini and run without credentials. The endpoint is intended for local development and has no authentication or rate limiting. Check dietary restrictions and allergies before using generated recipes.
 
 ## Working in this repository
 

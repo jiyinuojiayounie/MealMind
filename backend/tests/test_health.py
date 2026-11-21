@@ -51,7 +51,7 @@ def test_unsupported_preflight_method(client):
         HEALTH_PATH,
         headers={
             "Origin": "http://localhost:5173",
-            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Method": "PUT",
         },
     )
 
@@ -75,3 +75,25 @@ def test_invalid_origins(monkeypatch, origin):
 
     with pytest.raises(ValidationError, match="cors_origins"):
         Settings(_env_file=None)
+
+
+@pytest.mark.parametrize("origin,expected", [
+    ("http://127.0.0.1:5173", 200),
+    ("https://other.example", 400),
+])
+def test_meal_plan_preflight(client, origin, expected):
+    response = client.options(
+        "/api/v1/meal-plans/generate",
+        headers={
+            "Origin": origin,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+
+    assert response.status_code == expected
+    if expected == 200:
+        assert response.headers["access-control-allow-origin"] == origin
+        assert "POST" in response.headers["access-control-allow-methods"]
+    else:
+        assert "access-control-allow-origin" not in response.headers

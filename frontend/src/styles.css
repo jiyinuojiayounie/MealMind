@@ -172,7 +172,15 @@
     @apply grid gap-2 p-5 sm:p-6;
   }
 
-  .mode-list {
-    @apply list-disc space-y-1 pl-5;
+  .planning-field {
+    @apply grid min-w-0 content-start gap-2 font-semibold;
+  }
+
+  .planning-input {
+    @apply w-full min-w-0 rounded-xl border border-muted bg-surface px-3 py-2.5 text-base font-normal text-ink disabled:bg-paper;
+  }
+
+  .planning-input[aria-invalid="true"] {
+    @apply border-red-800;
   }
 }

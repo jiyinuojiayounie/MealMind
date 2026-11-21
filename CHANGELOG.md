@@ -14,3 +14,5 @@
 - Added a modular FastAPI backend with pinned dependencies, environment-based settings, local CORS, OpenAPI docs, and a tested health endpoint.
 - Connected the frontend through a typed API client and added a bilingual, development-only API status indicator with retry.
 - Documented separate frontend and backend startup commands and local environment overrides.
+- Added Gemini-backed meal planning for single meals and full days with structured responses, bilingual output instructions, and server-side ingredient and time checks.
+- Added mocked API tests for request validation, missing configuration, provider failures, and invalid model output.
