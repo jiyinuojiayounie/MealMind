@@ -18,3 +18,15 @@ The Day 1 entries retain the IDs and status from [PRD v1.1](PRD.md). Add dated e
 - Environment variable names in the root template are proposed conventions for future implementation.
 
 The [PRD open questions](PRD.md#open-questions) remain pending.
+
+## Day 4 recipe catalog foundation
+
+The following proposals record the approved product direction and the implementation boundaries for review.
+
+| ID | Proposed decision |
+| --- | --- |
+| D014 | Default complete lunches and dinners to protein, staple, and vegetable roles, including coverage by a single combination dish. Distinguish complete meals from individual dishes and preserve explicit request intent. Leave calorie restriction out of the default. |
+| D015 | Treat allergy exclusions, explicit restrictions, and strict ingredient availability as hard constraints. Missing or unverified allergen evidence is insufficient for exclusion-sensitive retrieval. Conduct further safety validation for allergy-related input, aliases, product labels, and cross-contact before live use. |
+| D016 | Prevent repeated dishes within a plan by tracking recipe and family IDs. Retain stable IDs to support future cross-generation deduplication after history scope and consent are approved. |
+| D017 | Store standard quantities and preparation states. Show household measures only when supported by reviewed references tied to the specific quantity, unit, and ingredient state. |
+| D018 | Use a curated catalog and deterministic filtering and validation, with one Gemini call for personalization over approved candidates. Seed a small development catalog and exclude draft and retired recipes from production retrieval. Defer live endpoint integration. |

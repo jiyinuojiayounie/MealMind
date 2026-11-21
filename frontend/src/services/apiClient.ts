@@ -6,9 +6,12 @@ const baseUrl = (
 export class ApiError extends Error {
   readonly status: number
 
-  constructor(status: number) {
+  readonly detail: unknown
+
+  constructor(status: number, detail?: unknown) {
     super(`API request failed with HTTP ${status}`)
     this.status = status
+    this.detail = detail
   }
 }
 
@@ -35,7 +38,11 @@ async function requestJson<T>(
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   })
 
-  if (!response.ok) throw new ApiError(response.status)
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => undefined)
+    const detail = typeof body === 'object' && body !== null && 'detail' in body ? body.detail : undefined
+    throw new ApiError(response.status, detail)
+  }
   return parse(await response.json())
 }
 

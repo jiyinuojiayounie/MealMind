@@ -101,6 +101,44 @@ The response contains a title, meals with dishes and approximate ingredient quan
 
 Invalid input returns HTTP 422. Missing credentials return 503, provider or invalid output errors return 502, and transport timeouts return 504. Each generation makes at most one provider attempt. For local troubleshooting, set `MEALMIND_GEMINI_DIAGNOSTICS=true` in `backend/.env` and restart FastAPI to log upstream HTTP codes and sanitized diagnostic summaries. API tests mock Gemini and run without credentials. The endpoint is intended for local development and has no authentication or rate limiting. Check dietary restrictions and allergies before using generated recipes.
 
+## Try catalog-guided planning locally
+
+The existing planner uses prompt-only generation by default. The catalog path requires both a server opt-in and the explicit `planning_mode=catalog` query parameter. The frontend defaults to prompt-only generation, including when the local selector is visible.
+
+For local draft review, add the following to the Git-ignored `backend/.env` file, then start or restart FastAPI on `127.0.0.1` using the local startup command above. Draft requests must use a loopback client and server address. Use direct loopback access and keep draft mode off on deployments.
+
+```dotenv
+MEALMIND_ENVIRONMENT=development
+MEALMIND_CATALOG_PLANNING_ENABLED=true
+MEALMIND_CATALOG_USE_DRAFTS=true
+MEALMIND_CATALOG_PERSONALIZATION=false
+```
+
+To show the selector, add `VITE_CATALOG_PLANNING_PREVIEW=true` to `frontend/.env.local` and restart the Vite development server on port 5173. Open [the Planning page](http://127.0.0.1:5173/plan), then choose **Catalog-guided planning (development preview)**. Switching modes preserves text and advanced options. Submit explicitly. The original mode may call Gemini when submitted with a configured key. Keep catalog personalization disabled for deterministic local review.
+
+Edit the local env files in place to preserve the API key and any other values. Before starting either server, stop any existing MealMind instance from its original terminal. The [backend command](#run-the-backend-locally) binds FastAPI to `127.0.0.1:8000` with reload. The [frontend command](#run-the-frontend-locally) uses Vite on port 5173. The preview flag is public frontend configuration and has no effect in production builds. Server-side development and loopback checks still control draft access.
+
+Try an explicit single dinner with known ingredients. This call is deterministic with the settings above and requires no Gemini key.
+
+```sh
+curl -i 'http://127.0.0.1:8000/api/v1/meal-plans/generate?planning_mode=catalog' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "user_request": "Plan dinner",
+    "language": "en-US",
+    "scope": "single_meal",
+    "ingredient_mode": "existing",
+    "available_ingredients": ["cooked rice", "eggs", "bok choy", "cooking oil", "salt"],
+    "cooking_time_limit": 16
+  }'
+```
+
+This request returns the draft egg and bok choy fried rice with a 16-minute catalog estimate and an empty additional-ingredient list. Successful responses use the existing meal-plan schema. The response marks draft portions and times as unverified. Independent nutritional adequacy and allergen safety are outside this preview.
+
+When the opt-in is disabled or draft access is forbidden, the endpoint returns 403. Unresolved requests and unsupported constraints return 422 with a structured status and reason codes. An empty feasible set returns 409 with `no_feasible_plan`. Production catalog retrieval uses reviewed records only. The bundled catalog has zero reviewed entries.
+
+Optional `MEALMIND_CATALOG_PERSONALIZATION=true` uses the existing Gemini credentials. It may make one provider call if at least two eligible plans exist. The model sees catalog candidate summaries and a cuisine preference when present. It can select only a supplied candidate ID and a fixed explanation reason. The backend resolves the ID to the exact validated plan and builds the response from catalog data. An invalid choice returns 502. The catalog path has no prompt-only fallback.
+
 ## Working in this repository
 
 Read the [product requirements](docs/PRD.md), [architecture and development conventions](AGENTS.md), and [decision record](docs/DECISIONS.md) before changing the project. See the [changelog](CHANGELOG.md) for completed work. The [original Word PRD](docs/MealMind_PRD_v1.1.docx) is preserved alongside the Markdown baseline.

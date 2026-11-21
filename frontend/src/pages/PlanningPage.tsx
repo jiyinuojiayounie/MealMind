@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { MealPlanResult } from '../components/MealPlanResult'
 import { ApiError } from '../services/apiClient'
-import { generateMealPlan, mealTypes } from '../services/mealPlans'
-import type { MealPlan, MealPlanRequest } from '../services/mealPlans'
+import { catalogOutcomeKey, catalogPreviewEnabled, generateMealPlan, mealTypes } from '../services/mealPlans'
+import type { MealPlan, MealPlanRequest, PlanningMode } from '../services/mealPlans'
 import { featurePaths } from '../types/navigation'
 
 const scopes = ['single_meal', 'full_day'] as const
@@ -31,6 +31,7 @@ export function PlanningPage() {
   const { t, i18n } = useTranslation()
   const [scope, setScope] = useState<MealPlanRequest['scope'] | ''>('')
   const [mode, setMode] = useState<MealPlanRequest['ingredient_mode']>('flexible')
+  const [planningMode, setPlanningMode] = useState<PlanningMode>('prompt_only')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState<{ plan: MealPlan; language: MealPlanRequest['language'] }>()
@@ -95,10 +96,13 @@ export function PlanningPage() {
     setResult(undefined)
     setBusy(true)
     try {
-      const plan = await generateMealPlan(payload, controller.signal, scope === '' && !mealType)
+      const plan = await generateMealPlan(payload, controller.signal, scope === '' && !mealType, planningMode)
       if (!controller.signal.aborted) setResult({ plan, language })
     } catch (failure) {
-      if (!controller.signal.aborted) setError(errorKey(failure))
+      if (!controller.signal.aborted) {
+        const catalogError = planningMode === 'catalog' ? catalogOutcomeKey(failure) : undefined
+        setError(catalogError ?? errorKey(failure))
+      }
     } finally {
       activeRequest.current = null
       if (!controller.signal.aborted) setBusy(false)
@@ -111,6 +115,29 @@ export function PlanningPage() {
 
       <form className="card p-5 sm:p-6" onSubmit={(event) => void submit(event)} noValidate>
         <fieldset disabled={busy} className="grid min-w-0 gap-4">
+          {catalogPreviewEnabled && (
+            <div className="grid gap-2 rounded-xl border border-border bg-paper p-3">
+              <label className="planning-field">
+                {t('pages.plan.preview.mode')}
+                <select className="planning-input" value={planningMode}
+                  aria-describedby={planningMode === 'catalog' ? 'catalog-preview-notice' : undefined}
+                  onChange={(event) => {
+                    setPlanningMode(event.target.value === 'catalog' ? 'catalog' : 'prompt_only')
+                    setError('')
+                    setResult(undefined)
+                  }}>
+                  <option value="prompt_only">{t('pages.plan.preview.original')}</option>
+                  <option value="catalog">{t('pages.plan.preview.catalog')}</option>
+                </select>
+              </label>
+              {planningMode === 'catalog' && (
+                <p id="catalog-preview-notice" className="text-sm text-muted">
+                  {t('pages.plan.preview.notice')}
+                </p>
+              )}
+            </div>
+          )}
+
           <label className="planning-field">
             <span className="sr-only">{t('pages.plan.requirements')}</span>
             <textarea ref={requirements} name="requirements" className="planning-input" rows={5} maxLength={2000} required

@@ -72,6 +72,12 @@
         "dinner": "Dinner",
         "snack": "Snack"
       },
+      "preview": {
+        "mode": "Recommendation mode",
+        "original": "Original AI generation",
+        "catalog": "Catalog-guided planning (development preview)",
+        "notice": "Development preview — recipes and quantities have not yet been independently verified."
+      },
       "errors": {
         "requirements": "Enter meal requirements using 1 to 2,000 characters.",
         "ingredientsRequired": "List at least one ingredient to use existing ingredients only.",
@@ -84,6 +90,12 @@
         "timeout": "Meal planning took too long. Try again in a moment.",
         "network": "Couldn’t reach the meal planning service. Check your connection and try again.",
         "networkDev": "Couldn’t reach the meal planning API. Check that FastAPI is running at your configured API address, then try again.",
+        "catalogNoPlan": "The current catalog has no plan that meets these requirements. Review your ingredients, meal scope, or time limit.",
+        "catalogClarification": "Catalog planning needs more detail. Clarify the meal, ingredients, or time limit and try again.",
+        "catalogSafetyClarification": "The preview cannot confirm this allergy or dietary restriction. No meal plan was generated.",
+        "catalogUnsupported": "The catalog preview cannot verify one or more requirements, such as spice level or a whole-day time limit. No meal plan was generated.",
+        "catalogDisabled": "Catalog planning is disabled on the local backend. Enable the catalog planning setting and restart FastAPI.",
+        "catalogLocalOnly": "Draft recipes are available only through a local development backend. Check the backend configuration and loopback address.",
         "unexpected": "Something went wrong while getting your meal plan. Try again."
       }
     },

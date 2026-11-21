@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import AnyHttpUrl, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -16,6 +17,10 @@ class Settings(BaseSettings):
     gemini_model: str = Field(default="gemini-3.1-flash-lite", validation_alias="GEMINI_MODEL")
 
     gemini_diagnostics: bool = False
+    environment: Literal["production", "development"] = "production"
+    catalog_planning_enabled: bool = False
+    catalog_use_drafts: bool = False
+    catalog_personalization: bool = False
 
     service_name: str = Field(default="mealmind-api", min_length=1)
     cors_origins: list[AnyHttpUrl] = Field(

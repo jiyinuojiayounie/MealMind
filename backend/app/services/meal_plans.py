@@ -1,9 +1,10 @@
 import logging
+from typing import TypeVar
 
 import httpx2
 from google import genai
 from google.genai import errors, types
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from app.core.settings import Settings
 from app.prompts.meal_plans import INFER_SCOPE_INSTRUCTIONS, MEAL_PLANNING_INSTRUCTIONS
@@ -19,8 +20,8 @@ logger = logging.getLogger(__name__)
 PROVIDER_SCHEMA_BOUNDS = ("minItems", "maxItems", "minimum", "maximum", "minLength", "maxLength")
 
 
-def _provider_schema() -> dict:
-    schema = GeneratedMealPlan.model_json_schema()
+def _provider_schema(model: type[BaseModel] = GeneratedMealPlan) -> dict:
+    schema = model.model_json_schema()
     # Keep the provider grammar small. Pydantic still enforces every bound on the result.
     pending = [schema]
     while pending:
@@ -66,20 +67,16 @@ class PlannerFailure(Exception):
     pass
 
 
-def generate_meal_plan(
-    request: MealPlanRequest,
-    settings: Settings,
-    *,
-    infer_scope: bool = False,
-) -> MealPlanResponse:
+ResponseModel = TypeVar("ResponseModel", bound=BaseModel)
+
+
+def generate_structured(
+    settings: Settings, *, contents: str, instructions: str,
+    response_model: type[ResponseModel], max_output_tokens: int = 4096,
+) -> ResponseModel:
     key = settings.gemini_api_key
     if key is None or not key.get_secret_value().strip():
         raise PlannerUnavailable
-
-    allow_inferred_scope = infer_scope and request.scope == "single_meal" and request.meal_type is None
-    instructions = MEAL_PLANNING_INSTRUCTIONS
-    if allow_inferred_scope:
-        instructions += INFER_SCOPE_INSTRUCTIONS
 
     try:
         with genai.Client(
@@ -92,15 +89,15 @@ def generate_meal_plan(
         ) as client:
             result = client.models.generate_content(
                 model=settings.gemini_model,
-                contents=request.model_dump_json(),
+                contents=contents,
                 config=types.GenerateContentConfig(
                     system_instruction=instructions,
                     response_mime_type="application/json",
-                    response_json_schema=_provider_schema(),
-                    max_output_tokens=4096,
+                    response_json_schema=_provider_schema(response_model),
+                    max_output_tokens=max_output_tokens,
                 ),
             )
-            plan = GeneratedMealPlan.model_validate_json(result.text or "")
+            return response_model.model_validate_json(result.text or "")
     except (httpx2.TimeoutException, TimeoutError):
         raise PlannerTimeout from None
     except errors.APIError as exc:
@@ -114,6 +111,21 @@ def generate_meal_plan(
     except (httpx2.HTTPError, ValidationError):
         raise PlannerFailure from None
 
+
+def generate_meal_plan(
+    request: MealPlanRequest,
+    settings: Settings,
+    *,
+    infer_scope: bool = False,
+) -> MealPlanResponse:
+    allow_inferred_scope = infer_scope and request.scope == "single_meal" and request.meal_type is None
+    instructions = MEAL_PLANNING_INSTRUCTIONS
+    if allow_inferred_scope:
+        instructions += INFER_SCOPE_INSTRUCTIONS
+    plan = generate_structured(
+        settings, contents=request.model_dump_json(), instructions=instructions,
+        response_model=GeneratedMealPlan,
+    )
     meal_types = [meal.meal_type for meal in plan.meals]
     if request.scope == "single_meal" and (not allow_inferred_scope or len(meal_types) == 1):
         if len(meal_types) != 1 or (request.meal_type and meal_types[0] != request.meal_type):

@@ -1,0 +1,626 @@
+[
+  {
+    "id": "zh_dinner",
+    "text": "  今晚吃什么？  ",
+    "expected_status": "success",
+    "expected": {
+      "scope": "complete_meal",
+      "meal_type": "dinner"
+    },
+    "explicit_fields": [
+      "meal_type"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "en_complete",
+    "text": "Plan a complete dinner",
+    "expected_status": "success",
+    "expected": {
+      "scope": "complete_meal",
+      "meal_type": "dinner"
+    },
+    "explicit_fields": [
+      "scope",
+      "meal_type"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "zh_dish",
+    "text": "只做一道菜",
+    "expected_status": "success",
+    "expected": {
+      "scope": "single_dish",
+      "meal_type": "dinner"
+    },
+    "explicit_fields": [
+      "scope"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "en_dish",
+    "text": "One dish for dinner",
+    "expected_status": "success",
+    "expected": {
+      "scope": "single_dish",
+      "meal_type": "dinner"
+    },
+    "explicit_fields": [
+      "scope",
+      "meal_type"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "zh_day",
+    "text": "安排今天三餐",
+    "expected_status": "success",
+    "expected": {
+      "scope": "full_day",
+      "meal_type": null
+    },
+    "explicit_fields": [
+      "scope"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "en_day",
+    "text": "Plan breakfast, lunch and dinner.",
+    "expected_status": "success",
+    "expected": {
+      "scope": "full_day",
+      "meal_type": null
+    },
+    "explicit_fields": [
+      "scope"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "mixed_day_time",
+    "text": "安排今天三餐，within 35 minutes per meal",
+    "expected_status": "success",
+    "expected": {
+      "scope": "full_day",
+      "meal_type": null,
+      "cooking_time_limit": 35,
+      "time_basis": "per_meal"
+    },
+    "explicit_fields": [
+      "scope",
+      "cooking_time_limit"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": true
+  },
+  {
+    "id": "day_too_short",
+    "text": "Plan a full day; each meal within 5 minutes",
+    "expected_status": "no_feasible_plan",
+    "expected": {
+      "scope": "full_day",
+      "cooking_time_limit": 5,
+      "time_basis": "per_meal"
+    },
+    "explicit_fields": [
+      "scope",
+      "cooking_time_limit"
+    ],
+    "issues": [],
+    "reasons": [
+      "no_slot_combination"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "day_time_ambiguous",
+    "text": "安排今天三餐，20分钟以内",
+    "expected_status": "clarification_required",
+    "expected": {
+      "scope": "full_day",
+      "cooking_time_limit": 20
+    },
+    "explicit_fields": [
+      "scope",
+      "cooking_time_limit"
+    ],
+    "issues": [
+      "ambiguous_time_scope"
+    ],
+    "reasons": [
+      "ambiguous_time_scope"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "whole_day_time",
+    "text": "Plan a full day; whole day within 30 minutes",
+    "expected_status": "unsupported_constraints",
+    "expected": {
+      "scope": "full_day",
+      "cooking_time_limit": null
+    },
+    "explicit_fields": [
+      "scope"
+    ],
+    "issues": [
+      "unsupported_time_scope"
+    ],
+    "reasons": [
+      "unsupported_time_scope"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "zh_strict",
+    "text": "我只有鸡蛋和番茄",
+    "expected_status": "no_feasible_plan",
+    "expected": {
+      "ingredient_mode": "strict",
+      "available_ingredients": [
+        [
+          "ingredient_egg",
+          "raw"
+        ],
+        [
+          "ingredient_tomato",
+          "raw"
+        ]
+      ]
+    },
+    "explicit_fields": [
+      "ingredient_mode",
+      "available_ingredients"
+    ],
+    "issues": [],
+    "reasons": [
+      "no_slot_combination"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "en_available",
+    "text": "I have eggs and tomatoes",
+    "expected_status": "success",
+    "expected": {
+      "ingredient_mode": "flexible",
+      "available_ingredients": [
+        [
+          "ingredient_egg",
+          "raw"
+        ],
+        [
+          "ingredient_tomato",
+          "raw"
+        ]
+      ]
+    },
+    "explicit_fields": [
+      "available_ingredients"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "zh_available",
+    "text": "我有鸡蛋和西红柿",
+    "expected_status": "success",
+    "expected": {
+      "ingredient_mode": "flexible",
+      "available_ingredients": [
+        [
+          "ingredient_egg",
+          "raw"
+        ],
+        [
+          "ingredient_tomato",
+          "raw"
+        ]
+      ]
+    },
+    "explicit_fields": [
+      "available_ingredients"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "strict_dish_feasible",
+    "text": "只做一道菜，我只有鸡蛋、番茄、食用油和盐，20分钟以内",
+    "expected_status": "success",
+    "expected": {
+      "scope": "single_dish",
+      "ingredient_mode": "strict",
+      "cooking_time_limit": 20,
+      "available_ingredients": [
+        [
+          "ingredient_egg",
+          "raw"
+        ],
+        [
+          "ingredient_tomato",
+          "raw"
+        ],
+        [
+          "ingredient_oil",
+          "ready_to_use"
+        ],
+        [
+          "ingredient_salt",
+          "ready_to_use"
+        ]
+      ]
+    },
+    "explicit_fields": [
+      "scope",
+      "ingredient_mode",
+      "available_ingredients",
+      "cooking_time_limit"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": true
+  },
+  {
+    "id": "mixed_time",
+    "text": "今晚吃什么; within 20 minutes",
+    "expected_status": "no_feasible_plan",
+    "expected": {
+      "scope": "complete_meal",
+      "meal_type": "dinner",
+      "cooking_time_limit": 20
+    },
+    "explicit_fields": [
+      "meal_type",
+      "cooking_time_limit"
+    ],
+    "issues": [],
+    "reasons": [
+      "no_slot_combination"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "zh_tight_time",
+    "text": "今晚吃什么，5分钟以内",
+    "expected_status": "no_feasible_plan",
+    "expected": {
+      "cooking_time_limit": 5
+    },
+    "explicit_fields": [
+      "meal_type",
+      "cooking_time_limit"
+    ],
+    "issues": [],
+    "reasons": [
+      "no_slot_combination"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "zh_no_spicy",
+    "text": "今晚吃什么，不要辣",
+    "expected_status": "unsupported_constraints",
+    "expected": {
+      "flavor_preference": "no_spicy"
+    },
+    "explicit_fields": [
+      "meal_type",
+      "flavor"
+    ],
+    "issues": [],
+    "reasons": [
+      "unverified_flavor_constraint"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "en_no_spicy",
+    "text": "Plan dinner; not spicy",
+    "expected_status": "unsupported_constraints",
+    "expected": {
+      "flavor_preference": "no_spicy"
+    },
+    "explicit_fields": [
+      "meal_type",
+      "flavor"
+    ],
+    "issues": [],
+    "reasons": [
+      "unverified_flavor_constraint"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "mild_preference",
+    "text": "Dinner; mildly spicy",
+    "expected_status": "success",
+    "expected": {
+      "flavor_preference": "mild"
+    },
+    "explicit_fields": [
+      "meal_type",
+      "flavor"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "cuisine_preference",
+    "text": "安排午餐，中式家常菜",
+    "expected_status": "success",
+    "expected": {
+      "cuisine_preference": "chinese_home_cooking",
+      "meal_type": "lunch"
+    },
+    "explicit_fields": [
+      "meal_type",
+      "cuisine"
+    ],
+    "issues": [],
+    "reasons": [],
+    "hard_constraint": false
+  },
+  {
+    "id": "allergy_zh",
+    "text": "今晚吃什么，我对花生过敏",
+    "expected_status": "clarification_required",
+    "expected": {
+      "allergy_statements": [
+        "我对花生过敏"
+      ]
+    },
+    "explicit_fields": [
+      "meal_type",
+      "allergies"
+    ],
+    "issues": [],
+    "reasons": [
+      "unconfirmed_allergies"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "allergy_en",
+    "text": "Dinner; I am allergic to shrimp",
+    "expected_status": "clarification_required",
+    "expected": {
+      "allergy_statements": [
+        "i am allergic to shrimp"
+      ]
+    },
+    "explicit_fields": [
+      "meal_type",
+      "allergies"
+    ],
+    "issues": [],
+    "reasons": [
+      "unconfirmed_allergies"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "hidden_allergy",
+    "text": "I have eggs and tomatoes but I get anaphylaxis from peanuts",
+    "expected_status": "clarification_required",
+    "expected": {
+      "allergy_statements": [
+        "i have eggs and tomatoes but i get anaphylaxis from peanuts"
+      ]
+    },
+    "explicit_fields": [
+      "allergies"
+    ],
+    "issues": [],
+    "reasons": [
+      "unconfirmed_allergies"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "dietary_zh",
+    "text": "晚餐，不吃猪肉",
+    "expected_status": "clarification_required",
+    "expected": {
+      "dietary_exclusions": [
+        "不吃猪肉"
+      ]
+    },
+    "explicit_fields": [
+      "meal_type",
+      "dietary_exclusions"
+    ],
+    "issues": [],
+    "reasons": [
+      "unconfirmed_dietary_exclusions"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "dietary_en",
+    "text": "Lunch; gluten-free",
+    "expected_status": "clarification_required",
+    "expected": {
+      "dietary_exclusions": [
+        "gluten-free"
+      ]
+    },
+    "explicit_fields": [
+      "meal_type",
+      "dietary_exclusions"
+    ],
+    "issues": [],
+    "reasons": [
+      "unconfirmed_dietary_exclusions"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "ambiguous_request",
+    "text": "Something nice with the usual restrictions",
+    "expected_status": "clarification_required",
+    "expected": {
+      "scope": "complete_meal"
+    },
+    "explicit_fields": [],
+    "issues": [
+      "unrecognized_clause"
+    ],
+    "reasons": [
+      "unrecognized_clause"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "unrecognized_negation",
+    "text": "Plan dinner; leave out the shellfish",
+    "expected_status": "clarification_required",
+    "expected": {
+      "meal_type": "dinner"
+    },
+    "explicit_fields": [
+      "meal_type"
+    ],
+    "issues": [
+      "unrecognized_clause"
+    ],
+    "reasons": [
+      "unrecognized_clause"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "ambiguous_ingredient",
+    "text": "我只有鸡蛋和豆腐",
+    "expected_status": "clarification_required",
+    "expected": {
+      "ingredient_mode": "strict",
+      "available_ingredients": [
+        [
+          "ingredient_egg",
+          "raw"
+        ]
+      ]
+    },
+    "explicit_fields": [
+      "ingredient_mode",
+      "available_ingredients"
+    ],
+    "issues": [
+      "unknown_ingredient"
+    ],
+    "reasons": [
+      "unknown_ingredient"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "conflict_scope",
+    "text": "安排今天三餐，只做一道菜",
+    "expected_status": "clarification_required",
+    "expected": {},
+    "explicit_fields": [
+      "scope"
+    ],
+    "issues": [
+      "conflicting_values"
+    ],
+    "reasons": [
+      "conflicting_values"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "conflict_flavor",
+    "text": "微辣，不要辣",
+    "expected_status": "clarification_required",
+    "expected": {},
+    "explicit_fields": [
+      "flavor"
+    ],
+    "issues": [
+      "conflicting_values"
+    ],
+    "reasons": [
+      "conflicting_values"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "unknown_suffix",
+    "text": "Dinner; within 20 minutes except if the fish is frozen",
+    "expected_status": "clarification_required",
+    "expected": {},
+    "explicit_fields": [
+      "meal_type"
+    ],
+    "issues": [
+      "unrecognized_clause"
+    ],
+    "reasons": [
+      "unrecognized_clause"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "strict_cooked_rice_and_eggs_only",
+    "text": "Dinner; I only have cooked rice and eggs",
+    "expected_status": "no_feasible_plan",
+    "expected": {
+      "ingredient_mode": "strict",
+      "available_ingredients": [
+        [
+          "ingredient_rice",
+          "cooked"
+        ],
+        [
+          "ingredient_egg",
+          "raw"
+        ]
+      ]
+    },
+    "explicit_fields": [
+      "meal_type",
+      "ingredient_mode",
+      "available_ingredients"
+    ],
+    "issues": [],
+    "reasons": [
+      "no_slot_combination"
+    ],
+    "hard_constraint": true
+  },
+  {
+    "id": "empty",
+    "text": "   ",
+    "expected_status": "clarification_required",
+    "expected": {},
+    "explicit_fields": [],
+    "issues": [
+      "missing_request"
+    ],
+    "reasons": [
+      "missing_request"
+    ],
+    "hard_constraint": false
+  }
+]

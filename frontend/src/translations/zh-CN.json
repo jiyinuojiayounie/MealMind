@@ -72,6 +72,12 @@
         "dinner": "晚餐",
         "snack": "加餐"
       },
+      "preview": {
+        "mode": "推荐模式",
+        "original": "原版 AI 生成",
+        "catalog": "目录引导规划（开发预览）",
+        "notice": "开发预览 — 食谱和用量尚未经过独立核实。"
+      },
       "errors": {
         "requirements": "请输入 1 到 2,000 个字符的餐食需求。",
         "ingredientsRequired": "选择仅使用现有食材时，请至少填写一种食材。",
@@ -84,6 +90,12 @@
         "timeout": "生成餐单超时，请稍后重试。",
         "network": "无法连接餐食规划服务，请检查连接后重试。",
         "networkDev": "无法连接餐食规划服务。请确认 FastAPI 已在配置的 API 地址启动，然后重试。",
+        "catalogNoPlan": "当前食谱目录没有符合要求的餐单。请检查食材、餐次范围或时间上限。",
+        "catalogClarification": "目录规划需要更明确的要求。请说明餐次、食材或时间上限后重试。",
+        "catalogSafetyClarification": "预览暂无法确认这项过敏或饮食限制，未生成餐单。",
+        "catalogUnsupported": "目录预览暂无法验证一项或多项要求，例如辣度或全天总时间上限，未生成餐单。",
+        "catalogDisabled": "本地后端尚未启用目录规划。请开启目录规划设置并重启 FastAPI。",
+        "catalogLocalOnly": "草稿食谱仅限本地开发后端使用。请检查后端配置和回环地址。",
         "unexpected": "获取餐单时发生错误，请重试。"
       }
     },

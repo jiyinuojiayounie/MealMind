@@ -1,0 +1,1982 @@
+{
+  "schema_version": 1,
+  "catalog_version": 3,
+  "ingredients": [
+    {
+      "ingredient_id": "ingredient_rice",
+      "names": {
+        "zh-CN": "大米",
+        "en-US": "Rice"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_millet",
+      "names": {
+        "zh-CN": "小米",
+        "en-US": "Millet"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_oats",
+      "names": {
+        "zh-CN": "燕麦片",
+        "en-US": "Rolled oats"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wheat_noodles",
+      "names": {
+        "zh-CN": "小麦面条",
+        "en-US": "Wheat noodles"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_sweet_potato",
+      "names": {
+        "zh-CN": "红薯",
+        "en-US": "Sweet potato"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_corn",
+      "names": {
+        "zh-CN": "玉米粒",
+        "en-US": "Corn kernels"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_egg",
+      "names": {
+        "zh-CN": "鸡蛋",
+        "en-US": "Egg"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tofu",
+      "names": {
+        "zh-CN": "北豆腐",
+        "en-US": "Firm tofu"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_chicken",
+      "names": {
+        "zh-CN": "鸡腿肉",
+        "en-US": "Chicken thigh"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pork",
+      "names": {
+        "zh-CN": "猪里脊",
+        "en-US": "Pork tenderloin"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_white_fish",
+      "names": {
+        "zh-CN": "白肉鱼片",
+        "en-US": "White fish fillet"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_shrimp",
+      "names": {
+        "zh-CN": "虾仁",
+        "en-US": "Peeled shrimp"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tomato",
+      "names": {
+        "zh-CN": "番茄",
+        "en-US": "Tomato"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_bok_choy",
+      "names": {
+        "zh-CN": "小白菜",
+        "en-US": "Bok choy"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_cabbage",
+      "names": {
+        "zh-CN": "卷心菜",
+        "en-US": "Cabbage"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_carrot",
+      "names": {
+        "zh-CN": "胡萝卜",
+        "en-US": "Carrot"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_cucumber",
+      "names": {
+        "zh-CN": "黄瓜",
+        "en-US": "Cucumber"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_shiitake",
+      "names": {
+        "zh-CN": "鲜香菇",
+        "en-US": "Fresh shiitake"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_winter_melon",
+      "names": {
+        "zh-CN": "冬瓜",
+        "en-US": "Winter melon"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pumpkin",
+      "names": {
+        "zh-CN": "南瓜",
+        "en-US": "Pumpkin"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_broccoli",
+      "names": {
+        "zh-CN": "西兰花",
+        "en-US": "Broccoli"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_ginger",
+      "names": {
+        "zh-CN": "姜",
+        "en-US": "Ginger"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_garlic",
+      "names": {
+        "zh-CN": "蒜",
+        "en-US": "Garlic"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_scallion",
+      "names": {
+        "zh-CN": "葱",
+        "en-US": "Scallion"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_water",
+      "names": {
+        "zh-CN": "水",
+        "en-US": "Water"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_salt",
+      "names": {
+        "zh-CN": "盐",
+        "en-US": "Salt"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_oil",
+      "names": {
+        "zh-CN": "食用油",
+        "en-US": "Cooking oil"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_soy_sauce",
+      "names": {
+        "zh-CN": "酱油",
+        "en-US": "Soy sauce"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_rice_vinegar",
+      "names": {
+        "zh-CN": "米醋",
+        "en-US": "Rice vinegar"
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "recipe_id": "recipe_000001",
+      "dish_family_id": "family_000001",
+      "revision": 3,
+      "names": {
+        "zh-CN": "小米南瓜粥",
+        "en-US": "Millet and pumpkin porridge"
+      },
+      "meal_types": [
+        "breakfast",
+        "snack"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_millet",
+          "quantity": 40,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_pumpkin",
+          "quantity": 80,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 450,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "用另备的水淘洗小米并沥干。南瓜去皮去籽，按净重称量，切小丁。",
+          "把小米、南瓜和列出的 450 毫升水放入锅中，从冷水起煮至沸腾。",
+          "转小火，半盖锅盖，搅动防粘并煮至小米和南瓜软烂。"
+        ],
+        "en-US": [
+          "Rinse the millet in separate water and drain it. Peel and seed the pumpkin, weigh the edible portion, and dice it.",
+          "Put the millet, pumpkin, and listed 450 mL of water in a pot and bring them to a boil from cold.",
+          "Lower the heat, partially cover, stir to prevent sticking, and simmer until the millet and pumpkin are soft."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 25,
+        "total_minutes": 31
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Trial finished porridge yield, snack scale, and elapsed time from cold water.",
+        "Measure the finished bowl, cold-start elapsed time, and a suitable snack scale."
+      ],
+      "serving_description": {
+        "zh-CN": "一份早餐粥；作为加餐时的份量待试做。",
+        "en-US": "One breakfast bowl. Snack scaling needs a trial."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "mild",
+          "sweet"
+        ],
+        "status": "provisional",
+        "basis": "Pumpkin supplies natural sweetness; no heat seasoning is listed. No chili is listed; the estimate is based on the draft formulation."
+      },
+      "process_water": {
+        "purpose": "rinse"
+      }
+    },
+    {
+      "recipe_id": "recipe_000002",
+      "dish_family_id": "family_000002",
+      "revision": 3,
+      "names": {
+        "zh-CN": "葱花蒸蛋",
+        "en-US": "Steamed eggs with scallion"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "steam"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 2,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 120,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 5,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "切葱。将鸡蛋、列出的 120 毫升水和盐打匀，倒入耐热浅碗。",
+          "蒸锅另加蒸制用水，烧开后将碗放上蒸架。盖锅小火蒸至蛋液中心凝固。",
+          "取出蒸蛋，撒上葱花。"
+        ],
+        "en-US": [
+          "Chop the scallion. Whisk the eggs with the listed 120 mL of water and salt, then pour into a shallow heatproof bowl.",
+          "Bring separate process water to a boil in a steamer, place the bowl on the rack, and steam gently with the lid on until the center is set.",
+          "Remove the bowl and top with chopped scallion."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 12,
+        "total_minutes": 17
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "process_water": {
+        "purpose": "steam"
+      },
+      "verification_notes": [
+        "Verify egg size, steaming-water amount, steamer heat-up, and finished texture.",
+        "Verify egg size, bowl depth, steamer-water volume, and timing from cold water to set custard."
+      ],
+      "serving_description": {
+        "zh-CN": "一份蛋类配菜，不单独作为完整午晚餐。",
+        "en-US": "One egg side for pairing at lunch or dinner."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "mild",
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Egg, salt, and scallion suggest a mild savory custard. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000003",
+      "dish_family_id": "family_000003",
+      "revision": 1,
+      "names": {
+        "zh-CN": "玉米燕麦粥",
+        "en-US": "Corn and oat porridge"
+      },
+      "meal_types": [
+        "breakfast",
+        "snack"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_oats",
+          "quantity": 40,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_corn",
+          "quantity": 60,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 280,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将玉米和燕麦加入水中，小火煮至玉米熟透、燕麦软糯。"
+        ],
+        "en-US": [
+          "Simmer the corn and oats in water until the corn is cooked and the oats are soft."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 4,
+        "cooking_minutes": 10,
+        "total_minutes": 14
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "recipe_id": "recipe_000004",
+      "dish_family_id": "family_000004",
+      "revision": 3,
+      "names": {
+        "zh-CN": "蒸红薯",
+        "en-US": "Steamed sweet potato"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "steam"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_sweet_potato",
+          "quantity": 220,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "洗净红薯，去皮后按可食净重称量，切成厚度接近的块。",
+          "蒸锅加入列出的工序用水，烧开后将红薯置于蒸架上，盖锅蒸至筷子能轻松穿透。"
+        ],
+        "en-US": [
+          "Wash and peel the sweet potato, weigh the edible portion, and cut it into pieces of similar thickness.",
+          "Bring the listed process water to a boil, then steam the sweet potato on a rack with the lid on until a chopstick passes through easily."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 20,
+        "total_minutes": 25
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "process_water": {
+        "purpose": "steam",
+        "quantity_ml": 500
+      },
+      "verification_notes": [
+        "Verify edible weight basis, snack scale, and heat-up time.",
+        "Verify cut thickness, process-water fill for the steamer, elapsed time, and cooked yield."
+      ],
+      "serving_description": {
+        "zh-CN": "一份主食；加餐份量待试做。",
+        "en-US": "One staple portion. Snack scaling needs a trial."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "mild",
+          "sweet"
+        ],
+        "status": "provisional",
+        "basis": "Steamed sweet potato is expected to taste mildly sweet. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000005",
+      "dish_family_id": "family_000005",
+      "revision": 3,
+      "names": {
+        "zh-CN": "姜丝蒸鱼",
+        "en-US": "Steamed fish with ginger"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "steam"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_white_fish",
+          "quantity": 140,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_ginger",
+          "quantity": 8,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "使用已解冻的生鱼片，检查鱼刺并吸干表面水分。姜切丝，铺在浅耐热盘中的鱼片上。",
+          "蒸锅烧开列出的工序用水，再将鱼盘上架，盖锅蒸至鱼肉熟透。淋上列出的酱油。"
+        ],
+        "en-US": [
+          "Start with thawed raw fish, check for pin bones, and blot it dry. Slice the ginger and lay it over the fish in a shallow heatproof dish.",
+          "Bring the listed process water to a boil, set the plate on the rack, and steam covered until the fish is cooked through. Finish with the listed soy sauce."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 12,
+        "total_minutes": 18,
+        "starting_assumptions": {
+          "zh-CN": "鱼片已解冻，称量为可食净重。",
+          "en-US": "The raw fish is thawed and weighed as an edible portion."
+        }
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "process_water": {
+        "purpose": "steam",
+        "quantity_ml": 500
+      },
+      "verification_notes": [
+        "Verify fish form, thickness, starting temperature, elapsed time, and packaged sauce evidence.",
+        "Confirm fish species, fillet thickness, doneness guidance, cold-start time, and sauce labels."
+      ],
+      "serving_description": {
+        "zh-CN": "一份鱼类主菜，可与主食和蔬菜搭配。",
+        "en-US": "One fish main to pair with a staple and vegetables."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Ginger and soy sauce suggest a savory profile; verify the actual sauce. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000006",
+      "dish_family_id": "family_000006",
+      "revision": 3,
+      "names": {
+        "zh-CN": "香菇焖鸡",
+        "en-US": "Braised chicken and shiitake"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "braise"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_chicken",
+          "quantity": 150,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_shiitake",
+          "quantity": 90,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_ginger",
+          "quantity": 5,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 100,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 8,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 5,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "鸡腿去骨后按可食净重称量，切成大小相近的块。香菇修整后切块，姜切片。",
+          "加热列出的油，炒香姜片，再下鸡肉翻炒。加入香菇、水和酱油，煮沸后降火并盖锅焖。",
+          "焖至鸡肉熟透、香菇软熟，连同锅内酱汁盛出。"
+        ],
+        "en-US": [
+          "Debone the thigh, weigh the edible portion, and cut it into evenly sized pieces. Trim and cut the mushrooms and slice the ginger.",
+          "Heat the listed oil, fry the ginger, and stir in the chicken. Add mushrooms, water, and soy sauce, bring to a boil, then lower the heat and cover to braise.",
+          "Braise until the chicken is cooked through and the mushrooms are tender. Serve with the pan sauce."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 18,
+        "total_minutes": 26
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify edible chicken weight, mushroom role, and covered simmer timing.",
+        "Confirm cut size and doneness guidance, sequential elapsed time, finished yield, and mushroom role."
+      ],
+      "serving_description": {
+        "zh-CN": "一份鸡肉香菇主菜；配主食，香菇的蔬菜角色待核。",
+        "en-US": "One chicken and mushroom main to pair with a staple. Vegetable role remains provisional."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Shiitake, browned chicken, and soy sauce suggest savoriness; verify the sauce. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000007",
+      "dish_family_id": "family_000007",
+      "revision": 1,
+      "names": {
+        "zh-CN": "葱香肉片",
+        "en-US": "Scallion pork slices"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_pork",
+          "quantity": 130,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 25,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 4,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 7,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将猪肉切薄片，葱切段。用油炒蒜和肉片至熟透，再加葱和酱油翻匀。"
+        ],
+        "en-US": [
+          "Slice the pork thinly and cut the scallion into lengths. Stir-fry the garlic and pork in oil until cooked through, then toss with scallion and soy sauce."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 9,
+        "total_minutes": 16
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "recipe_id": "recipe_000008",
+      "dish_family_id": "family_000008",
+      "revision": 3,
+      "names": {
+        "zh-CN": "番茄炒蛋",
+        "en-US": "Tomato and scrambled eggs"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 2,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tomato",
+          "quantity": 180,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "番茄去蒂后按净重称量并切块。鸡蛋打散，将列出的油分成两份。",
+          "用第一份油将鸡蛋炒至凝固，盛到干净碗中。用余油将番茄炒软。",
+          "将鸡蛋倒回锅中拌热，加盐后盛出。"
+        ],
+        "en-US": [
+          "Remove the tomato stems, weigh and chop the edible portion, beat the eggs, and divide the listed oil into two portions.",
+          "Scramble the eggs in the first portion of oil until set, then transfer to a clean bowl. Cook the tomatoes in the remaining oil until soft.",
+          "Return the eggs to the pan, toss until hot, season with salt, and serve."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 9,
+        "total_minutes": 15
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify egg size, tomato trim, oil split, and serving yield.",
+        "Trial egg size, trimmed tomato quantity, oil split, and finished yield."
+      ],
+      "serving_description": {
+        "zh-CN": "一份蛋和番茄配菜，作完整午晚餐时配主食。",
+        "en-US": "One egg and tomato component. Pair with a staple for a complete lunch or dinner."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "savory",
+          "sour"
+        ],
+        "status": "provisional",
+        "basis": "Tomatoes can add acidity; eggs and salt contribute savoriness. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000009",
+      "dish_family_id": "family_000009",
+      "revision": 1,
+      "names": {
+        "zh-CN": "葱香煎豆腐",
+        "en-US": "Pan-fried tofu with scallion"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_tofu",
+          "quantity": 180,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 10,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将豆腐沥干切片，两面煎至金黄。加葱和酱油翻匀。"
+        ],
+        "en-US": [
+          "Drain and slice the tofu. Pan-fry both sides until golden and toss with scallion and soy sauce."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 11,
+        "total_minutes": 17
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "recipe_id": "recipe_000010",
+      "dish_family_id": "family_000010",
+      "revision": 3,
+      "names": {
+        "zh-CN": "蒜蓉小白菜",
+        "en-US": "Garlic bok choy"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 180,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 6,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "小白菜洗净沥干，修掉根部后按净重称量。将梗与叶分开切段，蒜切末。",
+          "用列出的油炒香蒜末。先下菜梗炒至开始变软，再下菜叶翻炒至熟。",
+          "加盐拌匀后盛出。"
+        ],
+        "en-US": [
+          "Wash and drain the bok choy, trim the roots, and weigh the edible portion. Cut the stems and leaves separately and mince the garlic.",
+          "Fry the garlic briefly in the listed oil. Add the stems first and cook until they begin to soften, then add the leaves and stir-fry until cooked.",
+          "Toss with salt and serve."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 6,
+        "total_minutes": 11
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify washed and trimmed bok choy weight and cooking sequence.",
+        "Confirm trimmed weight, stem-first sequence, and elapsed time for the selected pan and burner."
+      ],
+      "serving_description": {
+        "zh-CN": "一份小白菜配菜，搭配蛋白质和主食。",
+        "en-US": "One bok choy side to pair with protein and a staple."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Garlic and salt suggest a savory vegetable side. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000011",
+      "dish_family_id": "family_000011",
+      "revision": 1,
+      "names": {
+        "zh-CN": "醋炒卷心菜",
+        "en-US": "Vinegar cabbage stir-fry"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_cabbage",
+          "quantity": 180,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_rice_vinegar",
+          "quantity": 10,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将卷心菜切细，用油炒至刚软，加入米醋和盐翻匀。"
+        ],
+        "en-US": [
+          "Slice the cabbage and stir-fry in oil until just tender. Toss with rice vinegar and salt."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 7,
+        "total_minutes": 12
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "recipe_id": "recipe_000012",
+      "dish_family_id": "family_000012",
+      "revision": 2,
+      "names": {
+        "zh-CN": "蒸西兰花胡萝卜",
+        "en-US": "Steamed broccoli and carrots"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "steam"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_broccoli",
+          "quantity": 130,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_carrot",
+          "quantity": 70,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将西兰花切小朵，胡萝卜切薄片。隔水蒸至熟，加盐拌匀。"
+        ],
+        "en-US": [
+          "Cut the broccoli into florets and slice the carrot thinly. Steam over the water until tender and toss with salt."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 8,
+        "total_minutes": 15
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "process_water": {
+        "purpose": "steam",
+        "quantity_ml": 500
+      }
+    },
+    {
+      "recipe_id": "recipe_000013",
+      "dish_family_id": "family_000013",
+      "revision": 1,
+      "names": {
+        "zh-CN": "醋拌黄瓜",
+        "en-US": "Rice vinegar cucumber salad"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "dish_roles": [
+        "vegetable",
+        "accompaniment"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "cold_mix"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_cucumber",
+          "quantity": 160,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_rice_vinegar",
+          "quantity": 10,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 4,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "洗净黄瓜并切块，将蒜切碎，与米醋和盐拌匀。"
+        ],
+        "en-US": [
+          "Wash and cut the cucumber. Mince the garlic and toss with the cucumber, rice vinegar, and salt."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 0,
+        "total_minutes": 7
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      }
+    },
+    {
+      "recipe_id": "recipe_000014",
+      "dish_family_id": "family_000014",
+      "revision": 3,
+      "names": {
+        "zh-CN": "胡萝卜米饭",
+        "en-US": "Carrot rice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 75,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_carrot",
+          "quantity": 45,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 160,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "用另备的水淘洗大米并沥干，胡萝卜修整后按净重称量并切小丁。",
+          "在带盖锅中加入大米、胡萝卜和列出的 160 毫升烹调用水，煮开后降至小火。",
+          "盖锅煮至米粒软熟，关火后拨松盛出。若试做需要焖放，另行记录等待时间。"
+        ],
+        "en-US": [
+          "Rinse the rice in separate process water and drain it. Trim, weigh, and finely dice the edible carrot.",
+          "Put rice, carrot, and the listed 160 mL of cooking water in a lidded pot. Bring to a boil and reduce the heat.",
+          "Cover and simmer until the grains are tender, then turn off the heat, fluff, and serve. Record any needed covered rest separately during the trial."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 21,
+        "total_minutes": 27
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify rice variety, net amounts, water for rinsing, and any necessary resting time.",
+        "Confirm rice variety, water ratio, rinsing-water volume, and whether covered resting is necessary."
+      ],
+      "serving_description": {
+        "zh-CN": "一份带胡萝卜的主食；胡萝卜暂按配料处理。",
+        "en-US": "One staple portion with carrot as a supporting ingredient."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "mild",
+          "sweet"
+        ],
+        "status": "provisional",
+        "basis": "Carrot may give the rice a mild sweetness. No chili is listed; the estimate is based on the draft formulation."
+      },
+      "process_water": {
+        "purpose": "rinse"
+      }
+    },
+    {
+      "recipe_id": "recipe_000015",
+      "dish_family_id": "family_000015",
+      "revision": 2,
+      "names": {
+        "zh-CN": "葱油拌面",
+        "en-US": "Scallion oil noodles"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "boil",
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wheat_noodles",
+          "quantity": 80,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 20,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 9,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 7,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将面条煮熟沥干。用油轻炒葱段，加入酱油后与面条拌匀。"
+        ],
+        "en-US": [
+          "Boil and drain the noodles. Gently fry the scallion in oil, add soy sauce, and toss with the noodles."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 12,
+        "total_minutes": 18
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "process_water": {
+        "purpose": "boil",
+        "quantity_ml": 600
+      }
+    },
+    {
+      "recipe_id": "recipe_000016",
+      "dish_family_id": "family_000016",
+      "revision": 3,
+      "names": {
+        "zh-CN": "鸡蛋小白菜炒饭",
+        "en-US": "Egg and bok choy fried rice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "staple",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 170,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 2,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 100,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "准备已安全保存的熟米饭并拨散。小白菜修整后按净重称量，梗与叶分开切碎；打散鸡蛋。",
+          "用部分列出的油炒蛋，凝固后盛到干净碗中。用剩余油先炒菜梗，再加入菜叶。",
+          "加入熟米饭和鸡蛋翻炒，确保整锅热透，加盐盛出。"
+        ],
+        "en-US": [
+          "Start with safely stored cooked rice and break up clumps. Trim and weigh the bok choy, chop stems and leaves separately, and beat the eggs.",
+          "Scramble the eggs in part of the listed oil until set, then transfer to a clean bowl. In the remaining oil, fry the stems before adding the leaves.",
+          "Return the eggs and cooked rice to the pan and stir-fry until hot throughout, then season with salt and serve."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 10,
+        "total_minutes": 16,
+        "starting_assumptions": {
+          "zh-CN": "已有安全保存的熟米饭，不含煮饭时间。",
+          "en-US": "Start with safely stored cooked rice. The estimate excludes cooking rice from dry."
+        }
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify starting rice condition, elapsed time, finished yield, and role coverage.",
+        "Confirm rice starting temperature, stored-rice handling, oil split, elapsed time, and role coverage."
+      ],
+      "serving_description": {
+        "zh-CN": "一份组合主餐；三种餐食角色与成品量待核。",
+        "en-US": "One combination meal. Finished yield and the three meal roles need review."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Egg, greens, and salt suggest a simple savory fried rice. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000017",
+      "dish_family_id": "family_000017",
+      "revision": 3,
+      "names": {
+        "zh-CN": "虾仁西兰花盖饭",
+        "en-US": "Shrimp and broccoli rice bowl"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "staple",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 170,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_shrimp",
+          "quantity": 120,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_broccoli",
+          "quantity": 130,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 4,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 35,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "准备已安全保存的熟米饭和已解冻、去壳去虾线的生虾仁。西兰花修整后按净重称量并切小朵，蒜切碎。",
+          "先将熟米饭复热至热透，盛出并加盖。用列出的油炒香蒜，加入西兰花与 35 毫升水，盖锅焖至西兰花开始变软。",
+          "加虾仁翻炒至熟透，拌入酱油，将菜和锅中汁液盖在饭上。"
+        ],
+        "en-US": [
+          "Start with safely stored cooked rice and thawed, peeled, deveined raw shrimp. Trim and weigh the broccoli, cut it into florets, and chop the garlic.",
+          "Reheat the cooked rice until hot throughout and set it aside, covered. Fry the garlic in the listed oil, then add broccoli and the 35 mL of water and cover until the broccoli begins to soften.",
+          "Stir-fry the shrimp until cooked through, mix in the soy sauce, and spoon the topping and pan juices over the rice."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 12,
+        "total_minutes": 20,
+        "starting_assumptions": {
+          "zh-CN": "已有安全保存的熟米饭，生虾仁已解冻。含复热，不含煮饭和解冻时间。",
+          "en-US": "Start with safely stored cooked rice and thawed raw shrimp. Include reheating, excluding cooking rice from dry and thawing."
+        }
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify shrimp starting condition, single-burner elapsed time, finished yield, and role coverage.",
+        "Time single-burner preparation including reheating. Confirm shrimp doneness, role coverage, and packaged sauce evidence."
+      ],
+      "serving_description": {
+        "zh-CN": "一份组合盖饭；三种餐食角色与成品量待核。",
+        "en-US": "One combination rice bowl. Finished yield and the three meal roles need review."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Shrimp, garlic, and soy sauce suggest a savory topping; verify the sauce. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000018",
+      "dish_family_id": "family_000018",
+      "revision": 3,
+      "names": {
+        "zh-CN": "豆腐香菇青菜汤面",
+        "en-US": "Tofu, shiitake, and bok choy noodle soup"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "staple",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wheat_noodles",
+          "quantity": 80,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tofu",
+          "quantity": 140,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_shiitake",
+          "quantity": 55,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 100,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 520,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 2,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "香菇修整后切片，豆腐沥干后称量并切块，小白菜修整称重后将梗与叶分开切段。",
+          "将 520 毫升水烧开，加入香菇和豆腐煮。再放干面条，按实际面条种类控制火候。",
+          "面条快熟时先放菜梗，再放菜叶煮至软熟。加盐，将汤和固体一同盛入碗中。"
+        ],
+        "en-US": [
+          "Trim and slice the shiitake, drain and weigh the tofu before cubing, and trim and weigh the bok choy before cutting stems and leaves separately.",
+          "Bring the 520 mL of water to a boil and simmer the mushrooms and tofu. Add the dry noodles and adjust the cooking to the noodle type.",
+          "As the noodles approach doneness, add the bok choy stems before the leaves and cook until tender. Add salt and serve the broth and solids together."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 13,
+        "total_minutes": 21,
+        "starting_assumptions": {
+          "zh-CN": "从冷水起算，使用干面条和沥干豆腐。",
+          "en-US": "Start with cold water, dry noodles, and drained tofu."
+        }
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify noodle type, staged cooking, finished yield, and elapsed time.",
+        "Trial noodle type, drain weight, staged timing, broth yield, and role coverage."
+      ],
+      "serving_description": {
+        "zh-CN": "一份组合汤面；汤和固体的成品量待核。",
+        "en-US": "One combination noodle soup. Broth and solids need a finished-yield check."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "mild",
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "Shiitake and tofu suggest a mild savory broth. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000019",
+      "dish_family_id": "family_000019",
+      "revision": 3,
+      "names": {
+        "zh-CN": "冬瓜姜汤",
+        "en-US": "Winter melon and ginger soup"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "vegetable",
+        "accompaniment"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_winter_melon",
+          "quantity": 200,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_ginger",
+          "quantity": 7,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 450,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "冬瓜去皮去籽后按净重称量，切相近厚度的薄块。姜切片。",
+          "将冬瓜、姜和列出的 450 毫升水同锅煮开，转小火煮至冬瓜软熟。",
+          "加盐后将汤和冬瓜一起盛出。"
+        ],
+        "en-US": [
+          "Peel and seed the winter melon, weigh the edible portion, and slice it into pieces of similar thickness. Slice the ginger.",
+          "Bring the melon, ginger, and listed 450 mL of water to a boil together, then simmer until tender.",
+          "Season with salt and serve both the broth and the melon."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 15,
+        "total_minutes": 22
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Verify trimmed melon weight, slice thickness, and elapsed time from cold water.",
+        "Confirm trimmed weight, slice thickness, cold-start time, and served broth and solids."
+      ],
+      "serving_description": {
+        "zh-CN": "一份清汤配菜，搭配主食和蛋白质。",
+        "en-US": "One soup side to pair with a staple and protein."
+      },
+      "flavor": {
+        "heat": "non_spicy",
+        "characteristics": [
+          "mild",
+          "savory"
+        ],
+        "status": "provisional",
+        "basis": "A light salted broth with ginger suggests a mild savory profile. No chili is listed; the estimate is based on the draft formulation."
+      }
+    },
+    {
+      "recipe_id": "recipe_000020",
+      "dish_family_id": "family_000020",
+      "revision": 1,
+      "names": {
+        "zh-CN": "胡萝卜玉米清汤",
+        "en-US": "Carrot and corn broth"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "vegetable",
+        "accompaniment"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_carrot",
+          "quantity": 100,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_corn",
+          "quantity": 80,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 450,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "将胡萝卜切小块，与玉米加水煮至两者软熟，最后加盐。"
+        ],
+        "en-US": [
+          "Dice the carrot and simmer with the corn and water until both are tender. Finish with salt."
+        ]
+      },
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 15,
+        "total_minutes": 21
+      },
+      "dietary": {},
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      },
+      "review": {
+        "status": "draft"
+      }
+    }
+  ]
+}

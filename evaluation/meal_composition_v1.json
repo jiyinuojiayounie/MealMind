@@ -1,0 +1,103 @@
+[
+  {
+    "id": "vegetable_dinner_is_incomplete",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "dinner", "anchor_recipe_id": "recipe_000010"}], "max_total_minutes_per_meal": 11},
+    "expected_status": "no_feasible_plan",
+    "reason": "no_slot_combination"
+  },
+  {
+    "id": "single_vegetable_dish",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "dinner", "style": "single_dish", "anchor_recipe_id": "recipe_000010"}]},
+    "expected_status": "feasible",
+    "recipe_ids": ["recipe_000010"]
+  },
+  {
+    "id": "one_dish_three_roles",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "dinner", "anchor_recipe_id": "recipe_000018"}], "max_total_minutes_per_meal": 21},
+    "expected_status": "feasible",
+    "recipe_ids": ["recipe_000018"]
+  },
+  {
+    "id": "diverse_full_day",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "breakfast"}, {"meal_type": "lunch"}, {"meal_type": "dinner"}]},
+    "expected_status": "feasible"
+  },
+  {
+    "id": "strict_dinner_with_exact_inventory",
+    "mode": "development_drafts",
+    "request": {
+      "slots": [{"meal_type": "dinner"}],
+      "strict_ingredients": true,
+      "max_total_minutes_per_meal": 16,
+      "available_ingredients": [
+        {"ingredient_id": "ingredient_rice", "state": "cooked"},
+        {"ingredient_id": "ingredient_egg", "state": "raw"},
+        {"ingredient_id": "ingredient_bok_choy", "state": "raw"},
+        {"ingredient_id": "ingredient_oil", "state": "ready_to_use"},
+        {"ingredient_id": "ingredient_salt", "state": "ready_to_use"}
+      ]
+    },
+    "expected_status": "feasible",
+    "recipe_ids": ["recipe_000016"]
+  },
+  {
+    "id": "dry_rice_is_not_cooked_rice",
+    "mode": "development_drafts",
+    "request": {
+      "slots": [{"meal_type": "dinner", "anchor_recipe_id": "recipe_000016"}],
+      "available_ingredients": [{"ingredient_id": "ingredient_rice", "state": "dry"}]
+    },
+    "expected_status": "no_feasible_plan",
+    "reason": "no_slot_combination"
+  },
+  {
+    "id": "hard_time_limit",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "dinner", "anchor_recipe_id": "recipe_000018"}], "max_total_minutes_per_meal": 20},
+    "expected_status": "no_feasible_plan",
+    "reason": "no_slot_combination"
+  },
+  {
+    "id": "unknown_allergen_evidence",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "dinner"}], "excluded_allergens": ["peanut"]},
+    "expected_status": "no_feasible_plan",
+    "reason": "no_slot_combination"
+  },
+  {
+    "id": "unconfirmed_free_text",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "dinner"}], "unresolved_constraints": ["Unmapped allergy exclusion"]},
+    "expected_status": "no_feasible_plan",
+    "reason": "unresolved_constraints"
+  },
+  {
+    "id": "production_excludes_drafts",
+    "mode": "production",
+    "request": {"slots": [{"meal_type": "dinner"}]},
+    "expected_status": "no_feasible_plan",
+    "reason": "no_slot_combination"
+  },
+  {
+    "id": "snack_requires_no_complete_meal_roles",
+    "mode": "development_drafts",
+    "request": {"slots": [{"meal_type": "snack", "anchor_recipe_id": "recipe_000013"}]},
+    "expected_status": "feasible",
+    "recipe_ids": ["recipe_000013"]
+  },
+  {
+    "id": "duplicate_anchor_across_day",
+    "mode": "development_drafts",
+    "request": {"slots": [
+      {"meal_type": "breakfast"},
+      {"meal_type": "lunch", "anchor_recipe_id": "recipe_000018"},
+      {"meal_type": "dinner", "anchor_recipe_id": "recipe_000018"}
+    ]},
+    "expected_status": "no_feasible_plan",
+    "reason": "no_distinct_day"
+  }
+]

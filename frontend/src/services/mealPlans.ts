@@ -1,6 +1,10 @@
-import { postJson } from './apiClient'
+import { ApiError, postJson } from './apiClient'
 
 export const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'] as const
+export type PlanningMode = 'prompt_only' | 'catalog'
+export const catalogPreviewEnabled =
+  import.meta.env.DEV && import.meta.env.VITE_CATALOG_PLANNING_PREVIEW === 'true'
+
 type MealType = (typeof mealTypes)[number]
 
 export type MealPlanRequest = {
@@ -64,7 +68,28 @@ function parseMealPlan(value: unknown): MealPlan {
   throw new Error('Invalid meal plan response')
 }
 
-export function generateMealPlan(payload: MealPlanRequest, signal: AbortSignal, inferScope: boolean): Promise<MealPlan> {
-  const path = inferScope ? '/api/v1/meal-plans/generate?infer_scope=true' : '/api/v1/meal-plans/generate'
-  return postJson(path, payload, parseMealPlan, signal)
+export function catalogOutcomeKey(error: unknown) {
+  if (!(error instanceof ApiError) || !isRecord(error.detail)) return undefined
+  const { status, reasons } = error.detail
+  switch (status) {
+    case 'no_feasible_plan': return 'catalogNoPlan'
+    case 'clarification_required':
+      return Array.isArray(reasons) && reasons.some(
+        (reason) => reason === 'unconfirmed_allergies' || reason === 'unconfirmed_dietary_exclusions',
+      ) ? 'catalogSafetyClarification' : 'catalogClarification'
+    case 'unsupported_constraints': return 'catalogUnsupported'
+    case 'catalog_disabled': return 'catalogDisabled'
+    case 'draft_catalog_forbidden': return 'catalogLocalOnly'
+    default: return undefined
+  }
+}
+
+export function generateMealPlan(
+  payload: MealPlanRequest, signal: AbortSignal, inferScope: boolean, mode: PlanningMode = 'prompt_only',
+): Promise<MealPlan> {
+  const query = new URLSearchParams()
+  if (inferScope) query.set('infer_scope', 'true')
+  if (catalogPreviewEnabled && mode === 'catalog') query.set('planning_mode', 'catalog')
+  const path = '/api/v1/meal-plans/generate'
+  return postJson(query.size ? `${path}?${query}` : path, payload, parseMealPlan, signal)
 }
