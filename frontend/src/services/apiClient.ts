@@ -1,4 +1,4 @@
-const baseUrl = (
+export const apiBaseUrl = (
   import.meta.env.VITE_API_BASE_URL?.trim() ||
   (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '')
 ).replace(/\/+$/, '')
@@ -16,25 +16,28 @@ export class ApiError extends Error {
 }
 
 type JsonRequest = {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   body?: object
+  redirect?: RequestRedirect
   signal?: AbortSignal
   timeoutMs: number
 }
 
-async function requestJson<T>(
+export async function requestJson<T>(
   path: `/${string}`,
   parse: (data: unknown) => T,
-  { body, signal, timeoutMs }: JsonRequest,
+  { body, method = body ? 'POST' : 'GET', redirect, signal, timeoutMs }: JsonRequest,
 ): Promise<T> {
   const timeout = AbortSignal.timeout(timeoutMs)
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: body ? 'POST' : 'GET',
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    method,
     headers: body
       ? { Accept: 'application/json', 'Content-Type': 'application/json' }
       : { Accept: 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
     credentials: 'omit',
     cache: 'no-store',
+    redirect,
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   })
 
@@ -43,7 +46,7 @@ async function requestJson<T>(
     const detail = typeof body === 'object' && body !== null && 'detail' in body ? body.detail : undefined
     throw new ApiError(response.status, detail)
   }
-  return parse(await response.json())
+  return parse(response.status === 204 ? undefined : await response.json())
 }
 
 export function getJson<T>(

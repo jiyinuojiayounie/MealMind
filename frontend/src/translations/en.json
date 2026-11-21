@@ -100,8 +100,94 @@
       }
     },
     "log": {
-      "intro": "Record what you ate with a photo or a short description.",
-      "status": "Photo recognition and food log saving are unavailable in this version."
+      "intro": "Record what you actually ate, in your own words.",
+      "unavailable": "Food logging is available only in local development. This page cannot save records here.",
+      "local": "Local development only. Records are stored on this machine.",
+      "newTitle": "New food log",
+      "editTitle": "Correct draft",
+      "description": "What did you eat?",
+      "example": "For example, steamed egg and a bowl of rice.",
+      "mealType": "Meal type",
+      "consumedAt": "When did you eat?",
+      "items": "Food items",
+      "manualHelp": "Add at least one food item by hand. Your original description is saved separately. Leave quantities blank if you don’t know them.",
+      "ai": {
+        "action": "Recognize with AI",
+        "loading": "Recognizing food…",
+        "help": "Optional. Recognition sends your description to Gemini for suggestions. You can also enter the items yourself.",
+        "applied": "AI suggestions added. Review and edit the items before saving a draft.",
+        "stale": "The description changed after recognition. Review the items against the new text or run recognition again.",
+        "pending": "Review the suggestions below. Your current items stay in place until you choose to replace them.",
+        "empty": "No foods could be identified. Add items manually or revise your description and try again.",
+        "replace": "Replace current items",
+        "discard": "Dismiss suggestions",
+        "portions": {
+          "quantity_unspecified": "No quantity was found. Leave it blank if you don’t know it.",
+          "portion_needs_review": "The portion is unclear. Check it and enter a quantity only if you know it."
+        },
+        "notes": {
+          "no_identifiable_foods": "No foods could be identified.",
+          "description_needs_review": "Part of the description was unclear. Check for missing or incorrect items."
+        },
+        "errors": {
+          "input": "Enter a food description of up to 2,000 characters, then try recognition again.",
+          "unavailable": "AI recognition is unavailable. Check the local backend and its Gemini configuration, or enter foods manually.",
+          "provider": "AI recognition couldn’t produce a valid proposal. Try again or enter foods manually.",
+          "timeout": "AI recognition took too long. Try again or enter foods manually.",
+          "network": "Couldn’t reach the recognition service. Check the local backend and try again.",
+          "invalid": "The recognition result was invalid. Try again or enter foods manually."
+        }
+      },
+      "itemNumber": "Food item {{number}}",
+      "name": "Food name",
+      "quantity": "Quantity (optional)",
+      "unit": "Unit (optional)",
+      "method": "Preparation (optional)",
+      "remove": "Remove item",
+      "removeNumber": "Remove food item {{number}}",
+      "add": "Add food item",
+      "save": "Save draft",
+      "cancelEdit": "Cancel editing",
+      "records": "Food logs by date",
+      "viewDate": "View date",
+      "today": "Today",
+      "loading": "Loading food logs…",
+      "working": "Saving changes…",
+      "retry": "Reload records",
+      "empty": "No food logs for this date.",
+      "unknown": "Quantity unknown",
+      "locked": "Confirmed food logs can be viewed or deleted. Editing is available for drafts.",
+      "editing": "Save or cancel your corrections before confirming or deleting this log.",
+      "correct": "Correct draft",
+      "confirm": "Confirm as eaten",
+      "delete": "Delete log",
+      "confirmDelete": "Delete this food log permanently?",
+      "statuses": {
+        "draft": "Draft",
+        "confirmed": "Confirmed"
+      },
+      "meals": {
+        "unspecified": "Unspecified",
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "dinner": "Dinner",
+        "snack": "Snack"
+      },
+      "notices": {
+        "create": "Draft saved. Review it below and confirm once it reflects what you ate.",
+        "update": "Draft corrected. Review it below before confirming.",
+        "confirm": "Food log confirmed.",
+        "delete": "Food log deleted."
+      },
+      "errors": {
+        "conflict": "This log changed or was deleted. Records are reloading. Review the latest version before trying again.",
+        "unavailable": "The food log API is unavailable. Check that the loopback backend is running in development mode.",
+        "invalid": "Enter a description and a name for each food item, then check the date and quantities.",
+        "time": "Enter a valid local date and time. If clocks skip this time, choose another time.",
+        "quantity": "Enter a quantity greater than zero, or leave it blank.",
+        "network": "Couldn’t reach the food log API. Check the local backend and try again.",
+        "saveUnknown": "Couldn’t verify that the draft saved. Reload the records for the consumption date before saving again."
+      }
     },
     "pantry": {
       "intro": "Keep a snapshot of the ingredients you have on hand.",

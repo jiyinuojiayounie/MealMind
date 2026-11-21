@@ -30,3 +30,9 @@ The following proposals record the approved product direction and the implementa
 | D016 | Prevent repeated dishes within a plan by tracking recipe and family IDs. Retain stable IDs to support future cross-generation deduplication after history scope and consent are approved. |
 | D017 | Store standard quantities and preparation states. Show household measures only when supported by reviewed references tied to the specific quantity, unit, and ingredient state. |
 | D018 | Use a curated catalog and deterministic filtering and validation, with one Gemini call for personalization over approved candidates. Seed a small development catalog and exclude draft and retired recipes from production retrieval. Defer live endpoint integration. |
+
+## Day 5 food logging foundation
+
+| ID | Decision |
+| --- | --- |
+| D019 | Use a versioned SQLite store for unauthenticated food log development on loopback only. Separate drafts from confirmed consumption and preserve unknown quantities. Keep the public guest and authenticated persistence requirements in FR08. |
