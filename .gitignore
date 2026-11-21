@@ -26,6 +26,14 @@ __pycache__/
 .coverage.*
 htmlcov/
 
+# Local food-log storage
+/backend/.local/
+*.sqlite*
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
 # Frontend and build output
 node_modules/
 dist/
@@ -46,3 +54,6 @@ supabase/.branches/
 ._*
 ~$*
 *.swp
+
+# Local development manager state
+/.dev-local/

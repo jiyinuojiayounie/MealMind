@@ -17,9 +17,34 @@ The frontend runs locally with bilingual navigation and feature previews. FastAP
 
 Supabase Auth is the planned authentication service. Gemini is the initial multimodal model candidate. The deployment target is Render, with a Static Site for the frontend and a Web Service for the backend.
 
+## Manage local development on macOS
+
+Install the frontend and backend dependencies once using the setup commands below. From the repository root, run:
+
+```sh
+./dev start
+./dev status
+./dev restart
+./dev stop
+```
+
+`start` launches both services in the background and waits for HTTP readiness. `status` shows managed services and unmanaged port occupants. `restart` rereads `backend/.env` and `frontend/.env.local` by starting fresh processes. `stop` gracefully shuts down only process groups whose local supervisors the tool can verify. Keep the existing environment files in place. The manager does not install dependencies or change food-log data.
+
+Open [MealMind](http://127.0.0.1:5173) or the [FastAPI docs](http://127.0.0.1:8000/docs). Both servers bind only to loopback. FastAPI uses reload and disables proxy headers. To enable development-only backend routes, keep `MEALMIND_ENVIRONMENT=development` in the backend environment or start the manager with `MEALMIND_ENVIRONMENT=development ./dev start`. If supplied only in the shell, pass it again when restarting.
+
+Follow the private, Git-ignored logs with:
+
+```sh
+tail -f .dev-local/backend.log .dev-local/frontend.log
+```
+
+The logs contain fixed startup, error category, and shutdown messages. Raw application output is withheld to avoid exposing credentials or food-log descriptions. Startup errors point to the relevant log. The manager uses macOS `lsof`, `ps`, and Unix sockets. If it cannot verify a saved supervisor, it leaves the recorded group untouched.
+
+If a port is occupied, read the PID and process name shown by `./dev status` or `./dev start`. Find the owning app or original terminal and close or stop it there before retrying. If you cannot identify the process, leave it running. Do not start manual servers alongside `./dev`.
+
 ## Run the frontend locally
 
-Start the backend described below first and keep it running in its own terminal. Use Node.js 24 and npm. From the repository root, run:
+For manual startup, start the backend described below first. Use Node.js 24 and npm. From the repository root, run:
 
 ```sh
 cd frontend
@@ -39,7 +64,7 @@ Use Python 3.14. Open a separate terminal at the repository root and run:
 cd backend
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
 Open the [interactive API documentation](http://127.0.0.1:8000/docs) or check the endpoint directly.
@@ -58,7 +83,7 @@ Run the health check above first. A connection refusal means nothing is acceptin
 
 ```sh
 lsof -nP -iTCP:8000 -sTCP:LISTEN
-ps -p PID -o pid,ppid,command
+ps -p PID -o pid,ppid,comm
 lsof -a -p PID -d cwd
 ```
 
@@ -144,3 +169,7 @@ Optional `MEALMIND_CATALOG_PERSONALIZATION=true` uses the existing Gemini creden
 Read the [product requirements](docs/PRD.md), [architecture and development conventions](AGENTS.md), and [decision record](docs/DECISIONS.md) before changing the project. See the [changelog](CHANGELOG.md) for completed work. The [original Word PRD](docs/MealMind_PRD_v1.1.docx) is preserved alongside the Markdown baseline.
 
 The [environment template](.env.example) documents local overrides and reserved integration settings.
+
+### Local food log API
+
+The food log endpoints are available only in local development. See the [food log API guide](docs/FOOD_LOGS.md) for the loopback startup command, draft and confirmation requests, and storage migration notes.

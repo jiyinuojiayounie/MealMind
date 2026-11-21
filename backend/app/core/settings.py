@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     catalog_planning_enabled: bool = False
     catalog_use_drafts: bool = False
     catalog_personalization: bool = False
+    food_log_db_path: Path = Path(__file__).resolve().parents[2] / ".local" / "food-logs.sqlite3"
 
     service_name: str = Field(default="mealmind-api", min_length=1)
     cors_origins: list[AnyHttpUrl] = Field(
