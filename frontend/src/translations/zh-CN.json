@@ -1,5 +1,6 @@
 {
   "language": "界面语言",
+  "backend": {"loading": "正在检查 API 连接…", "connected": "API 已连接", "unavailable": "API 当前不可用", "retry": "重试 API 连接"},
   "skip": "跳到主要内容",
   "navigation": "主导航",
   "nav": { "today": "今日", "log": "记录", "pantry": "食材", "profile": "我的" },

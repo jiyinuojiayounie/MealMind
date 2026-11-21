@@ -1,5 +1,6 @@
 {
   "language": "Interface language",
+  "backend": {"loading": "Checking API connection…", "connected": "API connected", "unavailable": "API unavailable", "retry": "Retry API connection"},
   "skip": "Skip to content",
   "navigation": "Primary navigation",
   "nav": { "today": "Today", "log": "Log", "pantry": "Pantry", "profile": "Profile" },

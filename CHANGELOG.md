@@ -11,3 +11,6 @@
 - Added six screens, four mobile navigation tabs, equal onboarding choices, and the Today assistant preview, shortcuts, and meal overview.
 - Added Simplified Chinese and English translations, a persistent language switch, and labeled previews for features awaiting the backend.
 - Documented local frontend startup, linting, and build commands.
+- Added a modular FastAPI backend with pinned dependencies, environment-based settings, local CORS, OpenAPI docs, and a tested health endpoint.
+- Connected the frontend through a typed API client and added a bilingual, development-only API status indicator with retry.
+- Documented separate frontend and backend startup commands and local environment overrides.

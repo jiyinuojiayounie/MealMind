@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
+import { BackendStatus } from '../components/BackendStatus'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { featurePaths } from '../types/navigation'
 
@@ -28,6 +29,7 @@ export function AppLayout() {
           <Link to="/" className="wordmark">MealMind</Link>
           <LanguageSwitcher />
         </div>
+        {import.meta.env.DEV && <BackendStatus />}
       </header>
       <main className="frame content" id="main-content" ref={main} tabIndex={-1}>
         <Outlet />
