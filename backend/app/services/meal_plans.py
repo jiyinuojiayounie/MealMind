@@ -6,7 +6,7 @@ from google.genai import errors, types
 from pydantic import ValidationError
 
 from app.core.settings import Settings
-from app.prompts.meal_plans import MEAL_PLANNING_INSTRUCTIONS
+from app.prompts.meal_plans import INFER_SCOPE_INSTRUCTIONS, MEAL_PLANNING_INSTRUCTIONS
 from app.schemas.meal_plans import (
     GeneratedMealPlan,
     MealPlanRequest,
@@ -69,10 +69,17 @@ class PlannerFailure(Exception):
 def generate_meal_plan(
     request: MealPlanRequest,
     settings: Settings,
+    *,
+    infer_scope: bool = False,
 ) -> MealPlanResponse:
     key = settings.gemini_api_key
     if key is None or not key.get_secret_value().strip():
         raise PlannerUnavailable
+
+    allow_inferred_scope = infer_scope and request.scope == "single_meal" and request.meal_type is None
+    instructions = MEAL_PLANNING_INSTRUCTIONS
+    if allow_inferred_scope:
+        instructions += INFER_SCOPE_INSTRUCTIONS
 
     try:
         with genai.Client(
@@ -87,7 +94,7 @@ def generate_meal_plan(
                 model=settings.gemini_model,
                 contents=request.model_dump_json(),
                 config=types.GenerateContentConfig(
-                    system_instruction=MEAL_PLANNING_INSTRUCTIONS,
+                    system_instruction=instructions,
                     response_mime_type="application/json",
                     response_json_schema=_provider_schema(),
                     max_output_tokens=4096,
@@ -108,7 +115,7 @@ def generate_meal_plan(
         raise PlannerFailure from None
 
     meal_types = [meal.meal_type for meal in plan.meals]
-    if request.scope == "single_meal":
+    if request.scope == "single_meal" and (not allow_inferred_scope or len(meal_types) == 1):
         if len(meal_types) != 1 or (request.meal_type and meal_types[0] != request.meal_type):
             raise PlannerFailure
     elif len(meal_types) != len(set(meal_types)) or not {"breakfast", "lunch", "dinner"}.issubset(meal_types):

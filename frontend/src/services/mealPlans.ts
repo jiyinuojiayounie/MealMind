@@ -64,6 +64,7 @@ function parseMealPlan(value: unknown): MealPlan {
   throw new Error('Invalid meal plan response')
 }
 
-export function generateMealPlan(payload: MealPlanRequest, signal: AbortSignal): Promise<MealPlan> {
-  return postJson('/api/v1/meal-plans/generate', payload, parseMealPlan, signal)
+export function generateMealPlan(payload: MealPlanRequest, signal: AbortSignal, inferScope: boolean): Promise<MealPlan> {
+  const path = inferScope ? '/api/v1/meal-plans/generate?infer_scope=true' : '/api/v1/meal-plans/generate'
+  return postJson(path, payload, parseMealPlan, signal)
 }

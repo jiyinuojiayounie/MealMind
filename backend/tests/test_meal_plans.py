@@ -196,3 +196,32 @@ def test_provider_diagnostics_are_sanitized(gemini, caplog, enabled):
     assert "private-test-data" not in caplog.text
     assert "fictional-key" not in caplog.text
     assert ("Gemini upstream HTTP 400: Structured output schema" in caplog.text) is enabled
+
+
+@pytest.mark.parametrize("query,meal_type,expected", [
+    ("?infer_scope=true", None, 200),
+    ("", None, 502),
+    ("?infer_scope=true", "dinner", 502),
+])
+def test_inferred_scope_is_opt_in_and_respects_explicit_meal_type(
+    api, gemini, plan, query, meal_type, expected
+):
+    plan["meals"] = [
+        {**plan["meals"][0], "meal_type": kind}
+        for kind in ("breakfast", "lunch", "dinner")
+    ]
+    gemini[1].return_value = SimpleNamespace(text=json.dumps(plan))
+    response = api.post(PATH + query, json={
+        "user_request": "Plan breakfast, lunch and dinner using only tofu and water.",
+        "language": "en-US",
+        "scope": "single_meal",
+        "meal_type": meal_type,
+        "ingredient_mode": "flexible",
+    })
+
+    assert response.status_code == expected
+    gemini[1].assert_called_once()
+    call = gemini[1].call_args.kwargs
+    assert ("scope in this request is a fallback" in call["config"].system_instruction) == (expected == 200)
+    assert "only when the user's requirements permit them" in call["config"].system_instruction
+    assert json.loads(call["contents"])["available_ingredients"] == []

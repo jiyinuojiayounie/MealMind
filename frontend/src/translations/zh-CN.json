@@ -35,8 +35,15 @@
   "back": "返回今日",
   "pages": {
     "plan": {
-      "intro": "根据你的需求生成单顿或全天餐单。",
-      "requirements": "你想吃什么？",
+      "requirements": "今天想吃什么？",
+      "moreOptions": "更多选项",
+      "automatic": "自动判断（默认单顿）",
+      "examplesLabel": "示例需求",
+      "examples": {
+        "quickDinner": "20 分钟做一顿中式晚餐",
+        "existingIngredients": "只用豆腐、鸡蛋、水和盐",
+        "fullDay": "安排早餐、午餐和晚餐"
+      },
       "requirementsExample": "适合一人的简单中式晚餐，不含花生。",
       "scope": "规划范围",
       "single": "单顿",
@@ -76,6 +83,7 @@
         "unavailable": "餐食规划服务暂不可用，请稍后重试。",
         "timeout": "生成餐单超时，请稍后重试。",
         "network": "无法连接餐食规划服务，请检查连接后重试。",
+        "networkDev": "无法连接餐食规划服务。请确认 FastAPI 已在配置的 API 地址启动，然后重试。",
         "unexpected": "获取餐单时发生错误，请重试。"
       }
     },

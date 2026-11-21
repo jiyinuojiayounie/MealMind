@@ -35,8 +35,15 @@
   "back": "Back to Today",
   "pages": {
     "plan": {
-      "intro": "Generate a plan for one meal or a full day based on your preferences.",
       "requirements": "What would you like to eat?",
+      "moreOptions": "More options",
+      "automatic": "Automatic (single meal by default)",
+      "examplesLabel": "Example prompts",
+      "examples": {
+        "quickDinner": "A quick Chinese dinner in 20 minutes",
+        "existingIngredients": "Use only tofu, eggs, water, and salt",
+        "fullDay": "Plan breakfast, lunch, and dinner"
+      },
       "requirementsExample": "A simple Chinese dinner for one, with no peanuts.",
       "scope": "Plan scope",
       "single": "Single meal",
@@ -76,6 +83,7 @@
         "unavailable": "Meal planning is temporarily unavailable. Try again later.",
         "timeout": "Meal planning took too long. Try again in a moment.",
         "network": "Couldn’t reach the meal planning service. Check your connection and try again.",
+        "networkDev": "Couldn’t reach the meal planning API. Check that FastAPI is running at your configured API address, then try again.",
         "unexpected": "Something went wrong while getting your meal plan. Try again."
       }
     },

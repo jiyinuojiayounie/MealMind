@@ -19,7 +19,7 @@ Supabase Auth is the planned authentication service. Gemini is the initial multi
 
 ## Run the frontend locally
 
-Use Node.js 24 and npm. From the repository root, run:
+Start the backend described below first and keep it running in its own terminal. Use Node.js 24 and npm. From the repository root, run:
 
 ```sh
 cd frontend
@@ -27,7 +27,7 @@ npm ci
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) or the URL printed by Vite. The development frontend checks the API at `http://127.0.0.1:8000` by default. To use a different backend, set `VITE_API_BASE_URL` in `frontend/.env.local` and restart Vite. The frontend opens in Simplified Chinese on first visit and remembers the selected language in this browser.
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173) or [http://localhost:5173](http://localhost:5173). Vite uses port 5173 and exits if that port is occupied. The development frontend checks the API at `http://127.0.0.1:8000` by default. To use a different backend, set `VITE_API_BASE_URL` in `frontend/.env.local` and restart Vite. The frontend opens in Simplified Chinese on first visit and remembers the selected language in this browser.
 
 From `frontend/`, run `npm run lint` and `npm run build` to check the source and generate the production build.
 
@@ -39,7 +39,7 @@ Use Python 3.14. Open a separate terminal at the repository root and run:
 cd backend
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Open the [interactive API documentation](http://127.0.0.1:8000/docs) or check the endpoint directly.
@@ -48,9 +48,32 @@ Open the [interactive API documentation](http://127.0.0.1:8000/docs) or check th
 curl -i http://127.0.0.1:8000/api/v1/health
 ```
 
-The expected response is HTTP 200 with `{"service":"mealmind-api","status":"ok"}`. The frontend's development-only indicator checks this endpoint when the app loads and when you retry after a failed request. It reports API reachability.
+Wait for Uvicorn to log `Application startup complete` before opening the frontend. The expected response is HTTP 200 with `{"service":"mealmind-api","status":"ok"}`. The frontend's development-only indicator checks this endpoint when the app loads and when you retry after a failed request. It reports API reachability.
 
-Both servers run with defaults. Override backend settings with environment variables or a `backend/.env` file. Set `MEALMIND_CORS_ORIGINS` to a JSON array of exact frontend origins if Vite runs on a different host or port. The defaults allow `http://localhost:5173` and `http://127.0.0.1:5173`.
+The backend reloads when Python source changes. Restart it after editing `backend/.env`. Both servers run with defaults. Override backend settings with environment variables or a `backend/.env` file. Set `MEALMIND_CORS_ORIGINS` to a JSON array of exact frontend origins if Vite runs on a different host or port. The defaults allow `http://localhost:5173` and `http://127.0.0.1:5173`.
+
+### Troubleshoot a local connection
+
+Run the health check above first. A connection refusal means nothing is accepting connections at the configured address. If startup reports that port 8000 is in use, inspect the listener and its working directory before stopping it:
+
+```sh
+lsof -nP -iTCP:8000 -sTCP:LISTEN
+ps -p PID -o pid,ppid,command
+lsof -a -p PID -d cwd
+```
+
+Replace `PID` with the listener's numeric process ID. For an old MealMind instance, use Ctrl+C in its original terminal, then start the backend with the reload command above.
+
+If health succeeds but generation fails in the browser, use the exact browser origin in this preflight check. It exercises CORS without invoking Gemini.
+
+```sh
+curl -i -X OPTIONS 'http://127.0.0.1:8000/api/v1/meal-plans/generate?infer_scope=true' \
+  -H 'Origin: http://127.0.0.1:5173' \
+  -H 'Access-Control-Request-Method: POST' \
+  -H 'Access-Control-Request-Headers: content-type'
+```
+
+Expect HTTP 200 and an `Access-Control-Allow-Origin` header matching the origin.
 
 From `backend/`, run `.venv/bin/python -m pytest` to test the API.
 

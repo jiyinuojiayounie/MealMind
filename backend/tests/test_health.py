@@ -77,13 +77,18 @@ def test_invalid_origins(monkeypatch, origin):
         Settings(_env_file=None)
 
 
+@pytest.mark.parametrize("path", [
+    "/api/v1/meal-plans/generate",
+    "/api/v1/meal-plans/generate?infer_scope=true",
+])
 @pytest.mark.parametrize("origin,expected", [
+    ("http://localhost:5173", 200),
     ("http://127.0.0.1:5173", 200),
     ("https://other.example", 400),
 ])
-def test_meal_plan_preflight(client, origin, expected):
+def test_meal_plan_preflight(client, path, origin, expected):
     response = client.options(
-        "/api/v1/meal-plans/generate",
+        path,
         headers={
             "Origin": origin,
             "Access-Control-Request-Method": "POST",
@@ -95,5 +100,27 @@ def test_meal_plan_preflight(client, origin, expected):
     if expected == 200:
         assert response.headers["access-control-allow-origin"] == origin
         assert "POST" in response.headers["access-control-allow-methods"]
+        assert "content-type" in response.headers["access-control-allow-headers"].lower()
     else:
         assert "access-control-allow-origin" not in response.headers
+
+
+@pytest.mark.parametrize("origin", ["http://localhost:5173", "http://127.0.0.1:5173"])
+def test_meal_plan_unavailable_response_keeps_cors(origin):
+    settings = Settings(_env_file=None, GEMINI_API_KEY=None, cors_origins=[
+        "http://localhost:5173", "http://127.0.0.1:5173",
+    ])
+    with TestClient(create_app(settings)) as client:
+        response = client.post(
+            "/api/v1/meal-plans/generate?infer_scope=true",
+            headers={"Origin": origin},
+            json={
+                "user_request": "A quick tofu dinner",
+                "language": "en-US",
+                "scope": "single_meal",
+                "ingredient_mode": "flexible",
+            },
+        )
+
+    assert response.status_code == 503
+    assert response.headers["access-control-allow-origin"] == origin
