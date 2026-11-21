@@ -1,14 +1,17 @@
 import json
+from io import BytesIO
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
 from google.genai import errors
+from PIL import Image
 
 from app.core.settings import Settings
 from app.main import create_app
 from app.services import meal_plans
+from app.services.food_images import MAX_IMAGE_BYTES, MAX_REQUEST_BYTES
 
 PATH = "/api/v1/food-logs/recognize-text"
 
@@ -154,3 +157,161 @@ def test_unavailable_and_nonlocal_never_call_provider(tmp_path, gemini, options,
         assert test.post(PATH, json={"description": "I ate eggs"}, headers=headers).status_code == status
     gemini[0].assert_not_called()
     assert not database.exists()
+
+
+IMAGE_PATH = "/api/v1/food-logs/recognize-image"
+
+
+def image_bytes(fmt="JPEG", size=(64, 32), **options):
+    buffer = BytesIO()
+    with Image.new("RGB", size, "orange") as image:
+        image.save(buffer, format=fmt, **options)
+    return buffer.getvalue()
+
+
+def image_output(gemini, items, *, needs_review=False):
+    gemini[1].side_effect = None
+    gemini[1].return_value = SimpleNamespace(text=json.dumps({"items": items, "needs_review": needs_review}))
+
+
+@pytest.mark.parametrize("fmt", ["JPEG", "PNG", "WEBP"])
+def test_image_suggestion_uses_actual_format_and_never_creates_database(tmp_path, gemini, fmt):
+    database = tmp_path / "logs.sqlite3"
+    image_output(gemini, [
+        {"name": "米饭", "identity_uncertain": False, "count": None, "count_unit": None},
+        {"name": "鸡蛋", "identity_uncertain": False, "count": 2, "count_unit": "个"},
+        {"name": "蔬菜", "identity_uncertain": True, "count": 3, "count_unit": "片"},
+    ])
+    with client(database) as test:
+        response = test.post(IMAGE_PATH, files={"image": ("misleading.gif", image_bytes(fmt), "image/gif")})
+
+    assert response.status_code == 200
+    result = response.json()
+    assert not database.exists()
+    assert result["description"] is None
+    assert result["source"] == "ai_image" and result["status"] == "draft" and "id" not in result
+    assert result["notes"] == ["image_needs_review"]
+    assert [(item["name"], item["quantity"], item["unit"], item["identity_uncertain"]) for item in result["items"]] == [
+        ("米饭", None, None, False), ("鸡蛋", 2, "个", False), ("蔬菜", None, None, True),
+    ]
+    assert result["items"][0]["portion_note"] == "portion_needs_review"
+    assert all(item["preparation_method"] is None for item in result["items"])
+
+    gemini[1].assert_called_once()
+    call = gemini[1].call_args.kwargs
+    assert call["model"] == "test-model"
+    assert call["config"].response_mime_type == "application/json"
+    part, = call["contents"]
+    assert part.inline_data.mime_type == "image/jpeg"
+    with Image.open(BytesIO(part.inline_data.data)) as normalized:
+        assert normalized.format == "JPEG"
+        assert normalized.size == (64, 32)
+
+
+def test_normalizes_orientation_dimensions_and_strips_metadata(tmp_path, gemini):
+    exif = Image.Exif()
+    exif[274] = 6  # Rotate the displayed photo 90 degrees clockwise.
+    exif[270] = "private-metadata-fixture"
+    image_output(gemini, [])
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(IMAGE_PATH, files={"image": ("photo.jpg", image_bytes(size=(1800, 100), exif=exif))})
+
+    assert response.status_code == 200
+    assert response.json()["items"] == []
+    assert response.json()["notes"] == ["no_identifiable_foods"]
+    normalized_bytes = gemini[1].call_args.kwargs["contents"][0].inline_data.data
+    assert b"private-metadata-fixture" not in normalized_bytes
+    with Image.open(BytesIO(normalized_bytes)) as normalized:
+        assert normalized.size == (89, 1600)
+        assert not normalized.getexif()
+
+
+@pytest.mark.parametrize("make_data,status", [
+    (lambda: b"", 400),
+    (lambda: b"plain text dressed as an image", 415),
+    (lambda: b"\xff\xd8broken JPEG", 400),
+    (lambda: image_bytes("PNG")[:30], 400),
+    (lambda: image_bytes("GIF"), 415),
+    (lambda: b"0" * (MAX_IMAGE_BYTES + 1), 413),
+    (lambda: image_bytes("PNG", (8193, 1)), 413),
+    (lambda: image_bytes("PNG", (5000, 5000)), 413),
+])
+def test_rejects_invalid_image_before_gemini(tmp_path, gemini, make_data, status):
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(IMAGE_PATH, files={"image": ("image.jpg", make_data(), "image/jpeg")})
+    assert response.status_code == status
+    gemini[0].assert_not_called()
+
+
+def test_rejects_animated_supported_format(tmp_path, gemini):
+    with Image.new("RGB", (10, 10), "blue") as next_frame:
+        animated = image_bytes("PNG", size=(10, 10), save_all=True, append_images=[next_frame], duration=10)
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(IMAGE_PATH, files={"image": ("animated.png", animated)})
+    assert response.status_code == 415
+    gemini[0].assert_not_called()
+
+
+def test_streaming_multipart_guard_and_single_file_contract(tmp_path, gemini):
+    data = image_bytes()
+    with client(tmp_path / "logs.sqlite3") as test:
+        assert test.post(IMAGE_PATH, content=data).status_code == 415
+        assert test.post(IMAGE_PATH, files={"file": ("test.jpg", data)}).status_code == 400
+        assert test.post(IMAGE_PATH, files=[("image", ("a.jpg", data)), ("image", ("b.jpg", data))]).status_code == 400
+        assert test.post(IMAGE_PATH, headers={"Content-Type": "multipart/form-data"}, content=b"malformed").status_code == 400
+        prefix = b'--test\r\nContent-Disposition: form-data; name="image"; filename="test.jpg"\r\n\r\n'
+        headers = {"Content-Type": "multipart/form-data; boundary=test"}
+        assert test.post(IMAGE_PATH, headers=headers, content=prefix + data + b"\r\n--test\r\n").status_code == 400
+
+        def large_chunks():
+            yield prefix
+            yield b"x" * MAX_REQUEST_BYTES
+
+        assert test.post(IMAGE_PATH, headers=headers, content=large_chunks()).status_code == 413
+    gemini[0].assert_not_called()
+
+
+@pytest.mark.parametrize("error,status", [
+    (TimeoutError("private-fixture"), 504),
+    (errors.ClientError(400, {"error": {"message": "private-fixture test-key"}}), 502),
+])
+def test_image_provider_failure_is_generic(tmp_path, gemini, caplog, error, status):
+    gemini[1].side_effect = error
+    database = tmp_path / "logs.sqlite3"
+    with client(database, gemini_diagnostics=True) as test:
+        response = test.post(IMAGE_PATH, files={"image": ("private-fixture.jpg", image_bytes())})
+    assert response.status_code == status and not database.exists()
+    assert "private-fixture" not in response.text + caplog.text
+    assert "test-key" not in response.text + caplog.text
+    gemini[1].assert_called_once()
+
+
+def test_image_provider_cannot_return_weight_or_nutrition_fields(tmp_path, gemini):
+    image_output(gemini, [{"name": "米饭", "identity_uncertain": False, "count": 100, "count_unit": "g"}])
+    with client(tmp_path / "logs.sqlite3") as test:
+        assert test.post(IMAGE_PATH, files={"image": ("photo.jpg", image_bytes())}).status_code == 502
+
+
+@pytest.mark.parametrize("options,status", [({"environment": "production"}, 404), ({"peer": "192.0.2.1"}, 403)])
+def test_image_route_uses_same_local_access_guard(tmp_path, gemini, options, status):
+    database = tmp_path / "logs.sqlite3"
+    with client(database, **options) as test:
+        assert test.post(IMAGE_PATH, files={"image": ("photo.jpg", image_bytes())}).status_code == status
+    gemini[0].assert_not_called()
+    assert not database.exists()
+
+
+def test_oversized_webp_canvas_is_rejected_before_opening_decoder(tmp_path, gemini, monkeypatch):
+    oversized_canvas = (
+        b"RIFF" + (22).to_bytes(4, "little") + b"WEBPVP8X" + (10).to_bytes(4, "little")
+        + b"\x00" * 4 + (8192).to_bytes(3, "little") + (31).to_bytes(3, "little")
+    )
+
+    def unexpected_open(*args, **kwargs):
+        pytest.fail("Oversized WebP should be rejected before opening the decoder")
+
+    monkeypatch.setattr(Image, "open", unexpected_open)
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(IMAGE_PATH, files={"image": ("large.webp", oversized_canvas)})
+    assert response.status_code == 413
+    gemini[0].assert_not_called()

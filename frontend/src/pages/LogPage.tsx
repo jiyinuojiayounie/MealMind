@@ -3,27 +3,26 @@ import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../services/apiClient'
 import {
-  canUseFoodLogs, confirmFoodLog, deleteFoodLog, listFoodLogs, logMealTypes, recognizeFoodText, saveFoodLog,
+  canUseFoodLogs, confirmFoodLog, deleteFoodLog, listFoodLogs, logMealTypes, maxFoodPhotoBytes,
+  recognizeFoodImage, recognizeFoodText, saveFoodLog,
 } from '../services/foodLogs'
-import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote } from '../services/foodLogs'
+import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote, RecognitionSource } from '../services/foodLogs'
 import { localDateTimeValue, timestampAtLocalTime } from '../types/localTime'
 
 const button = 'min-h-11 cursor-pointer rounded-xl border border-border px-3 py-2 font-semibold text-forest hover:bg-sage disabled:cursor-not-allowed disabled:opacity-50'
 const primaryButton = 'min-h-11 cursor-pointer rounded-xl bg-forest px-4 py-2.5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50'
 
-function foodRow(item?: FoodItem, portionNote: PortionNote = null) {
+function foodRow(item?: FoodItem, portionNote: PortionNote = null, identityUncertain = false) {
   return {
     key: crypto.randomUUID(), name: item?.name ?? '', quantity: item?.quantity?.toString() ?? '',
-    unit: item?.unit ?? '', method: item?.preparation_method ?? '', portionNote,
+    unit: item?.unit ?? '', method: item?.preparation_method ?? '', portionNote, identityUncertain,
   }
 }
-
-type Row = ReturnType<typeof foodRow>
 
 function initialForm() {
   return { description: '', consumedAt: localDateTimeValue(new Date()), mealType: 'unspecified' as FoodLogDraft['meal_type'],
     rows: [foodRow()], editing: null as FoodLog | null,
-    recognized: null as Pick<FoodRecognition, 'description' | 'notes'> | null }
+    recognized: null as Pick<FoodRecognition, 'source' | 'description' | 'notes'> | null }
 }
 
 function recognitionError(error: unknown) {
@@ -68,8 +67,12 @@ function LocalFoodLogs() {
   const [view, setView] = useState(() => ({ date: localDateTimeValue(new Date()).slice(0, 10), refresh: 0 }))
   const [list, setList] = useState<{ view: typeof view; logs?: FoodLog[]; error?: string }>()
   const [busy, setBusy] = useState(false)
-  const [recognizing, setRecognizing] = useState(false)
-  const [recognition, setRecognition] = useState<{ proposal?: FoodRecognition; error?: string }>({})
+  const [recognizing, setRecognizing] = useState<RecognitionSource | null>(null)
+  const [recognition, setRecognition] = useState<{
+    proposal?: FoodRecognition; error?: { source: RecognitionSource; key: string }
+  }>({})
+  const [photo, setPhoto] = useState<{ file: File; url: string } | null>(null)
+  const previewUrl = useRef<string | null>(null)
   const [feedback, setFeedback] = useState<{ error?: string; notice?: string }>({})
   const action = useRef<AbortController | null>(null)
   const formHeading = useRef<HTMLHeadingElement>(null)
@@ -77,8 +80,8 @@ function LocalFoodLogs() {
   const currentList = list?.view === view ? list : undefined
   const number = new Intl.NumberFormat(i18n.resolvedLanguage, { maximumSignificantDigits: 15 })
   const proposal = recognition.proposal
-  const proposalStale = proposal !== undefined && proposal.description !== form.description
-  const appliedStale = form.recognized !== null && form.recognized.description !== form.description
+  const proposalStale = proposal?.source === 'ai_text' && proposal.description !== form.description
+  const appliedStale = form.recognized?.source === 'ai_text' && form.recognized.description !== form.description
 
   useEffect(() => {
     const controller = new AbortController()
@@ -91,7 +94,37 @@ function LocalFoodLogs() {
     return () => controller.abort()
   }, [view])
 
-  useEffect(() => () => action.current?.abort(), [])
+  useEffect(() => () => {
+    action.current?.abort()
+    if (previewUrl.current) URL.revokeObjectURL(previewUrl.current)
+  }, [])
+
+  function changePhoto(file?: File) {
+    if (recognizing === 'ai_image') {
+      action.current?.abort()
+      action.current = null
+      setRecognizing(null)
+      setBusy(false)
+    }
+    if (previewUrl.current) URL.revokeObjectURL(previewUrl.current)
+    previewUrl.current = null
+    setPhoto(null)
+    setRecognition((previous) => ({
+      proposal: previous.proposal?.source === 'ai_image' ? undefined : previous.proposal,
+      error: previous.error?.source === 'ai_image' ? undefined : previous.error,
+    }))
+    if (!file) return
+    const supported = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)
+      || ((!file.type || file.type === 'application/octet-stream') && /\.(jpe?g|png|webp)$/i.test(file.name))
+    const key = !supported ? 'format' : file.size > maxFoodPhotoBytes ? 'size' : !file.size ? 'corrupt' : null
+    if (key) {
+      setRecognition((previous) => ({ ...previous, error: { source: 'ai_image', key } }))
+      return
+    }
+    const url = URL.createObjectURL(file)
+    previewUrl.current = url
+    setPhoto({ file, url })
+  }
 
   function reload(date?: string) {
     setView((previous) => ({ date: date ?? previous.date, refresh: previous.refresh + 1 }))
@@ -111,6 +144,7 @@ function LocalFoodLogs() {
       if (controller.signal.aborted) return
       if (kind === 'create' || kind === 'update') {
         setForm(initialForm())
+        changePhoto()
         setRecognition({})
       }
       setFeedback({ notice: kind })
@@ -128,52 +162,59 @@ function LocalFoodLogs() {
   }
 
   function applyRecognition(result: FoodRecognition) {
-    if (result.description !== form.description || !result.items.length) return
+    if (!result.items.length || (result.source === 'ai_text' && result.description !== form.description)) return
     setForm((previous) => ({
       ...previous,
-      rows: result.items.map((item) => foodRow(item, item.portion_note)),
-      recognized: { description: result.description, notes: result.notes },
+      rows: result.items.map((item) => foodRow(item, item.portion_note, item.identity_uncertain)),
+      recognized: { source: result.source, description: result.description, notes: result.notes },
     }))
     setRecognition({})
   }
 
-  async function recognize() {
+  async function recognize(source: RecognitionSource) {
     if (action.current) return
     const description = form.description
-    if (!description.trim() || Array.from(description).length > 2000) {
-      setRecognition((previous) => ({ ...previous, error: 'input' }))
+    if (source === 'ai_image' && !photo) return
+    if (source === 'ai_text' && (!description.trim() || Array.from(description).length > 2000)) {
+      setRecognition((previous) => ({ ...previous, error: { source, key: 'input' } }))
       return
     }
     const controller = new AbortController()
     action.current = controller
-    setRecognizing(true)
+    setRecognizing(source)
     setBusy(true)
     setRecognition((previous) => ({ proposal: previous.proposal }))
     try {
-      const result = await recognizeFoodText(description, controller.signal)
-      if (controller.signal.aborted) return
+      const result = source === 'ai_image' && photo
+        ? await recognizeFoodImage(photo.file, controller.signal)
+        : await recognizeFoodText(description, controller.signal)
+      if (controller.signal.aborted || (source === 'ai_image' && previewUrl.current !== photo?.url)) return
       const hasEntries = form.rows.length !== 1
         || form.rows.some((row) => row.name || row.quantity || row.unit || row.method)
       if (hasEntries || !result.items.length) setRecognition({ proposal: result })
       else applyRecognition(result)
     } catch (error) {
       if (!controller.signal.aborted) {
-        setRecognition((previous) => ({ ...previous, error: recognitionError(error) }))
+        const key = source === 'ai_image' && error instanceof ApiError
+          ? ({ 400: 'corrupt', 413: 'size', 415: 'format' }[error.status] ?? recognitionError(error))
+          : recognitionError(error)
+        setRecognition((previous) => ({ ...previous, error: { source, key } }))
       }
     } finally {
-      action.current = null
-      if (!controller.signal.aborted) {
+      if (action.current === controller && !controller.signal.aborted) {
+        action.current = null
         setBusy(false)
-        setRecognizing(false)
+        setRecognizing(null)
       }
     }
   }
 
-  function updateRow(key: string, field: keyof Omit<Row, 'key' | 'portionNote'>, value: string) {
+  function updateRow(key: string, field: 'name' | 'quantity' | 'unit' | 'method', value: string) {
     setForm((previous) => ({
       ...previous,
       rows: previous.rows.map((row) => row.key === key
-        ? { ...row, [field]: value, portionNote: field === 'method' ? row.portionNote : null } : row),
+        ? { ...row, [field]: value, portionNote: field === 'method' ? row.portionNote : null,
+            identityUncertain: field === 'name' ? false : row.identityUncertain } : row),
     }))
   }
 
@@ -201,7 +242,7 @@ function LocalFoodLogs() {
       return
     }
     const payload = { description: form.description, consumed_at: consumedAt, meal_type: form.mealType, items }
-    const source = form.recognized ? 'ai_text' : 'manual_text'
+    const source = form.recognized?.source ?? 'manual_text'
     void mutate(existing ? 'update' : 'create', (signal) => saveFoodLog(payload, existing, source, signal))
   }
 
@@ -212,6 +253,7 @@ function LocalFoodLogs() {
       rows: log.items.map((item) => foodRow(item)),
       recognized: null,
     })
+    changePhoto()
     setRecognition({})
     setFeedback({})
     formHeading.current?.focus()
@@ -220,7 +262,10 @@ function LocalFoodLogs() {
   return (
     <>
       <p className="rounded-xl bg-sage px-4 py-3 text-sm text-forest">{t('pages.log.local')}</p>
-      <p className="sr-only" role="status">{recognizing ? t('pages.log.ai.loading') : busy ? t('pages.log.working') : ''}</p>
+      <p className="sr-only" role="status">
+        {recognizing === 'ai_image' ? t('pages.log.photo.loading')
+          : recognizing ? t('pages.log.ai.loading') : busy ? t('pages.log.working') : ''}
+      </p>
       <form className="card grid gap-4 p-4 sm:p-6" onSubmit={submit}>
         <h2 ref={formHeading} tabIndex={-1}>{t(form.editing ? 'pages.log.editTitle' : 'pages.log.newTitle')}</h2>
         {feedback.error && <p role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`)}</p>}
@@ -233,14 +278,52 @@ function LocalFoodLogs() {
           </label>
           <div className="grid justify-items-start gap-2">
             <button type="button" className={button} aria-describedby="food-recognition-help"
-              onClick={() => void recognize()}>
-              {t(recognizing ? 'pages.log.ai.loading' : 'pages.log.ai.action')}
+              onClick={() => void recognize('ai_text')}>
+              {t(recognizing === 'ai_text' ? 'pages.log.ai.loading' : 'pages.log.ai.action')}
             </button>
             <p id="food-recognition-help" className="text-sm text-muted">{t('pages.log.ai.help')}</p>
-            {recognition.error && (
-              <p role="alert" className="text-red-800">{t(`pages.log.ai.errors.${recognition.error}`)}</p>
+            {recognition.error?.source === 'ai_text' && (
+              <p role="alert" className="text-red-800">{t(`pages.log.ai.errors.${recognition.error.key}`)}</p>
             )}
           </div>
+        </fieldset>
+        <fieldset disabled={busy && recognizing !== 'ai_image'} className="grid min-w-0 gap-2 border-t border-border pt-3">
+          <label className="planning-field">
+            {t('pages.log.photo.label')}
+            <input type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+              aria-describedby="photo-recognition-help"
+              className="w-full min-w-0 text-sm text-muted file:mr-2 file:min-h-11 file:cursor-pointer file:rounded-xl file:border file:border-border file:bg-surface file:px-3 file:font-semibold file:text-forest"
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0]
+                if (file) changePhoto(file)
+                event.currentTarget.value = ''
+              }} />
+          </label>
+          <p id="photo-recognition-help" className="text-sm text-muted">{t('pages.log.photo.help')}</p>
+          {photo && (
+            <>
+              <img key={photo.url} src={photo.url} alt={t('pages.log.photo.preview')}
+                className="max-h-36 max-w-full rounded-xl object-contain"
+                onError={() => {
+                  if (previewUrl.current !== photo.url) return
+                  changePhoto()
+                  setRecognition((previous) => ({ ...previous, error: { source: 'ai_image', key: 'corrupt' } }))
+                }} />
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={button} disabled={busy} onClick={() => void recognize('ai_image')}>
+                  {t(recognizing === 'ai_image' ? 'pages.log.photo.loading' : 'pages.log.photo.action')}
+                </button>
+                <button type="button" className={button} onClick={() => changePhoto()}>{t('pages.log.photo.remove')}</button>
+              </div>
+            </>
+          )}
+          {recognition.error?.source === 'ai_image' && (
+            <p role="alert" className="text-red-800">
+              {t(`pages.log.ai.errors.${recognition.error.key}`)}
+            </p>
+          )}
+        </fieldset>
+        <fieldset disabled={busy} className="grid min-w-0 gap-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="planning-field">
               {t('pages.log.mealType')}
@@ -283,6 +366,7 @@ function LocalFoodLogs() {
                       <li key={index} className="wrap-anywhere">
                         {item.name} · {item.quantity === null ? t('pages.log.unknown') : number.format(item.quantity)}
                         {item.unit && ` ${item.unit}`}{item.preparation_method && ` · ${item.preparation_method}`}
+                        {item.identity_uncertain && ` · ${t('pages.log.photo.uncertain')}`}
                       </li>
                     ))}
                   </ul>
@@ -303,8 +387,12 @@ function LocalFoodLogs() {
                 <label className="planning-field col-span-2">
                   {t('pages.log.name')}
                   <input className="planning-input" required maxLength={120} value={row.name}
+                    aria-describedby={row.identityUncertain ? `identity-${row.key}` : undefined}
                     onChange={(event) => updateRow(row.key, 'name', event.target.value)} />
                 </label>
+                {row.identityUncertain && (
+                  <p id={`identity-${row.key}`} className="col-span-2 text-sm text-muted">{t('pages.log.photo.uncertain')}</p>
+                )}
                 <label className="planning-field">
                   {t('pages.log.quantity')}
                   <input className="planning-input" type="number" inputMode="decimal" min="0" step="any"
@@ -343,6 +431,7 @@ function LocalFoodLogs() {
             {form.editing && (
               <button type="button" className={button} onClick={() => {
                 setForm(initialForm())
+                changePhoto()
                 setFeedback({})
                 setRecognition({})
               }}>

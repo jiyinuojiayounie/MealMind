@@ -4,6 +4,8 @@
 
 ### Added
 
+- Added local-development meal photo recognition with bounded image uploads, metadata stripping, and editable draft suggestions. Recognition makes no food-log writes.
+
 - Established the Day 2 monorepo directory structure and project documentation.
 - Preserved the original Word PRD and added an English Markdown baseline.
 - Documented product and architecture decisions, local ignore rules, and placeholder environment configuration.

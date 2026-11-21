@@ -29,12 +29,13 @@ export async function requestJson<T>(
   { body, method = body ? 'POST' : 'GET', redirect, signal, timeoutMs }: JsonRequest,
 ): Promise<T> {
   const timeout = AbortSignal.timeout(timeoutMs)
+  const multipart = body instanceof FormData
   const response = await fetch(`${apiBaseUrl}${path}`, {
     method,
-    headers: body
+    headers: body && !multipart
       ? { Accept: 'application/json', 'Content-Type': 'application/json' }
       : { Accept: 'application/json' },
-    body: body ? JSON.stringify(body) : undefined,
+    body: multipart ? body : body ? JSON.stringify(body) : undefined,
     credentials: 'omit',
     cache: 'no-store',
     redirect,

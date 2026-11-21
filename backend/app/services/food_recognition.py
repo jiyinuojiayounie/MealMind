@@ -2,11 +2,15 @@ import math
 import re
 from fractions import Fraction
 
+from google.genai import types
+
 from app.core.settings import Settings
-from app.prompts.food_recognition import FOOD_RECOGNITION_INSTRUCTIONS
+from app.prompts.food_recognition import FOOD_RECOGNITION_INSTRUCTIONS, IMAGE_RECOGNITION_INSTRUCTIONS
 from app.schemas.food_recognition import (
-    FoodRecognitionRequest, FoodRecognitionResponse, ProposedFoodItem, QuotedFoods,
+    FoodRecognitionRequest, FoodRecognitionResponse, ImageFoodRecognitionResponse, ImageProposedFoodItem,
+    ProposedFoodItem, QuotedFoods, VisibleFoods,
 )
+from app.services.food_images import normalize_image
 from app.services.meal_plans import PlannerFailure, generate_structured
 
 ENGLISH_NUMBERS = {
@@ -89,3 +93,30 @@ def recognize_food_text(request: FoodRecognitionRequest, settings: Settings) -> 
     if proposed.needs_clarification:
         notes.append("description_needs_review")
     return FoodRecognitionResponse(description=request.description, items=items, notes=notes)
+
+
+def recognize_food_image(data: bytes, settings: Settings) -> ImageFoodRecognitionResponse:
+    jpeg = normalize_image(data)
+    visible = generate_structured(
+        settings,
+        contents=[types.Part.from_bytes(data=jpeg, mime_type="image/jpeg")],
+        instructions=IMAGE_RECOGNITION_INSTRUCTIONS,
+        response_model=VisibleFoods,
+        max_output_tokens=4096,
+    )
+    items = [
+        ImageProposedFoodItem(
+            name=item.name,
+            quantity=None if item.identity_uncertain else item.count,
+            unit=None if item.identity_uncertain else item.count_unit,
+            portion_note="portion_needs_review" if item.identity_uncertain or item.count is None else None,
+            identity_uncertain=item.identity_uncertain,
+        )
+        for item in visible.items
+    ]
+    notes = []
+    if not items:
+        notes.append("no_identifiable_foods")
+    if visible.needs_review or any(item.identity_uncertain for item in items):
+        notes.append("image_needs_review")
+    return ImageFoodRecognitionResponse(items=items, notes=notes)

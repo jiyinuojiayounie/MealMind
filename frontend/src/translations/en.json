@@ -127,7 +127,8 @@
         },
         "notes": {
           "no_identifiable_foods": "No foods could be identified.",
-          "description_needs_review": "Part of the description was unclear. Check for missing or incorrect items."
+          "description_needs_review": "Part of the description was unclear. Check for missing or incorrect items.",
+          "image_needs_review": "Some foods in the photo were unclear. Review the suggested items."
         },
         "errors": {
           "input": "Enter a food description of up to 2,000 characters, then try recognition again.",
@@ -135,8 +136,20 @@
           "provider": "AI recognition couldn’t produce a valid proposal. Try again or enter foods manually.",
           "timeout": "AI recognition took too long. Try again or enter foods manually.",
           "network": "Couldn’t reach the recognition service. Check the local backend and try again.",
-          "invalid": "The recognition result was invalid. Try again or enter foods manually."
+          "invalid": "The recognition result was invalid. Try again or enter foods manually.",
+          "format": "Choose a still JPEG, PNG or WebP photo.",
+          "size": "This photo exceeds the 5 MiB upload limit or the supported dimensions.",
+          "corrupt": "This photo could not be read. Choose a different image."
         }
+      },
+      "photo": {
+        "label": "Meal photo",
+        "help": "JPEG, PNG or WebP, up to 5 MiB. The photo is sent to Gemini only when you request recognition.",
+        "preview": "Selected meal photo preview",
+        "action": "Recognize photo with AI",
+        "loading": "Recognizing photo…",
+        "remove": "Remove photo",
+        "uncertain": "Food identification is uncertain. Please check the name."
       },
       "itemNumber": "Food item {{number}}",
       "name": "Food name",

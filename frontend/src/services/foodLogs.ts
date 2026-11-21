@@ -18,15 +18,22 @@ export type FoodLogDraft = {
 }
 
 export type FoodLogSource = 'manual_text' | 'ai_text' | 'ai_image'
+export type RecognitionSource = Exclude<FoodLogSource, 'manual_text'>
 export type PortionNote = 'quantity_unspecified' | 'portion_needs_review' | null
 type RecognitionNote = 'no_identifiable_foods' | 'description_needs_review'
 
-type RecognizedItem = FoodItem & { portion_note: PortionNote }
+type RecognizedItem = FoodItem & { portion_note: PortionNote; identity_uncertain?: boolean }
 
-export type FoodRecognition = {
+export type FoodRecognition = ({
+  source: 'ai_text'
   description: string
-  items: RecognizedItem[]
   notes: RecognitionNote[]
+} | {
+  source: 'ai_image'
+  description: null
+  notes: ('no_identifiable_foods' | 'image_needs_review')[]
+}) & {
+  items: RecognizedItem[]
 }
 
 export type FoodLog = FoodLogDraft & {
@@ -105,10 +112,28 @@ export function recognizeFoodText(description: string, signal: AbortSignal): Pro
     if (isRecord(value) && value.description === description && value.source === 'ai_text' && value.status === 'draft'
       && Array.isArray(value.items) && value.items.length <= 50 && value.items.every(isRecognizedItem)
       && Array.isArray(value.notes) && value.notes.every(isRecognitionNote)) {
-      return { description, items: value.items, notes: value.notes }
+      return { source: 'ai_text', description, items: value.items, notes: value.notes }
     }
     throw new Error('Invalid food recognition proposal')
   }, { ...options, timeoutMs: 35_000, body: { description }, signal })
+}
+
+export const maxFoodPhotoBytes = 5 * 1024 * 1024
+
+export function recognizeFoodImage(image: File, signal: AbortSignal): Promise<FoodRecognition> {
+  const body = new FormData()
+  body.append('image', image)
+  return requestJson(`${path}/recognize-image`, (value) => {
+    if (isRecord(value) && value.description === null && value.source === 'ai_image' && value.status === 'draft'
+      && Array.isArray(value.items) && value.items.length <= 50 && value.items.every(
+        (item: unknown) => isRecognizedItem(item) && typeof item.identity_uncertain === 'boolean',
+      ) && Array.isArray(value.notes) && value.notes.every(
+        (note: unknown) => note === 'no_identifiable_foods' || note === 'image_needs_review',
+      )) {
+      return { source: 'ai_image', description: null, items: value.items, notes: value.notes }
+    }
+    throw new Error('Invalid food image recognition proposal')
+  }, { ...options, timeoutMs: 35_000, body, signal })
 }
 
 export function listFoodLogs(date: string, signal: AbortSignal): Promise<FoodLog[]> {
@@ -119,7 +144,7 @@ export function listFoodLogs(date: string, signal: AbortSignal): Promise<FoodLog
 }
 
 export function saveFoodLog(
-  draft: FoodLogDraft, existing: FoodLog | null, source: 'manual_text' | 'ai_text', signal: AbortSignal,
+  draft: FoodLogDraft, existing: FoodLog | null, source: FoodLogSource, signal: AbortSignal,
 ) {
   if (existing) {
     return requestJson(`${path}/${encodeURIComponent(existing.id)}`, parseLog, {

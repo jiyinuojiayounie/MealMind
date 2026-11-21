@@ -127,7 +127,8 @@
         },
         "notes": {
           "no_identifiable_foods": "没有识别到食物。",
-          "description_needs_review": "部分描述不明确，请检查是否遗漏或识别有误。"
+          "description_needs_review": "部分描述不明确，请检查是否遗漏或识别有误。",
+          "image_needs_review": "照片中有些食物不易辨认，请核对建议。"
         },
         "errors": {
           "input": "请输入不超过 2,000 字符的食物描述，再试一次。",
@@ -135,8 +136,20 @@
           "provider": "AI 未能生成有效的识别建议。请重试或手动录入。",
           "timeout": "AI 识别超时。请重试或手动录入。",
           "network": "无法连接识别服务。请检查本地后端后重试。",
-          "invalid": "识别结果格式无效。请重试或手动录入。"
+          "invalid": "识别结果格式无效。请重试或手动录入。",
+          "format": "请选择静态 JPEG、PNG 或 WebP 照片。",
+          "size": "照片超过 5 MiB 上传限制或图片尺寸上限。",
+          "corrupt": "无法读取这张照片，请选择其他图片。"
         }
+      },
+      "photo": {
+        "label": "餐食照片",
+        "help": "支持 JPEG、PNG 或 WebP，最大 5 MiB。只有主动点击识别，照片才会发送给 Gemini。",
+        "preview": "所选餐食照片预览",
+        "action": "AI 识别照片",
+        "loading": "正在识别照片…",
+        "remove": "移除照片",
+        "uncertain": "这项食物的识别结果不确定，请核对名称。"
       },
       "itemNumber": "食物 {{number}}",
       "name": "食物名称",

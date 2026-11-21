@@ -71,7 +71,7 @@ ResponseModel = TypeVar("ResponseModel", bound=BaseModel)
 
 
 def generate_structured(
-    settings: Settings, *, contents: str, instructions: str,
+    settings: Settings, *, contents: types.ContentListUnion, instructions: str,
     response_model: type[ResponseModel], max_output_tokens: int = 4096,
 ) -> ResponseModel:
     key = settings.gemini_api_key
