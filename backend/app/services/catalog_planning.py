@@ -209,6 +209,7 @@ def _build_response(
 def generate_catalog_plan(
     payload: MealPlanRequest, settings: Settings, catalog: RecipeCatalog, *,
     infer_scope: bool = False, mode: CatalogMode = "production",
+    recent_family_ids: frozenset[str] = frozenset(),
 ) -> MealPlanResponse | PlanningBlocked | NoFeasiblePlan:
     # Keep the service boundary safe for internal callers as well as the route.
     if mode == "development_drafts" and not (settings.environment == "development" and settings.catalog_use_drafts):
@@ -216,6 +217,7 @@ def generate_catalog_plan(
     intent = merge_planning_request(payload, infer_scope=infer_scope)
     result = plan_from_intent(
         catalog, intent, mode=mode, candidate_limit=3 if settings.catalog_personalization else 1,
+        recent_family_ids=recent_family_ids,
     )
     if not isinstance(result, PlanningSuccess):
         return result

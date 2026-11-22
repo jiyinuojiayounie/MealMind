@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { MealPlan, MealPlanRequest } from '../services/mealPlans'
 
@@ -5,12 +6,13 @@ type Props = { plan: MealPlan; language: MealPlanRequest['language'] }
 
 export function MealPlanResult({ plan, language }: Props) {
   const { t, i18n } = useTranslation()
+  const titleId = useId()
   const number = new Intl.NumberFormat(i18n.resolvedLanguage, { maximumSignificantDigits: 12 })
 
   return (
-    <section className="grid gap-4 wrap-anywhere" aria-labelledby="meal-plan-title">
+    <section className="grid gap-4 wrap-anywhere" aria-labelledby={titleId}>
       <div>
-        <h2 id="meal-plan-title" className="text-2xl" lang={language}>{plan.title}</h2>
+        <h2 id={titleId} className="text-2xl" lang={language}>{plan.title}</h2>
         <p className="mt-2 text-muted">
           <strong>{t('pages.plan.explanation')}</strong>{' '}
           <span lang={language}>{plan.explanation}</span>

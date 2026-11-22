@@ -5,7 +5,7 @@ export type PlanningMode = 'prompt_only' | 'catalog'
 export const catalogPreviewEnabled =
   import.meta.env.DEV && import.meta.env.VITE_CATALOG_PLANNING_PREVIEW === 'true'
 
-type MealType = (typeof mealTypes)[number]
+export type MealType = (typeof mealTypes)[number]
 
 export type MealPlanRequest = {
   user_request: string
@@ -19,11 +19,11 @@ export type MealPlanRequest = {
 
 type Ingredient = { name: string; quantity: number; unit: string }
 type Dish = { name: string; ingredients: Ingredient[]; instructions: string[] }
-type Meal = { meal_type: MealType; dishes: Dish[]; estimated_preparation_minutes: number }
+export type PlannedMeal = { meal_type: MealType; dishes: Dish[]; estimated_preparation_minutes: number }
 
 export type MealPlan = {
   title: string
-  meals: Meal[]
+  meals: PlannedMeal[]
   explanation: string
   additional_ingredients: string[]
 }
@@ -47,14 +47,14 @@ function isDish(value: unknown): value is Dish {
     && Array.isArray(value.instructions) && value.instructions.length > 0 && value.instructions.every(isText)
 }
 
-function isMeal(value: unknown): value is Meal {
+export function isMeal(value: unknown): value is PlannedMeal {
   return isRecord(value) && mealTypes.some((type) => type === value.meal_type)
     && typeof value.estimated_preparation_minutes === 'number'
     && Number.isInteger(value.estimated_preparation_minutes) && value.estimated_preparation_minutes > 0
     && Array.isArray(value.dishes) && value.dishes.length > 0 && value.dishes.every(isDish)
 }
 
-function parseMealPlan(value: unknown): MealPlan {
+export function parseMealPlan(value: unknown): MealPlan {
   if (isRecord(value) && isText(value.title) && isText(value.explanation)
     && Array.isArray(value.meals) && value.meals.length > 0 && value.meals.every(isMeal)
     && Array.isArray(value.additional_ingredients) && value.additional_ingredients.every(isText)) {

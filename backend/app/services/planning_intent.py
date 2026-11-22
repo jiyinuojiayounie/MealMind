@@ -206,6 +206,7 @@ class PlanningSuccess:
 def plan_from_intent(
     catalog: RecipeCatalog, intent: PlanningIntent, *, mode: CatalogMode = "production",
     candidate_limit: int = 1,
+    recent_family_ids: frozenset[str] = frozenset(),
 ) -> PlanningSuccess | PlanningBlocked | NoFeasiblePlan:
     safety = intent.confirmed_safety or ConfirmedSafetyConstraints()
     unconfirmed = []
@@ -272,12 +273,15 @@ def plan_from_intent(
         preferred = tuple(recipe for recipe in catalog.recipes if recipe.cuisine == intent.cuisine_preference)
         if preferred:
             result = compose_candidates(
-                catalog.model_copy(update={"recipes": preferred}), request, mode=mode, limit=candidate_limit
+                catalog.model_copy(update={"recipes": preferred}), request, mode=mode, limit=candidate_limit,
+                recent_family_ids=recent_family_ids,
             )
             if isinstance(result, tuple):
                 return PlanningSuccess(result[0], unapplied, result[1:])
         unapplied += ("cuisine_preference",)
-    result = compose_candidates(catalog, request, mode=mode, limit=candidate_limit)
+    result = compose_candidates(
+        catalog, request, mode=mode, limit=candidate_limit, recent_family_ids=recent_family_ids,
+    )
     if isinstance(result, tuple):
         return PlanningSuccess(result[0], unapplied, result[1:])
     if result.reason == "unresolved_constraints":

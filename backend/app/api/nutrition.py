@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Query, Response
 from pydantic import BeforeValidator
 
 from app.api.food_logs import Store
+from app.core.calendar import parse_calendar_date
 from app.schemas.daily_nutrition import DailyNutritionAnalysis
 from app.services.daily_nutrition import analyze_confirmed_logs
 from app.services.nutrition_calculation import NutritionCalculator
@@ -12,17 +13,6 @@ from app.storage.food_logs import FoodLogStorageUnavailable
 
 router = APIRouter(prefix="/nutrition", tags=["nutrition"])
 PRIVATE_HEADERS = {"Cache-Control": "no-store"}
-
-
-def parse_calendar_date(value: object) -> date:
-    if isinstance(value, str):
-        try:
-            parsed = date.fromisoformat(value)
-            if parsed.isoformat() == value:
-                return parsed
-        except ValueError:
-            pass
-    raise ValueError("Use a valid calendar date in YYYY-MM-DD format.")
 
 
 @router.get("/daily")

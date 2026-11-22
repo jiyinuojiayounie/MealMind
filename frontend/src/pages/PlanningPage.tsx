@@ -5,11 +5,23 @@ import { Link } from 'react-router'
 import { MealPlanResult } from '../components/MealPlanResult'
 import { ApiError } from '../services/apiClient'
 import { catalogOutcomeKey, catalogPreviewEnabled, generateMealPlan, mealTypes } from '../services/mealPlans'
-import type { MealPlan, MealPlanRequest, PlanningMode } from '../services/mealPlans'
+import type { MealPlanRequest, PlanningMode } from '../services/mealPlans'
+import { acceptMealPlan, createPlanId, getSavedMealPlan, PlanStorageError } from '../services/mealPlanRepository'
+import type { PlanAcceptance, SavedMealPlan } from '../services/mealPlanRepository'
+import { localDateTimeValue } from '../types/localTime'
 import { featurePaths } from '../types/navigation'
 
 const scopes = ['single_meal', 'full_day'] as const
 const examples = ['quickDinner', 'existingIngredients', 'fullDay'] as const
+const planButton = 'min-h-11 cursor-pointer rounded-xl border border-border px-4 py-2 font-semibold text-forest hover:bg-sage disabled:cursor-not-allowed disabled:opacity-50'
+
+function localPlanDate() {
+  return localDateTimeValue(new Date()).slice(0, 10)
+}
+
+function storageError(error: unknown) {
+  return error instanceof PlanStorageError ? error.code : 'unavailable'
+}
 
 function errorKey(error: unknown) {
   if (error instanceof ApiError) {
@@ -34,14 +46,55 @@ export function PlanningPage() {
   const [planningMode, setPlanningMode] = useState<PlanningMode>('prompt_only')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [result, setResult] = useState<{ plan: MealPlan; language: MealPlanRequest['language'] }>()
+  const [result, setResult] = useState<PlanAcceptance>()
+  const [selection, setSelection] = useState(() => ({ date: localPlanDate() }))
+  const [saved, setSaved] = useState<{ selection: typeof selection; record?: SavedMealPlan | null; error?: string }>()
+  const [saveError, setSaveError] = useState('')
+  const [saving, setSaving] = useState(false)
+  const saveInFlight = useRef(false)
   const requirements = useRef<HTMLTextAreaElement>(null)
   const options = useRef<HTMLDetailsElement>(null)
   const activeRequest = useRef<AbortController | null>(null)
   const invalidIngredients = error === 'ingredientsRequired' || error === 'ingredientLimit'
   const invalidField = error === 'requirements' || error === 'time' || invalidIngredients
+  const current = saved?.selection === selection ? saved : undefined
+  const accepted = current?.record?.revisions.at(-1)
+  const alreadySaved = result && current?.record?.revisions.some((version) => version.acceptanceId === result.acceptanceId)
 
   useEffect(() => () => activeRequest.current?.abort(), [])
+  useEffect(() => {
+    let active = true
+    void getSavedMealPlan(selection.date).then(
+      (record) => { if (active) setSaved({ selection, record }) },
+      (failure: unknown) => { if (active) setSaved({ selection, error: storageError(failure) }) },
+    )
+    return () => { active = false }
+  }, [selection])
+
+  function selectDate(date: string) {
+    if (date === selection.date) return
+    setResult(undefined)
+    setSaveError('')
+    setSelection({ date })
+  }
+
+  async function savePlan() {
+    if (!result || alreadySaved || !current || current.record === undefined || saveInFlight.current) return
+    saveInFlight.current = true
+    setSaving(true)
+    setSaveError('')
+    try {
+      const record = await acceptMealPlan(selection.date, result, current.record)
+      setSaved({ selection, record })
+    } catch (failure) {
+      const key = storageError(failure)
+      setSaveError(key)
+      if (key === 'stale' || key === 'invalid') setSelection({ date: selection.date })
+    } finally {
+      saveInFlight.current = false
+      setSaving(false)
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -94,10 +147,20 @@ export function PlanningPage() {
     activeRequest.current = controller
     setError('')
     setResult(undefined)
+    setSaveError('')
     setBusy(true)
     try {
-      const plan = await generateMealPlan(payload, controller.signal, scope === '' && !mealType, planningMode)
-      if (!controller.signal.aborted) setResult({ plan, language })
+      const inferScope = scope === '' && !mealType
+      const plan = await generateMealPlan(payload, controller.signal, inferScope, planningMode)
+      if (!controller.signal.aborted) {
+        setResult({
+          plan, language, source: planningMode, acceptanceId: createPlanId(),
+          constraints: {
+            scope: payload.scope, meal_type: payload.meal_type, ingredient_mode: payload.ingredient_mode,
+            available_ingredients: payload.available_ingredients, cooking_time_limit: payload.cooking_time_limit, inferScope,
+          },
+        })
+      }
     } catch (failure) {
       if (!controller.signal.aborted) {
         const catalogError = planningMode === 'catalog' ? catalogOutcomeKey(failure) : undefined
@@ -113,8 +176,38 @@ export function PlanningPage() {
     <div className="grid gap-6">
       <h1>{t('pages.plan.requirements')}</h1>
 
+      <section className="card grid min-w-0 gap-2 p-4 sm:p-5" aria-labelledby="saved-plan-heading">
+        <h2 id="saved-plan-heading">{t('pages.plan.saved.heading')}</h2>
+        <label className="planning-field w-fit text-sm">
+          {t('pages.plan.saved.date')}
+          <input type="date" className="planning-input" min="0001-01-01" max="9999-12-31" value={selection.date}
+            disabled={busy || saving}
+            onChange={(event) => {
+              if (event.target.value && event.target.validity.valid) selectDate(event.target.value)
+            }} />
+        </label>
+        {!current && <p role="status" className="text-sm text-muted">{t('pages.plan.saved.loading')}</p>}
+        {current?.error && (
+          <div className="grid justify-items-start gap-2">
+            <p role="alert" className="text-sm text-red-800">{t(`pages.plan.saved.errors.${current.error}`)}</p>
+            <button type="button" className={planButton} onClick={() => setSelection({ date: selection.date })}>
+              {t('pages.plan.saved.retry')}
+            </button>
+          </div>
+        )}
+        {current?.record === null && <p className="text-sm text-muted">{t('pages.plan.saved.empty')}</p>}
+        {accepted && (
+          <details className="min-w-0">
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-forest wrap-anywhere">
+              {t('pages.plan.saved.active', { revision: accepted.revision })} · <span lang={accepted.language}>{accepted.plan.title}</span>
+            </summary>
+            <MealPlanResult plan={accepted.plan} language={accepted.language} />
+          </details>
+        )}
+      </section>
+
       <form className="card p-5 sm:p-6" onSubmit={(event) => void submit(event)} noValidate>
-        <fieldset disabled={busy} className="grid min-w-0 gap-4">
+        <fieldset disabled={busy || saving} className="grid min-w-0 gap-4">
           {catalogPreviewEnabled && (
             <div className="grid gap-2 rounded-xl border border-border bg-paper p-3">
               <label className="planning-field">
@@ -218,7 +311,23 @@ export function PlanningPage() {
         <p className="sr-only" role="status">{busy ? t('pages.plan.loading') : result ? t('pages.plan.ready') : ''}</p>
       </form>
 
-      {result && <MealPlanResult plan={result.plan} language={result.language} />}
+      {result && (
+        <div className="grid gap-4">
+          <div className="card grid justify-items-start gap-2 p-4">
+            <p role="status" className="text-sm font-medium text-forest">
+              {t(alreadySaved ? 'pages.plan.saved.accepted' : 'pages.plan.saved.temporary', { date: selection.date })}
+            </p>
+            {saveError && <p role="alert" className="text-sm text-red-800">{t(`pages.plan.saved.errors.${saveError}`)}</p>}
+            {!alreadySaved && (
+              <button type="button" className={planButton} disabled={saving || current?.record === undefined}
+                onClick={() => void savePlan()}>
+                {t(saving ? 'pages.plan.saved.saving' : accepted ? 'pages.plan.saved.replace' : 'pages.plan.saved.save')}
+              </button>
+            )}
+          </div>
+          <MealPlanResult plan={result.plan} language={result.language} />
+        </div>
+      )}
       <Link className="text-link justify-self-start" to={featurePaths.today}>
         <span aria-hidden="true">←</span> {t('back')}
       </Link>
