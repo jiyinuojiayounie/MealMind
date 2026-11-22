@@ -117,6 +117,9 @@
       "invalid": "无法读取返回的营养分析结果，请重试。"
     },
     "reasons": {
+      "food_reference_binding_invalid": "无法验证记录中的食物参考。",
+      "food_reference_binding_stale": "已保存的参考与记录的食物信息不一致。",
+      "food_reference_binding_version_unavailable": "这项食物使用的参考目录版本不可用。",
       "food_not_found": "参考目录暂未覆盖这项食物。",
       "ambiguous_food_match": "名称可能对应多种食物或做法。以后记录时可注明具体品种或做法。",
       "food_state_unknown": "记录未说明数量对应生食材、干食材还是熟食。以后记录同类食物时可注明状态。",
@@ -231,6 +234,58 @@
       }
     },
     "log": {
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "moveUpNumber": "上移第 {{number}} 项食物",
+      "moveDownNumber": "下移第 {{number}} 项食物",
+      "matching": {
+        "action": "查看食物匹配",
+        "loading": "正在查找参考目录…",
+        "error": "暂时无法匹配食物。可以重试，或按原样保存草稿。",
+        "identified": "建议匹配：{{name}}",
+        "choose": "为「{{name}}」选择预览匹配",
+        "unselected": "知道的话可选择",
+        "identity": {
+          "ambiguous_identity": "需要更多信息才能确定是哪种食物。",
+          "food_state_unknown": "请核对食物的做法或称重时的状态。",
+          "unsupported_food": "参考目录暂未覆盖这项食物。",
+          "insufficient_information": "暂时无法从现有记录识别这项食物。"
+        },
+        "portion": {
+          "quantity_unknown": "份量未知。",
+          "conversion_unavailable": "这条记录的单位暂无已验证的重量换算。",
+          "needs_review": "请核对份量以及是否为可食部分的重量。",
+          "verified_conversion": "已有适用的验证份量规格。"
+        },
+        "reasons": {
+          "state_and_edible_basis": "如果知道，请核对生熟状态及份量是否只计算可食用的肉。",
+          "preparation_and_edible_basis": "如果知道，请核对做法及份量是否只计算可食用的肉。",
+          "measurement_state": "如果知道，请说明是烹调前还是烹调后称重。",
+          "conflicting_preparation": "食物名称与制备信息有冲突，请核对。",
+          "grain_variety": "如果知道，请说明谷物品种。",
+          "egg_doneness": "如果知道，请说明鸡蛋是否全熟。",
+          "food_and_state": "如果知道，请说明食物种类和做法。",
+          "vegetable_and_preparation": "如果知道，请说明是哪种蔬菜和做法。",
+          "tofu_type_and_preparation": "如果知道，请说明豆腐种类和做法。",
+          "check_spelling": "请核对拼写，或选择相符的候选项。",
+          "confirm_identity": "请核对照片中是否确实有这项食物。"
+        },
+        "states": {
+          "raw": "生",
+          "cooked": "熟",
+          "dry": "干制",
+          "as_sold": "原售状态"
+        },
+        "reviewHelp": "参考与食物相符时才确认，保存草稿后才会保留。",
+        "confirmReference": "确认参考：{{name}}",
+        "edibleWeight": "记录的重量是「{{name}}」在该制备状态下的可食部分重量。不确定时可留空。",
+        "saved": "参考已随草稿保存 · {{state}}",
+        "awaitingConfirmation": "已选择参考 · {{state}} · 保存前请确认",
+        "pendingSave": "参考已确认 · {{state}} · 保存草稿后保留",
+        "invalidSaved": "已保存的参考需要复核。请清除它或重新确认参考，再保存草稿。",
+        "weightConfirmed": "已确认可食重量",
+        "clear": "清除参考"
+      },
       "intro": "用自己的话记下实际吃过的食物。",
       "unavailable": "食物记录仅在本地开发环境可用。当前页面无法保存记录。",
       "local": "仅供本地开发使用，记录保存在这台电脑上。",
@@ -324,6 +379,9 @@
         "delete": "食物记录已删除。"
       },
       "errors": {
+        "bindingVersion": "第 {{number}} 项食物的参考目录版本不可用。请打开草稿重新匹配，或清除该参考。",
+        "bindingChanged": "第 {{number}} 项食物已修改。请重新匹配或清除该参考。",
+        "bindingInvalid": "无法验证第 {{number}} 项食物的参考。请重新匹配或清除该参考。",
         "conflict": "这条记录已有更改或已被删除。正在重新加载，请核对最新版本后再操作。",
         "unavailable": "食物记录服务不可用。请检查后端是否以开发模式在本机回环地址运行。",
         "items": "请填写每项食物的名称，至少需要一项食物。",

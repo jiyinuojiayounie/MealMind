@@ -9,6 +9,7 @@ from uuid import UUID, uuid4
 from pydantic import ValidationError
 
 from app.schemas.food_logs import FoodLog, FoodLogCreate, FoodLogDraft
+from app.services.food_reference_binding import bind_draft_items, validate_bindings_for_confirmation
 
 # Append ordered, transactional migrations. Never edit a released migration.
 MIGRATIONS = (
@@ -93,7 +94,7 @@ class FoodLogStore:
     def create(self, payload: FoodLogCreate) -> FoodLog:
         now = datetime.now(timezone.utc)
         log = FoodLog(
-            **payload.model_dump(), id=uuid4(), status="draft", revision=1, created_at=now, updated_at=now,
+            **payload.model_dump(exclude={"items"}), items=bind_draft_items(payload.items, now), id=uuid4(), status="draft", revision=1, created_at=now, updated_at=now,
         )
         with self.connection(write=True) as db:
             db.execute(
@@ -142,8 +143,10 @@ class FoodLogStore:
             log = self._read(db, log_id)
             if log.status != "draft" or log.revision != expected_revision:
                 raise FoodLogConflict
+            now = datetime.now(timezone.utc)
             log = log.model_copy(update={
-                **dict(payload), "revision": log.revision + 1, "updated_at": datetime.now(timezone.utc),
+                **payload.model_dump(exclude={"items"}), "items": bind_draft_items(payload.items, now),
+                "revision": log.revision + 1, "updated_at": now,
             })
             self._save(db, log)
         return log
@@ -155,6 +158,7 @@ class FoodLogStore:
                 return log
             if log.status != "draft" or log.revision != expected_revision:
                 raise FoodLogConflict
+            validate_bindings_for_confirmation(log.items)
             log = log.model_copy(update={
                 "status": "confirmed", "revision": log.revision + 1, "updated_at": datetime.now(timezone.utc),
             })

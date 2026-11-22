@@ -1,21 +1,42 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { BindingAction } from '../components/FoodMatchingReview'
+import { FoodMatchingReview } from '../components/FoodMatchingReview'
+import type { Candidate } from '../services/foodMatching'
 import { ApiError } from '../services/apiClient'
 import {
   canUseFoodLogs, confirmFoodLog, deleteFoodLog, listFoodLogs, logMealTypes, maxFoodPhotoBytes,
-  recognizeFoodImage, recognizeFoodText, saveFoodLog,
+  readBindingError, recognizeFoodImage, recognizeFoodText, referenceSelection, sameFoodItem, saveFoodLog,
 } from '../services/foodLogs'
-import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote, RecognitionSource } from '../services/foodLogs'
+import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote, RecognitionSource, ReferenceSelection } from '../services/foodLogs'
 import { localDateTimeValue, timestampAtLocalTime } from '../types/localTime'
 
 const button = 'min-h-11 cursor-pointer rounded-xl border border-border px-3 py-2 font-semibold text-forest hover:bg-sage disabled:cursor-not-allowed disabled:opacity-50'
 const primaryButton = 'min-h-11 cursor-pointer rounded-xl bg-forest px-4 py-2.5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50'
 
+type RowBinding = {
+  selection: Omit<ReferenceSelection, 'confirmed'> & { confirmed: boolean }
+  state: Candidate['state']
+  candidate?: Candidate
+  preparation?: string
+  saved: boolean
+}
+
 function foodRow(item?: FoodItem, portionNote: PortionNote = null, identityUncertain = false) {
   return {
     key: crypto.randomUUID(), name: item?.name ?? '', quantity: item?.quantity?.toString() ?? '',
     unit: item?.unit ?? '', method: item?.preparation_method ?? '', portionNote, identityUncertain,
+    binding: null as RowBinding | null, invalidBinding: false,
+  }
+}
+
+function rowItem(row: ReturnType<typeof foodRow>): FoodItem {
+  return {
+    name: row.name.trim(),
+    quantity: row.quantity === '' ? null : Number(row.quantity),
+    unit: row.unit.trim() || null,
+    preparation_method: row.method.trim() || null,
   }
 }
 
@@ -73,7 +94,7 @@ function LocalFoodLogs() {
   }>({})
   const [photo, setPhoto] = useState<{ file: File; url: string } | null>(null)
   const previewUrl = useRef<string | null>(null)
-  const [feedback, setFeedback] = useState<{ error?: string; notice?: string }>({})
+  const [feedback, setFeedback] = useState<{ error?: string; notice?: string; item?: number; listError?: boolean }>({})
   const action = useRef<AbortController | null>(null)
   const formHeading = useRef<HTMLHeadingElement>(null)
   const listHeading = useRef<HTMLHeadingElement>(null)
@@ -152,8 +173,14 @@ function LocalFoodLogs() {
       listHeading.current?.focus()
     } catch (error) {
       if (controller.signal.aborted) return
+      const listError = kind === 'confirm' || kind === 'delete'
+      const bindingError = readBindingError(error)
+      if (bindingError) {
+        setFeedback({ error: bindingError.key, item: bindingError.index + 1, listError })
+        return
+      }
       const key = errorKey(error, kind)
-      setFeedback({ error: key })
+      setFeedback({ error: key, listError })
       if (key === 'conflict') reload()
     } finally {
       action.current = null
@@ -214,8 +241,55 @@ function LocalFoodLogs() {
       ...previous,
       rows: previous.rows.map((row) => row.key === key
         ? { ...row, [field]: value, portionNote: field === 'method' ? row.portionNote : null,
-            identityUncertain: field === 'name' ? false : row.identityUncertain } : row),
+            identityUncertain: field === 'name' ? false : row.identityUncertain,
+            binding: null, invalidBinding: false } : row),
     }))
+  }
+
+  function changeReference(key: string, item: FoodItem, candidate: Candidate, version: string, action: BindingAction) {
+    setForm((previous) => ({
+      ...previous,
+      rows: previous.rows.map((row) => {
+        if (row.key !== key || !sameFoodItem(rowItem(row), item)) return row
+        const binding = row.binding
+        const current = binding?.selection.food_id === candidate.food_id
+          && binding.selection.reference_version === version ? binding.selection : undefined
+        if (action.type === 'choose' && current) return row
+        return {
+          ...row,
+          binding: {
+            selection: {
+              food_id: candidate.food_id, reference_version: version, item,
+              confirmed: action.type === 'confirm' || current?.confirmed === true,
+              edible_weight_confirmed: action.type === 'weight' ? action.checked : current?.edible_weight_confirmed ?? false,
+            },
+            state: candidate.state, candidate, saved: false,
+          },
+          invalidBinding: false,
+        }
+      }),
+    }))
+    setFeedback({})
+  }
+
+  function clearReference(key: string) {
+    setForm((previous) => ({
+      ...previous,
+      rows: previous.rows.map((row) => row.key === key ? { ...row, binding: null, invalidBinding: false } : row),
+    }))
+    setFeedback({})
+  }
+
+  function moveRow(index: number, offset: number) {
+    setForm((previous) => {
+      const rows = [...previous.rows]
+      const target = index + offset
+      if (target < 0 || target >= rows.length) return previous
+      const row = rows[index]
+      rows[index] = rows[target]
+      rows[target] = row
+      return { ...previous, rows }
+    })
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -231,12 +305,16 @@ function LocalFoodLogs() {
       setFeedback({ error: 'items' })
       return
     }
-    const items = form.rows.map((row) => ({
-      name: row.name.trim(),
-      quantity: row.quantity === '' ? null : Number(row.quantity),
-      unit: row.unit.trim() || null,
-      preparation_method: row.method.trim() || null,
-    }))
+    if (form.rows.some((row) => row.invalidBinding)) {
+      setFeedback({ error: 'bindingInvalid', item: form.rows.findIndex((row) => row.invalidBinding) + 1 })
+      return
+    }
+    const items = form.rows.map((row) => {
+      const item = rowItem(row)
+      return row.binding?.selection.confirmed && sameFoodItem(item, row.binding.selection.item)
+        ? { ...item, reference_binding: { ...row.binding.selection, confirmed: true as const } }
+        : item
+    })
     if (event.currentTarget.querySelector('input[type="number"]:invalid')
       || items.some(({ quantity }) => quantity !== null && (!Number.isFinite(quantity) || quantity <= 0))) {
       setFeedback({ error: 'quantity' })
@@ -254,7 +332,13 @@ function LocalFoodLogs() {
     setForm({
       editing: log, description: log.description ?? '', consumedAt: log.consumed_at.slice(0, 16),
       mealType: log.meal_type,
-      rows: log.items.map((item) => foodRow(item)),
+      rows: log.items.map((item) => {
+        const row = foodRow(item)
+        const binding = item.reference_binding
+        if (!binding) return row
+        if ('status' in binding || !sameFoodItem(item, binding.item)) return { ...row, invalidBinding: true }
+        return { ...row, binding: { selection: referenceSelection(binding), state: binding.state, preparation: binding.preparation, saved: true } }
+      }),
       recognized: null,
     })
     changePhoto()
@@ -262,6 +346,13 @@ function LocalFoodLogs() {
     setFeedback({})
     formHeading.current?.focus()
   }
+
+  const matchingEntries = form.rows.map((row) => ({
+    selection: row.binding?.selection,
+    rowKey: row.key, item: rowItem(row), identity_uncertain: row.identityUncertain,
+  })).filter(({ item }) => item.name && (item.quantity === null || (Number.isFinite(item.quantity) && item.quantity > 0)))
+  // Reset suggestions and local choices whenever the candidate input changes.
+  const matchingKey = JSON.stringify(matchingEntries.map(({ rowKey, item, identity_uncertain }) => ({ rowKey, item, identity_uncertain })))
 
   return (
     <>
@@ -272,7 +363,7 @@ function LocalFoodLogs() {
       </p>
       <form className="card grid gap-4 p-4 sm:p-6" onSubmit={submit} noValidate>
         <h2 ref={formHeading} tabIndex={-1}>{t(form.editing ? 'pages.log.editTitle' : 'pages.log.newTitle')}</h2>
-        {feedback.error && <p id="food-log-error" role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`)}</p>}
+        {feedback.error && !feedback.listError && <p id="food-log-error" role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`, { number: feedback.item })}</p>}
         <fieldset disabled={busy} className="grid min-w-0 gap-4">
           <label className="planning-field">
             {t('pages.log.description')}
@@ -427,18 +518,45 @@ function LocalFoodLogs() {
                   <input className="planning-input" maxLength={120} value={row.method}
                     onChange={(event) => updateRow(row.key, 'method', event.target.value)} />
                 </label>
+                {(row.binding || row.invalidBinding) && (
+                  <div className="col-span-2 grid gap-1 rounded-xl bg-sage p-2 text-sm">
+                    <p role="status">{row.binding ? t(
+                      row.binding.saved ? 'pages.log.matching.saved'
+                        : row.binding.selection.confirmed ? 'pages.log.matching.pendingSave' : 'pages.log.matching.awaitingConfirmation',
+                      { state: t(`pages.log.matching.states.${row.binding.state}`) },
+                    ) : t('pages.log.matching.invalidSaved')}</p>
+                    {row.binding?.candidate && <p>{i18n.resolvedLanguage?.startsWith('zh')
+                      ? row.binding.candidate.names.zh_cn : row.binding.candidate.names.en_us}</p>}
+                    {row.binding?.preparation && <p lang="en">{row.binding.preparation}</p>}
+                    {row.binding?.selection.edible_weight_confirmed && <p>{t('pages.log.matching.weightConfirmed')}</p>}
+                    <button type="button" className={`${button} justify-self-start`} onClick={() => clearReference(row.key)}>
+                      {t('pages.log.matching.clear')}
+                    </button>
+                  </div>
+                )}
                 {form.rows.length > 1 && (
-                  <button type="button" className={`${button} col-span-2 justify-self-start`}
-                    aria-label={t('pages.log.removeNumber', { number: index + 1 })}
-                    onClick={() => setForm({ ...form, rows: form.rows.filter((item) => item.key !== row.key) })}>
-                    {t('pages.log.remove')}
-                  </button>
+                  <div className="col-span-2 flex flex-wrap gap-2">
+                    <button type="button" className={button} disabled={index === 0}
+                      onClick={() => moveRow(index, -1)} aria-label={t('pages.log.moveUpNumber', { number: index + 1 })}>
+                      {t('pages.log.moveUp')}
+                    </button>
+                    <button type="button" className={button} disabled={index === form.rows.length - 1}
+                      onClick={() => moveRow(index, 1)} aria-label={t('pages.log.moveDownNumber', { number: index + 1 })}>
+                      {t('pages.log.moveDown')}
+                    </button>
+                    <button type="button" className={button}
+                      aria-label={t('pages.log.removeNumber', { number: index + 1 })}
+                      onClick={() => setForm({ ...form, rows: form.rows.filter((item) => item.key !== row.key) })}>
+                      {t('pages.log.remove')}
+                    </button>
+                  </div>
                 )}
               </fieldset>
             ))}
             <button type="button" className={`${button} justify-self-start`} disabled={form.rows.length >= 50}
               onClick={() => setForm({ ...form, rows: [...form.rows, foodRow()] })}>{t('pages.log.add')}</button>
           </div>
+          <FoodMatchingReview key={matchingKey} entries={matchingEntries} buttonClass={button} onBindingAction={changeReference} onClear={clearReference} />
           <div className="flex flex-wrap gap-2">
             <button type="submit" className={primaryButton}>{t('pages.log.save')}</button>
             {form.editing && (
@@ -466,6 +584,9 @@ function LocalFoodLogs() {
           <button type="button" className={button} disabled={busy}
             onClick={() => reload(localDateTimeValue(new Date()).slice(0, 10))}>{t('pages.log.today')}</button>
         </div>
+        {feedback.error && feedback.listError && (
+          <p role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`, { number: feedback.item })}</p>
+        )}
         {feedback.notice && <p role="status" className="text-forest">{t(`pages.log.notices.${feedback.notice}`)}</p>}
         {!currentList && <p role="status" className="text-muted">{t('pages.log.loading')}</p>}
         {currentList?.error && (

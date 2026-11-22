@@ -1,0 +1,36 @@
+{
+  "version": "food-aliases-v1",
+  "reference_version": "usda-sr-legacy-v1",
+  "exact_aliases": {
+    "whole_egg_hard_boiled": ["全熟去壳水煮蛋", "去壳全熟水煮鸡蛋", "peeled fully hard-boiled egg"],
+    "whole_egg_raw": ["去壳生鸡蛋", "raw shelled whole egg"],
+    "broccoli_raw": ["生西蘭花", "生花椰菜（绿）", "raw green broccoli"],
+    "oats_unfortified_dry": ["未强化干燕麦片", "dry plain unfortified oats"],
+    "banana_raw": ["去皮香蕉（生）", "peeled raw banana"],
+    "chicken_breast_skinless_boneless_raw": ["生的去皮去骨鸡胸肉", "raw skinless boneless chicken breast"],
+    "carrot_raw": ["生紅蘿蔔"],
+    "rice_noodles_cooked": ["水煮熟米粉（原味）", "plain cooked rice noodles"]
+  },
+  "qualified_aliases": {
+    "去皮去骨鸡胸肉": {"raw": "chicken_breast_skinless_boneless_raw", "roasted": "chicken_breast_meat_roasted", "stewed": "chicken_breast_meat_stewed"},
+    "skinless boneless chicken breast": {"raw": "chicken_breast_skinless_boneless_raw", "roasted": "chicken_breast_meat_roasted", "stewed": "chicken_breast_meat_stewed"},
+    "长粒糙米": {"raw": "brown_rice_long_grain_raw", "cooked": "brown_rice_long_grain_cooked"},
+    "long-grain brown rice": {"raw": "brown_rice_long_grain_raw", "cooked": "brown_rice_long_grain_cooked"},
+    "rice noodles": {"dry": "rice_noodles_dry", "cooked": "rice_noodles_cooked"}
+  },
+  "ambiguous_aliases": [
+    {"labels": ["鸡胸肉", "chicken breast"], "reason": "state_and_edible_basis", "candidates": ["chicken_breast_skinless_boneless_raw", "chicken_breast_meat_roasted", "chicken_breast_meat_stewed"]},
+    {"labels": ["熟鸡胸肉", "cooked chicken breast"], "reason": "preparation_and_edible_basis", "candidates": ["chicken_breast_meat_roasted", "chicken_breast_meat_stewed"]},
+    {"labels": ["糙米饭", "cooked brown rice"], "reason": "grain_variety", "candidates": ["brown_rice_long_grain_cooked"]},
+    {"labels": ["白米饭", "cooked white rice"], "reason": "grain_variety", "candidates": ["white_rice_long_grain_unenriched_cooked"]},
+    {"labels": ["水煮蛋", "煮鸡蛋", "boiled egg"], "reason": "egg_doneness", "candidates": ["whole_egg_hard_boiled"]},
+    {"labels": ["米粉", "面条", "noodles"], "reason": "food_and_state", "candidates": []},
+    {"labels": ["青菜", "leafy greens"], "reason": "vegetable_and_preparation", "candidates": ["bok_choy_raw", "bok_choy_boiled_unsalted"]},
+    {"labels": ["豆腐", "硬豆腐", "北豆腐", "tofu", "firm tofu"], "reason": "tofu_type_and_preparation", "candidates": ["firm_tofu_calcium_sulfate_raw"]}
+  ],
+  "unsupported_labels": [
+    "炒鸡蛋", "scrambled eggs", "煎豆腐", "pan-fried tofu", "拿铁咖啡", "拿铁", "latte", "coffee latte",
+    "海南鸡饭", "海南鸡肉饭", "hainanese chicken rice", "牛肉面", "beef noodle soup", "番茄炒蛋", "西红柿炒鸡蛋",
+    "stir-fried tomato and eggs", "煎饺", "fried dumplings", "oat milk", "燕麦奶", "三杯鸡", "three cup chicken"
+  ]
+}

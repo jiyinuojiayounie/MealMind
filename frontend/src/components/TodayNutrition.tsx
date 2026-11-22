@@ -12,6 +12,7 @@ const button = 'min-h-11 shrink-0 cursor-pointer rounded-xl border border-border
 const knownReasons = [
   'food_not_found', 'ambiguous_food_match', 'food_state_unknown', 'food_preparation_mismatch',
   'mixed_dish_unsupported', 'quantity_unknown', 'invalid_quantity', 'portion_needs_review',
+  'food_reference_binding_invalid', 'food_reference_binding_stale', 'food_reference_binding_version_unavailable',
   'unsupported_unit', 'unsupported_serving_conversion', 'nutrient_data_missing',
 ]
 

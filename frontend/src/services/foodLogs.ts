@@ -1,4 +1,4 @@
-import { apiBaseUrl, requestJson } from './apiClient'
+import { ApiError, apiBaseUrl, requestJson } from './apiClient'
 import { mealTypes } from './mealPlans'
 
 export const logMealTypes = ['unspecified', ...mealTypes] as const
@@ -10,11 +10,42 @@ export type FoodItem = {
   preparation_method: string | null
 }
 
+export const foodStates = ['raw', 'cooked', 'dry', 'as_sold'] as const
+export type FoodState = (typeof foodStates)[number]
+
+export type ReferenceSelection = {
+  food_id: string
+  reference_version: string
+  confirmed: true
+  edible_weight_confirmed: boolean
+  item: FoodItem
+}
+
+export type SavedReference = ReferenceSelection & {
+  binding_version: 'food-reference-binding-v1'
+  state: FoodState
+  preparation: string
+}
+
+type LoggedFoodItem = FoodItem & {
+  reference_binding?: SavedReference | { status: 'invalid_binding' } | null
+}
+
+export function sameFoodItem(left: FoodItem, right: FoodItem): boolean {
+  return left.name === right.name && left.quantity === right.quantity
+    && left.unit === right.unit && left.preparation_method === right.preparation_method
+}
+
+export function referenceSelection(binding: ReferenceSelection): ReferenceSelection {
+  const { food_id, reference_version, confirmed, edible_weight_confirmed, item } = binding
+  return { food_id, reference_version, confirmed, edible_weight_confirmed, item }
+}
+
 export type FoodLogDraft = {
   meal_type: (typeof logMealTypes)[number]
   consumed_at: string
   description: string | null
-  items: FoodItem[]
+  items: (FoodItem & { reference_binding?: ReferenceSelection })[]
 }
 
 export type FoodLogSource = 'manual_text' | 'ai_text' | 'ai_image'
@@ -36,7 +67,8 @@ export type FoodRecognition = ({
   items: RecognizedItem[]
 }
 
-export type FoodLog = FoodLogDraft & {
+export type FoodLog = Omit<FoodLogDraft, 'items'> & {
+  items: LoggedFoodItem[]
   id: string
   source: FoodLogSource
   status: 'draft' | 'confirmed'
@@ -88,6 +120,30 @@ function isTimestamp(value: unknown): value is string {
   return typeof value === 'string' && Number.isFinite(Date.parse(value))
 }
 
+function isLoggedItem(value: unknown): value is LoggedFoodItem {
+  if (!isRecord(value)) return false
+  const binding = value.reference_binding
+  if (!isItem(value)) return false
+  if (binding == null) return true
+  if (!isRecord(binding)) return false
+  return binding.status === 'invalid_binding' || (
+    binding.binding_version === 'food-reference-binding-v1' && isShortText(binding.food_id)
+    && isShortText(binding.reference_version) && binding.confirmed === true
+    && typeof binding.edible_weight_confirmed === 'boolean' && isItem(binding.item)
+    && foodStates.some((state) => state === binding.state) && isShortText(binding.preparation)
+  )
+}
+
+export function readBindingError(error: unknown) {
+  if (!(error instanceof ApiError) || error.status !== 422 || !isRecord(error.detail)) return null
+  const { status, reason, item_index: index } = error.detail
+  if (status !== 'food_reference_binding_rejected' || typeof index !== 'number'
+    || !Number.isSafeInteger(index) || index < 0) return null
+  const key = reason === 'catalog_version_unavailable' ? 'bindingVersion'
+    : reason === 'item_changed' ? 'bindingChanged' : 'bindingInvalid'
+  return { key, index }
+}
+
 function isLog(value: unknown): value is FoodLog {
   return isRecord(value) && typeof value.id === 'string'
     && logMealTypes.some((type) => type === value.meal_type)
@@ -96,7 +152,7 @@ function isLog(value: unknown): value is FoodLog {
     && typeof value.revision === 'number' && Number.isSafeInteger(value.revision) && value.revision > 0
     && (value.description === null || typeof value.description === 'string') && isTimestamp(value.consumed_at)
     && isTimestamp(value.created_at) && isTimestamp(value.updated_at)
-    && Array.isArray(value.items) && value.items.length > 0 && value.items.every(isItem)
+    && Array.isArray(value.items) && value.items.length > 0 && value.items.every(isLoggedItem)
 }
 
 function parseLog(value: unknown): FoodLog {

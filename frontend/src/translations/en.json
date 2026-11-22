@@ -120,6 +120,9 @@
       "invalid": "The nutrition response could not be read. Try again."
     },
     "reasons": {
+      "food_reference_binding_invalid": "The saved food reference could not be verified.",
+      "food_reference_binding_stale": "The saved reference no longer matches the recorded food details.",
+      "food_reference_binding_version_unavailable": "The reference catalog version for this item is unavailable.",
       "food_not_found": "The reference catalog doesn’t cover this food yet.",
       "ambiguous_food_match": "Several foods or preparations could match this name. A more specific description helps with future logs.",
       "food_state_unknown": "The record doesn’t specify whether the amount was raw, dried, or cooked. Include the preparation state when logging similar foods.",
@@ -234,6 +237,58 @@
       }
     },
     "log": {
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "moveUpNumber": "Move food item {{number}} up",
+      "moveDownNumber": "Move food item {{number}} down",
+      "matching": {
+        "action": "Review food matches",
+        "loading": "Checking the reference catalog…",
+        "error": "Food matching is unavailable. Try again, or save your draft as entered.",
+        "identified": "Suggested match: {{name}}",
+        "choose": "Choose a preview match for {{name}}",
+        "unselected": "Choose if you know",
+        "identity": {
+          "ambiguous_identity": "More detail is needed to identify this food.",
+          "food_state_unknown": "Check how this food was prepared or weighed.",
+          "unsupported_food": "The reference catalog does not cover this food.",
+          "insufficient_information": "Could not identify this food from the current entry."
+        },
+        "portion": {
+          "quantity_unknown": "Quantity is unknown.",
+          "conversion_unavailable": "This unit has no verified weight conversion for this entry.",
+          "needs_review": "Check the amount and whether it represents the edible portion.",
+          "verified_conversion": "A verified serving specification is available."
+        },
+        "reasons": {
+          "state_and_edible_basis": "If known, check raw or cooked and whether the amount is for edible meat.",
+          "preparation_and_edible_basis": "If known, check the cooking method and whether the amount is for edible meat.",
+          "measurement_state": "If known, specify whether this amount was weighed before or after cooking.",
+          "conflicting_preparation": "The name and preparation details disagree. Check both.",
+          "grain_variety": "If known, specify the grain variety.",
+          "egg_doneness": "If known, specify whether the egg was fully cooked.",
+          "food_and_state": "If known, specify the food type and preparation.",
+          "vegetable_and_preparation": "If known, specify the vegetable and how it was prepared.",
+          "tofu_type_and_preparation": "If known, specify the type of tofu and how it was prepared.",
+          "check_spelling": "Check the spelling or choose a candidate if it fits.",
+          "confirm_identity": "Check whether the suggested food is visible in the photo."
+        },
+        "states": {
+          "raw": "Raw",
+          "cooked": "Cooked",
+          "dry": "Dry",
+          "as_sold": "As sold"
+        },
+        "reviewHelp": "Confirm a reference only if it describes your food. Save the draft to keep it.",
+        "confirmReference": "Confirm reference: {{name}}",
+        "edibleWeight": "The entered weight is for the edible portion of {{name}} in this preparation. Leave unchecked if unsure.",
+        "saved": "Reference saved with draft · {{state}}",
+        "awaitingConfirmation": "Reference selected · {{state}} · confirm before saving",
+        "pendingSave": "Reference confirmed for this edit · {{state}} · save draft to keep",
+        "invalidSaved": "The saved reference needs review. Clear it or confirm a new reference before saving.",
+        "weightConfirmed": "Edible weight confirmed",
+        "clear": "Clear reference"
+      },
       "intro": "Record what you actually ate, in your own words.",
       "unavailable": "Food logging is available only in local development. This page cannot save records here.",
       "local": "Local development only. Records are stored on this machine.",
@@ -327,6 +382,9 @@
         "delete": "Food log deleted."
       },
       "errors": {
+        "bindingVersion": "The catalog version for food item {{number}} is unavailable. Open the draft, review matches again, or clear its reference.",
+        "bindingChanged": "Food item {{number}} has changed. Review its match again or clear the reference.",
+        "bindingInvalid": "The reference for food item {{number}} could not be verified. Review the match or clear its reference.",
         "conflict": "This log changed or was deleted. Records are reloading. Review the latest version before trying again.",
         "unavailable": "The food log API is unavailable. Check that the loopback backend is running in development mode.",
         "items": "Enter a name for each food item. At least one food item is required.",

@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from app.core.settings import Settings
 from app.schemas.food_logs import FoodLog, FoodLogConfirmation, FoodLogCreate, FoodLogDraft, FoodLogUpdate
+from app.services.food_reference_binding import FoodReferenceBindingRejected, FoodReferenceBindingUnavailable
 from app.storage.food_logs import FoodLogConflict, FoodLogNotFound, FoodLogStore
 
 router = APIRouter(prefix="/food-logs", tags=["food logs"])
@@ -93,6 +94,12 @@ def delete_log(log_id: UUID, expected_revision: Annotated[int, Query(gt=0)], sto
 
 
 def food_log_error(_request: Request, exc: Exception) -> Response:
+    if isinstance(exc, FoodReferenceBindingRejected):
+        return JSONResponse({"detail": {
+            "status": "food_reference_binding_rejected", "item_index": exc.item_index, "reason": exc.reason,
+        }}, status_code=422)
+    if isinstance(exc, FoodReferenceBindingUnavailable):
+        return JSONResponse({"detail": "Food reference validation is unavailable."}, status_code=503)
     if isinstance(exc, FoodLogNotFound):
         return JSONResponse({"detail": "Food log not found."}, status_code=404)
     if isinstance(exc, FoodLogConflict):

@@ -1,9 +1,10 @@
 # Product backlog
 
-These product improvements are deferred until the first MVP core loop works end to end (Plan → Log → Analyze → Replan). Review every item before a production-quality release. P0 items are release criteria. P1 items require a documented acceptance or an explicit product-owner decision to defer them further.
+These improvements follow the first end-to-end MVP core loop (Plan → Log → Analyze → Replan). Review every item before a production-quality release. P0 items are release criteria. P1 items require a documented acceptance or an explicit product-owner decision to defer them further.
 
 | Priority | Deferred issue | Production-quality review |
 | --- | --- | --- |
+| P0 | Food normalization and reference matching (P0.1) | Review the bilingual, state-aware matching design and 50-case evaluation. Separate food identity, catalog gaps and portion conversion. Preserve original logs and use verified reference candidates only. [Design](FOOD_NORMALIZATION_DESIGN.md) |
 | P0 | Complete-meal quality and verified portions | Review complete lunches and dinners for practical protein, staple, and vegetable coverage. Verify edible weights and serving sizes before using portions in nutrition estimates. |
 | P0 | Cooking effort and practical one-person templates | Cook through representative single-serving meals and check declared prerequisites, elapsed time, and independently prepared dishes. Revalidate convenience ranking against those estimates. |
 | P1 | Breakfast simplicity | Curate and test combined breakfasts and cooked dishes with ready-to-eat accompaniments. Check whether they reduce separate cooking work while covering the intended breakfast roles. |

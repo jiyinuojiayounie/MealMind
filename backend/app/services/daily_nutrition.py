@@ -6,6 +6,9 @@ from app.schemas.nutrition_calculation import NutritionReason
 from app.services.nutrition_calculation import NutritionCalculator, aggregate_nutrition
 
 REVIEW_GUIDANCE: dict[NutritionReason, str] = {
+    "food_reference_binding_invalid": "The saved food reference could not be verified.",
+    "food_reference_binding_stale": "The food details no longer match the saved reference confirmation.",
+    "food_reference_binding_version_unavailable": "The reference catalog version for this confirmation is unavailable.",
     "food_not_found": "No matching reference is available for this food.",
     "ambiguous_food_match": "Review the food name, variety, and preparation.",
     "food_state_unknown": "Check whether the logged amount refers to raw, dry, or cooked food.",
