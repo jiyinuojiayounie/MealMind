@@ -18,6 +18,63 @@
     "direct": "Get started directly",
     "directDetail": "Open Today and explore without setting up a profile."
   },
+  "nutrition": {
+    "title": "Recorded nutrition",
+    "localOnly": "Nutrition analysis is available in local development only.",
+    "date": "Analysis date",
+    "today": "Today",
+    "loading": "Loading nutrition estimates…",
+    "retry": "Retry",
+    "openLog": "Open food log",
+    "logs": "Confirmed food logs",
+    "logCount_one": "{{count}} confirmed log",
+    "logCount_other": "{{count}} confirmed logs",
+    "estimatedItems": "{{computed}} of {{total}} food items estimated",
+    "noValue": "Unavailable",
+    "measure": "{{value}} {{unit}}",
+    "units": {
+      "kcal": "kcal",
+      "g": "g"
+    },
+    "recordedOnly": "Estimates cover confirmed records only. Other food eaten that day may be missing.",
+    "logEstimate": "Estimate for this recorded meal",
+    "logPartial": "Calculated subtotal for this record",
+    "estimatedPortion": "Portion weight is estimated from a matching reference serving.",
+    "itemSource": "View USDA reference",
+    "sources": "About these estimates",
+    "sourceVersion": "USDA FoodData Central, SR Legacy {{release}} · {{version}}",
+    "nutrients": {
+      "energy_kcal": "Energy",
+      "protein_g": "Protein",
+      "carbohydrate_g": "Carbohydrates",
+      "fat_g": "Fat"
+    },
+    "states": {
+      "no_confirmed_logs": "No confirmed food logs for this date.",
+      "not_calculable": "Confirmed foods are recorded, but none have enough information for an estimate. Open a log below to see why.",
+      "partial": "Calculated subtotals · partial coverage",
+      "all_logged_items_calculated": "Estimates for confirmed records"
+    },
+    "errors": {
+      "network": "Couldn’t reach the local nutrition service. Check the connection and try again.",
+      "unavailable": "Nutrition analysis is unavailable. Check that the local backend is running in development mode.",
+      "invalid": "The nutrition response could not be read. Try again."
+    },
+    "reasons": {
+      "food_not_found": "The reference catalog doesn’t cover this food yet.",
+      "ambiguous_food_match": "Several foods or preparations could match this name. A more specific description helps with future logs.",
+      "food_state_unknown": "The record doesn’t specify whether the amount was raw, dried, or cooked. Include the preparation state when logging similar foods.",
+      "food_preparation_mismatch": "The preparation doesn’t match a reference used for this estimate.",
+      "mixed_dish_unsupported": "The catalog has no matching reference for this mixed dish. Hidden ingredients and oils are unknown.",
+      "quantity_unknown": "The amount eaten was not recorded.",
+      "invalid_quantity": "The recorded quantity could not be used.",
+      "portion_needs_review": "The portion and unit need checking before they can support an estimate.",
+      "unsupported_unit": "The recorded unit doesn’t support an estimate. For future logs, use edible grams if known.",
+      "unsupported_serving_conversion": "This household measure has no verified weight for this food. For future logs, use edible grams if known.",
+      "nutrient_data_missing": "The food reference is missing one or more nutrient values.",
+      "unknown": "Some information was insufficient for this estimate."
+    }
+  },
   "today": {
     "title": "Your meals today",
     "assistant": "MealMind Assistant",
@@ -105,12 +162,12 @@
       "local": "Local development only. Records are stored on this machine.",
       "newTitle": "New food log",
       "editTitle": "Correct draft",
-      "description": "What did you eat?",
+      "description": "What did you eat? (optional)",
       "example": "For example, steamed egg and a bowl of rice.",
       "mealType": "Meal type",
       "consumedAt": "When did you eat?",
       "items": "Food items",
-      "manualHelp": "Add at least one food item by hand. Your original description is saved separately. Leave quantities blank if you don’t know them.",
+      "manualHelp": "Add at least one food item by hand. If you enter a description, it’s saved separately. Leave quantities blank if you don’t know them.",
       "ai": {
         "action": "Recognize with AI",
         "loading": "Recognizing food…",
@@ -195,7 +252,8 @@
       "errors": {
         "conflict": "This log changed or was deleted. Records are reloading. Review the latest version before trying again.",
         "unavailable": "The food log API is unavailable. Check that the loopback backend is running in development mode.",
-        "invalid": "Enter a description and a name for each food item, then check the date and quantities.",
+        "items": "Enter a name for each food item. At least one food item is required.",
+        "invalid": "Check the food names, date, and quantities, then try again.",
         "time": "Enter a valid local date and time. If clocks skip this time, choose another time.",
         "quantity": "Enter a quantity greater than zero, or leave it blank.",
         "network": "Couldn’t reach the food log API. Check the local backend and try again.",

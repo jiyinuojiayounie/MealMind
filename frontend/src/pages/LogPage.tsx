@@ -227,8 +227,8 @@ function LocalFoodLogs() {
       setFeedback({ error: 'time' })
       return
     }
-    if (!form.description.trim() || form.rows.some((row) => !row.name.trim())) {
-      setFeedback({ error: 'invalid' })
+    if (!form.rows.length || form.rows.some((row) => !row.name.trim())) {
+      setFeedback({ error: 'items' })
       return
     }
     const items = form.rows.map((row) => ({
@@ -237,18 +237,22 @@ function LocalFoodLogs() {
       unit: row.unit.trim() || null,
       preparation_method: row.method.trim() || null,
     }))
-    if (items.some(({ quantity }) => quantity !== null && (!Number.isFinite(quantity) || quantity <= 0))) {
+    if (event.currentTarget.querySelector('input[type="number"]:invalid')
+      || items.some(({ quantity }) => quantity !== null && (!Number.isFinite(quantity) || quantity <= 0))) {
       setFeedback({ error: 'quantity' })
       return
     }
-    const payload = { description: form.description, consumed_at: consumedAt, meal_type: form.mealType, items }
+    const payload = {
+      description: form.description.trim() ? form.description : null,
+      consumed_at: consumedAt, meal_type: form.mealType, items,
+    }
     const source = form.recognized?.source ?? 'manual_text'
     void mutate(existing ? 'update' : 'create', (signal) => saveFoodLog(payload, existing, source, signal))
   }
 
   function edit(log: FoodLog) {
     setForm({
-      editing: log, description: log.description, consumedAt: log.consumed_at.slice(0, 16),
+      editing: log, description: log.description ?? '', consumedAt: log.consumed_at.slice(0, 16),
       mealType: log.meal_type,
       rows: log.items.map((item) => foodRow(item)),
       recognized: null,
@@ -266,13 +270,13 @@ function LocalFoodLogs() {
         {recognizing === 'ai_image' ? t('pages.log.photo.loading')
           : recognizing ? t('pages.log.ai.loading') : busy ? t('pages.log.working') : ''}
       </p>
-      <form className="card grid gap-4 p-4 sm:p-6" onSubmit={submit}>
+      <form className="card grid gap-4 p-4 sm:p-6" onSubmit={submit} noValidate>
         <h2 ref={formHeading} tabIndex={-1}>{t(form.editing ? 'pages.log.editTitle' : 'pages.log.newTitle')}</h2>
-        {feedback.error && <p role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`)}</p>}
+        {feedback.error && <p id="food-log-error" role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`)}</p>}
         <fieldset disabled={busy} className="grid min-w-0 gap-4">
           <label className="planning-field">
             {t('pages.log.description')}
-            <textarea className="planning-input" rows={4} maxLength={2000} required value={form.description}
+            <textarea className="planning-input" rows={4} maxLength={2000} value={form.description}
               placeholder={t('pages.log.example')}
               onChange={(event) => setForm({ ...form, description: event.target.value })} />
           </label>
@@ -337,6 +341,8 @@ function LocalFoodLogs() {
             <label className="planning-field">
               {t('pages.log.consumedAt')}
               <input className="planning-input" type="datetime-local" required value={form.consumedAt}
+                aria-invalid={feedback.error === 'time'}
+                aria-describedby={feedback.error === 'time' ? 'food-log-error' : undefined}
                 onChange={(event) => setForm({ ...form, consumedAt: event.target.value })} />
             </label>
           </div>
@@ -387,7 +393,11 @@ function LocalFoodLogs() {
                 <label className="planning-field col-span-2">
                   {t('pages.log.name')}
                   <input className="planning-input" required maxLength={120} value={row.name}
-                    aria-describedby={row.identityUncertain ? `identity-${row.key}` : undefined}
+                    aria-invalid={feedback.error === 'items' && !row.name.trim()}
+                    aria-describedby={[
+                      row.identityUncertain && `identity-${row.key}`,
+                      feedback.error === 'items' && !row.name.trim() && 'food-log-error',
+                    ].filter(Boolean).join(' ') || undefined}
                     onChange={(event) => updateRow(row.key, 'name', event.target.value)} />
                 </label>
                 {row.identityUncertain && (
@@ -396,7 +406,10 @@ function LocalFoodLogs() {
                 <label className="planning-field">
                   {t('pages.log.quantity')}
                   <input className="planning-input" type="number" inputMode="decimal" min="0" step="any"
-                    aria-describedby={row.portionNote ? `portion-${row.key}` : undefined}
+                    aria-describedby={[
+                      row.portionNote && `portion-${row.key}`,
+                      feedback.error === 'quantity' && 'food-log-error',
+                    ].filter(Boolean).join(' ') || undefined}
                     value={row.quantity} onChange={(event) => updateRow(row.key, 'quantity', event.target.value)} />
                 </label>
                 {row.portionNote && (
@@ -470,7 +483,7 @@ function LocalFoodLogs() {
                 {t(`pages.log.statuses.${log.status}`)}
               </span>
             </div>
-            <p className="whitespace-pre-wrap wrap-anywhere">{log.description}</p>
+            {log.description && <p className="whitespace-pre-wrap wrap-anywhere">{log.description}</p>}
             <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
               {log.items.map((item, index) => (
                 <li key={index} className="wrap-anywhere">

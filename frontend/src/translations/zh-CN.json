@@ -18,6 +18,62 @@
     "direct": "直接开始",
     "directDetail": "进入今日首页，无需建立档案即可浏览。"
   },
+  "nutrition": {
+    "title": "已记录食物的营养估算",
+    "localOnly": "营养分析仅在本地开发环境可用。",
+    "date": "分析日期",
+    "today": "今天",
+    "loading": "正在加载营养估算…",
+    "retry": "重试",
+    "openLog": "打开食物记录",
+    "logs": "已确认的食物记录",
+    "logCount": "{{count}} 条已确认记录",
+    "estimatedItems": "已计算 {{computed}}/{{total}} 项食物",
+    "noValue": "暂无估算",
+    "measure": "{{value}} {{unit}}",
+    "units": {
+      "kcal": "千卡",
+      "g": "克"
+    },
+    "recordedOnly": "估算仅涵盖已确认的记录，当天其他摄入可能尚未记录。",
+    "logEstimate": "该条记录的营养估算",
+    "logPartial": "该条记录的已计算小计",
+    "estimatedPortion": "份量重量来自匹配的参考份量，属于估算。",
+    "itemSource": "查看 USDA 参考来源",
+    "sources": "估算与来源说明",
+    "sourceVersion": "USDA FoodData Central，SR Legacy {{release}} · {{version}}",
+    "nutrients": {
+      "energy_kcal": "热量",
+      "protein_g": "蛋白质",
+      "carbohydrate_g": "碳水化合物",
+      "fat_g": "脂肪"
+    },
+    "states": {
+      "no_confirmed_logs": "当天还没有已确认的食物记录。",
+      "not_calculable": "当天有已确认的记录，但现有信息不足以估算。展开下方记录可查看原因。",
+      "partial": "已计算小计 · 仅覆盖部分记录",
+      "all_logged_items_calculated": "已确认记录的营养估算"
+    },
+    "errors": {
+      "network": "无法连接本地营养分析服务，请检查连接后重试。",
+      "unavailable": "营养分析暂不可用。请检查本地后端是否以开发模式运行。",
+      "invalid": "无法读取返回的营养分析结果，请重试。"
+    },
+    "reasons": {
+      "food_not_found": "参考目录暂未覆盖这项食物。",
+      "ambiguous_food_match": "名称可能对应多种食物或做法。以后记录时可注明具体品种或做法。",
+      "food_state_unknown": "记录未说明数量对应生食材、干食材还是熟食。以后记录同类食物时可注明状态。",
+      "food_preparation_mismatch": "记录的做法与可用的参考数据不匹配。",
+      "mixed_dish_unsupported": "目录中没有匹配这道混合菜的参考数据，隐藏配料与用油量仍未知。",
+      "quantity_unknown": "没有记录实际吃了多少。",
+      "invalid_quantity": "记录中的数量无法用于估算。",
+      "portion_needs_review": "需要核实份量和单位后才能估算。",
+      "unsupported_unit": "记录的单位无法用于估算。以后记录时，如知道可食重量，可用克填写。",
+      "unsupported_serving_conversion": "这项食物的家庭量具没有已核实的重量换算。以后记录时，如知道可食重量，可用克填写。",
+      "nutrient_data_missing": "食物参考来源缺少一项或多项营养值。",
+      "unknown": "部分信息不足，暂时无法完成估算。"
+    }
+  },
   "today": {
     "title": "今天的餐食",
     "assistant": "MealMind 助手",
@@ -105,12 +161,12 @@
       "local": "仅供本地开发使用，记录保存在这台电脑上。",
       "newTitle": "新增食物记录",
       "editTitle": "纠正草稿",
-      "description": "你吃了什么？",
+      "description": "你吃了什么？（选填）",
       "example": "例如，吃了蒸蛋和一碗米饭。",
       "mealType": "餐别",
       "consumedAt": "实际用餐时间",
       "items": "食物明细",
-      "manualHelp": "请手动填写至少一项食物。原始描述会单独保存，不确定的数量可以留空。",
+      "manualHelp": "请手动填写至少一项食物。如果填写描述，原文会单独保存，不确定的数量可以留空。",
       "ai": {
         "action": "AI 识别食物",
         "loading": "正在识别食物…",
@@ -195,7 +251,8 @@
       "errors": {
         "conflict": "这条记录已有更改或已被删除。正在重新加载，请核对最新版本后再操作。",
         "unavailable": "食物记录服务不可用。请检查后端是否以开发模式在本机回环地址运行。",
-        "invalid": "请填写描述和每项食物的名称，并检查日期与数量。",
+        "items": "请填写每项食物的名称，至少需要一项食物。",
+        "invalid": "请检查食物名称、日期和数量后重试。",
         "time": "请输入有效的本地日期和时间。如果时钟跳过了这个时间，请另选时间。",
         "quantity": "数量必须大于零。不确定时请留空。",
         "network": "无法连接食物记录服务，请检查本地后端后重试。",

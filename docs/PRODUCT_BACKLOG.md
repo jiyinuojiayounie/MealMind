@@ -1,6 +1,6 @@
 # Product backlog
 
-These planning improvements are deferred until the first MVP core loop works end to end (Plan → Log → Analyze → Replan). Review every item before a production-quality release. P0 items are release criteria. P1 items require a documented acceptance or an explicit product-owner decision to defer them further.
+These product improvements are deferred until the first MVP core loop works end to end (Plan → Log → Analyze → Replan). Review every item before a production-quality release. P0 items are release criteria. P1 items require a documented acceptance or an explicit product-owner decision to defer them further.
 
 | Priority | Deferred issue | Production-quality review |
 | --- | --- | --- |
@@ -11,5 +11,6 @@ These planning improvements are deferred until the first MVP core loop works end
 | P1 | Cross-generation dish repetition | Evaluate repeat recipe and family IDs over multiple requests. Define guest and authenticated history scope before storing recommendation history. |
 | P1 | Human-friendly ingredient measures | Verify household equivalents by ingredient state and portion size, keeping standard quantities as the reference. |
 | P1 | Result UI improvements | Test bilingual mobile readability, ingredient and prerequisite visibility, time estimates, and navigation through structured results. |
+| P1 | Compact food-log item editor | Make each item collapsible with a short name and quantity summary. Keep edits and uncertainty warnings visible, preserve keyboard access, and expand invalid rows on submit. |
 
 See the [meal planning quality rules](MEAL_PLANNING_QUALITY.md) and [recipe catalog design](RECIPE_CATALOG_DESIGN.md) for existing detail.

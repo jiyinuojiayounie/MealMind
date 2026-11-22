@@ -33,10 +33,13 @@ class FoodItem(FoodLogInput):
 class FoodLogDraft(FoodLogInput):
     meal_type: MealType | Literal["unspecified"] = "unspecified"
     consumed_at: AwareDatetime
-    description: Description
+    description: Description | None = None
     items: Annotated[list[FoodItem], Field(min_length=1, max_length=50)]
 
-    _require_description = field_validator("description")(require_nonblank_description)
+    @field_validator("description", mode="before")
+    @classmethod
+    def normalize_empty_description(cls, value: object) -> object:
+        return None if isinstance(value, str) and not value.strip() else value
 
     @field_validator("consumed_at", mode="before")
     @classmethod

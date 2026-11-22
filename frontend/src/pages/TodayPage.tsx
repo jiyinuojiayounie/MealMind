@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { TodayNutrition } from '../components/TodayNutrition'
 import { featurePaths } from '../types/navigation'
 
 const shortcuts = ['plan', 'log', 'pantry', 'profile'] as const
@@ -41,6 +42,7 @@ export function TodayPage() {
           ))}
         </div>
       </section>
+      <TodayNutrition />
       <section aria-labelledby="overview-title">
         <h2 id="overview-title">{t('today.overview')}</h2>
         <ul className="card meal-list mt-3">

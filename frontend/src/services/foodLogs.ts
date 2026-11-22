@@ -13,7 +13,7 @@ export type FoodItem = {
 export type FoodLogDraft = {
   meal_type: (typeof logMealTypes)[number]
   consumed_at: string
-  description: string
+  description: string | null
   items: FoodItem[]
 }
 
@@ -94,7 +94,7 @@ function isLog(value: unknown): value is FoodLog {
     && (value.status === 'draft' || value.status === 'confirmed')
     && (value.source === 'manual_text' || value.source === 'ai_text' || value.source === 'ai_image')
     && typeof value.revision === 'number' && Number.isSafeInteger(value.revision) && value.revision > 0
-    && typeof value.description === 'string' && isTimestamp(value.consumed_at)
+    && (value.description === null || typeof value.description === 'string') && isTimestamp(value.consumed_at)
     && isTimestamp(value.created_at) && isTimestamp(value.updated_at)
     && Array.isArray(value.items) && value.items.length > 0 && value.items.every(isItem)
 }

@@ -88,10 +88,11 @@ def test_simultaneous_confirmation_is_idempotent(tmp_path):
     {"status": "confirmed"},
     {"source": "unknown"},
     {"meal_type": "brunch"},
-    {"description": "  "},
+    {"description": "x" * 2001},
     {"consumed_at": "2026-11-21T00:15:00"},
     {"consumed_at": 1795210500},
     {"items": []},
+    {"description": None, "items": []},
     {"items": [{"name": " "}]},
     {"items": [{"name": "Rice", "quantity": 0}]},
     {"items": [{"name": "Rice", "quantity": -1}]},
@@ -103,6 +104,36 @@ def test_invalid_drafts_are_rejected(tmp_path, overrides):
         assert client.post(PATH, json={**DRAFT, **overrides}).status_code == 422
         assert client.get(PATH, params={"date": DATE}).json() == []
         assert client.get(PATH, params={"date": "2026-02-30"}).status_code == 422
+
+
+@pytest.mark.parametrize("source,description", [
+    ("manual_text", {}),
+    ("manual_text", {"description": "  "}),
+    ("ai_image", {"description": None}),
+    ("ai_text", {"description": ""}),
+])
+def test_items_can_be_saved_and_confirmed_without_a_description(tmp_path, source, description):
+    payload = {key: value for key, value in DRAFT.items() if key != "description"}
+    with client_for(tmp_path / "logs.sqlite3") as client:
+        created = client.post(PATH, json={**payload, **description, "source": source})
+        assert created.status_code == 201
+        log = created.json()
+        assert log["description"] is None
+        assert log["source"] == source
+        assert log["status"] == "draft"
+        path = f"{PATH}/{log['id']}"
+        updated = client.put(path, json={**payload, "expected_revision": log["revision"]})
+        assert updated.status_code == 200
+        assert updated.json()["description"] is None
+        confirmation = {"expected_revision": updated.json()["revision"]}
+        response = client.post(f"{path}/confirm", json=confirmation)
+        assert response.status_code == 200
+        confirmed = response.json()
+        assert confirmed["status"] == "confirmed"
+        assert confirmed["description"] is None
+        assert confirmed["items"] == log["items"]
+        assert client.post(f"{path}/confirm", json=confirmation).json() == confirmed
+        assert client.get(PATH, params={"date": DATE}).json() == [confirmed]
 
 
 @pytest.mark.parametrize("settings,headers,status", [

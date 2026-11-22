@@ -36,3 +36,9 @@ The following proposals record the approved product direction and the implementa
 | ID | Decision |
 | --- | --- |
 | D019 | Use a versioned SQLite store for unauthenticated food log development on loopback only. Separate drafts from confirmed consumption and preserve unknown quantities. Keep the public guest and authenticated persistence requirements in FR08. |
+
+## Day 6 nutrition foundation
+
+| ID | Decision |
+| --- | --- |
+| D020 | Use traceable food-state reference data and deterministic nutrition calculations over confirmed logs grouped by the recorded local date. Preserve unknowns and distinguish partial estimates from complete intake. Scope v1 mappings to compatible food identities and preparations. Exclude model-invented nutrients or weights and assumed mixed-dish decomposition. See the [nutrition analysis design](NUTRITION_ANALYSIS_DESIGN.md). |

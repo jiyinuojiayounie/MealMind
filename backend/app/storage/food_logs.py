@@ -108,6 +108,35 @@ class FoodLogStore:
             logs = [FoodLog.model_validate_json(row[0]) for row in rows]
         return sorted(logs, key=lambda log: (log.consumed_at, log.id))
 
+    def list_confirmed_by_date(self, consumed_on: date) -> list[FoodLog]:
+        # Reporting never uses connection(), which can create or migrate the database.
+        try:
+            self.path.stat()
+        except FileNotFoundError:
+            return []
+        except OSError:
+            raise FoodLogStorageUnavailable from None
+
+        try:
+            database_uri = self.path.absolute().as_uri() + "?mode=ro"
+            with closing(sqlite3.connect(database_uri, uri=True, timeout=5)) as db:
+                db.execute("BEGIN")
+                if db.execute("PRAGMA user_version").fetchone()[0] != len(MIGRATIONS):
+                    raise FoodLogStorageUnavailable
+                rows = db.execute(
+                    "SELECT id, document FROM food_logs WHERE consumed_on = ? AND status = 'confirmed'",
+                    (consumed_on.isoformat(),),
+                )
+                logs = []
+                for log_id, document in rows:
+                    log = FoodLog.model_validate_json(document)
+                    if str(log.id) != log_id or log.status != "confirmed" or log.consumed_at.date() != consumed_on:
+                        raise FoodLogStorageUnavailable
+                    logs.append(log)
+        except (OSError, sqlite3.Error, ValidationError):
+            raise FoodLogStorageUnavailable from None
+        return sorted(logs, key=lambda log: (log.consumed_at, log.id))
+
     def update(self, log_id: UUID, payload: FoodLogDraft, expected_revision: int) -> FoodLog:
         with self.connection(write=True) as db:
             log = self._read(db, log_id)

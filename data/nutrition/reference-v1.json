@@ -1,0 +1,1323 @@
+{
+  "schema_version": 1,
+  "reference_version": "usda-sr-legacy-v1",
+  "source": {
+    "provider": "USDA FoodData Central",
+    "data_type": "sr_legacy_food",
+    "release": "2018-04",
+    "archive_url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+    "archive_sha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+    "retrieved_on": "2026-11-21",
+    "license": "CC0-1.0",
+    "license_url": "https://fdc.nal.usda.gov/"
+  },
+  "basis": "per_100g_edible",
+  "nutrient_definitions": {
+    "energy_kcal": {
+      "usda_nutrient_id": 1008,
+      "name": "Energy",
+      "unit": "kcal"
+    },
+    "protein_g": {
+      "usda_nutrient_id": 1003,
+      "name": "Protein",
+      "unit": "g"
+    },
+    "carbohydrate_g": {
+      "usda_nutrient_id": 1005,
+      "name": "Carbohydrate, by difference",
+      "unit": "g"
+    },
+    "fat_g": {
+      "usda_nutrient_id": 1004,
+      "name": "Total lipid (fat)",
+      "unit": "g"
+    }
+  },
+  "unresolved_labels": [
+    "米饭",
+    "白米饭",
+    "糙米饭",
+    "米粉",
+    "荞麦面",
+    "面条",
+    "鸡蛋",
+    "水煮蛋",
+    "煮鸡蛋",
+    "鸡胸肉",
+    "熟鸡胸肉",
+    "豆腐",
+    "硬豆腐",
+    "北豆腐",
+    "青菜",
+    "小白菜",
+    "西兰花",
+    "胡萝卜",
+    "土豆",
+    "红薯",
+    "燕麦",
+    "香蕉",
+    "食用油",
+    "rice",
+    "white rice",
+    "cooked white rice",
+    "brown rice",
+    "rice noodles",
+    "noodles",
+    "soba",
+    "egg",
+    "eggs",
+    "chicken breast",
+    "cooked chicken breast",
+    "tofu",
+    "firm tofu",
+    "bok choy",
+    "broccoli",
+    "carrot",
+    "potato",
+    "sweet potato",
+    "oats",
+    "banana",
+    "cooking oil"
+  ],
+  "foods": [
+    {
+      "food_id": "white_rice_long_grain_unenriched_raw",
+      "names": {
+        "zh_cn": "未强化长粒白米（生）",
+        "en_us": "Unenriched long-grain white rice (raw)"
+      },
+      "aliases": [
+        "生长粒白米（未强化）"
+      ],
+      "category": "grains",
+      "state": "raw",
+      "preparation": "Long-grain, regular, unenriched",
+      "source": {
+        "fdc_id": 169756,
+        "ndb_number": "20444",
+        "publication_date": "2019-04-01",
+        "description": "Rice, white, long-grain, regular, raw, unenriched",
+        "url": "https://fdc.nal.usda.gov/food-details/169756/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 365.0,
+          "source_row_id": 1467262
+        },
+        "protein_g": {
+          "amount": 7.13,
+          "source_row_id": 1467237
+        },
+        "carbohydrate_g": {
+          "amount": 79.95,
+          "source_row_id": 1467261
+        },
+        "fat_g": {
+          "amount": 0.66,
+          "source_row_id": 1467260
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "white_rice_long_grain_unenriched_cooked",
+      "names": {
+        "zh_cn": "未强化长粒白米饭（无盐）",
+        "en_us": "Unenriched long-grain white rice (cooked without salt)"
+      },
+      "aliases": [
+        "无盐熟长粒白米（未强化）"
+      ],
+      "category": "grains",
+      "state": "cooked",
+      "preparation": "Long-grain, regular, unenriched, cooked without salt",
+      "source": {
+        "fdc_id": 169757,
+        "ndb_number": "20445",
+        "publication_date": "2019-04-01",
+        "description": "Rice, white, long-grain, regular, unenriched, cooked without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/169757/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 130.0,
+          "source_row_id": 1467323
+        },
+        "protein_g": {
+          "amount": 2.69,
+          "source_row_id": 1467347
+        },
+        "carbohydrate_g": {
+          "amount": 28.17,
+          "source_row_id": 1467322
+        },
+        "fat_g": {
+          "amount": 0.28,
+          "source_row_id": 1467321
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "brown_rice_long_grain_raw",
+      "names": {
+        "zh_cn": "长粒糙米（生）",
+        "en_us": "Long-grain brown rice (raw)"
+      },
+      "aliases": [
+        "生长粒糙米"
+      ],
+      "category": "grains",
+      "state": "raw",
+      "preparation": "Long-grain, uncooked",
+      "source": {
+        "fdc_id": 169703,
+        "ndb_number": "20036",
+        "publication_date": "2019-04-01",
+        "description": "Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)",
+        "url": "https://fdc.nal.usda.gov/food-details/169703/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 367.0,
+          "source_row_id": 1462699
+        },
+        "protein_g": {
+          "amount": 7.54,
+          "source_row_id": 1462744
+        },
+        "carbohydrate_g": {
+          "amount": 76.25,
+          "source_row_id": 1462698
+        },
+        "fat_g": {
+          "amount": 3.2,
+          "source_row_id": 1462697
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "brown_rice_long_grain_cooked",
+      "names": {
+        "zh_cn": "长粒糙米饭（熟）",
+        "en_us": "Long-grain brown rice (cooked)"
+      },
+      "aliases": [
+        "熟长粒糙米",
+        "cooked long-grain brown rice"
+      ],
+      "category": "grains",
+      "state": "cooked",
+      "preparation": "Long-grain, cooked",
+      "source": {
+        "fdc_id": 169704,
+        "ndb_number": "20037",
+        "publication_date": "2019-04-01",
+        "description": "Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)",
+        "url": "https://fdc.nal.usda.gov/food-details/169704/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 123.0,
+          "source_row_id": 1462903
+        },
+        "protein_g": {
+          "amount": 2.74,
+          "source_row_id": 1462868
+        },
+        "carbohydrate_g": {
+          "amount": 25.58,
+          "source_row_id": 1462902
+        },
+        "fat_g": {
+          "amount": 0.97,
+          "source_row_id": 1462901
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "rice_noodles_dry",
+      "names": {
+        "zh_cn": "米粉（干）",
+        "en_us": "Rice noodles (dry)"
+      },
+      "aliases": [
+        "干米粉",
+        "dry rice noodles"
+      ],
+      "category": "noodles",
+      "state": "dry",
+      "preparation": "Dry rice noodles",
+      "source": {
+        "fdc_id": 169742,
+        "ndb_number": "20133",
+        "publication_date": "2019-04-01",
+        "description": "Rice noodles, dry",
+        "url": "https://fdc.nal.usda.gov/food-details/169742/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 364.0,
+          "source_row_id": 1466046
+        },
+        "protein_g": {
+          "amount": 5.95,
+          "source_row_id": 1466079
+        },
+        "carbohydrate_g": {
+          "amount": 80.18,
+          "source_row_id": 1466098
+        },
+        "fat_g": {
+          "amount": 0.56,
+          "source_row_id": 1466045
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "rice_noodles_cooked",
+      "names": {
+        "zh_cn": "米粉（熟）",
+        "en_us": "Rice noodles (cooked)"
+      },
+      "aliases": [
+        "熟米粉",
+        "cooked rice noodles"
+      ],
+      "category": "noodles",
+      "state": "cooked",
+      "preparation": "Cooked rice noodles, without toppings or broth",
+      "source": {
+        "fdc_id": 168914,
+        "ndb_number": "20134",
+        "publication_date": "2019-04-01",
+        "description": "Rice noodles, cooked",
+        "url": "https://fdc.nal.usda.gov/food-details/168914/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 108.0,
+          "source_row_id": 1398664
+        },
+        "protein_g": {
+          "amount": 1.79,
+          "source_row_id": 1398676
+        },
+        "carbohydrate_g": {
+          "amount": 24.01,
+          "source_row_id": 1398663
+        },
+        "fat_g": {
+          "amount": 0.2,
+          "source_row_id": 1398650
+        }
+      },
+      "limitations": [
+        "The source describes the noodles alone, without a dish-level mapping."
+      ]
+    },
+    {
+      "food_id": "soba_dry",
+      "names": {
+        "zh_cn": "日式荞麦面（干）",
+        "en_us": "Japanese soba (dry)"
+      },
+      "aliases": [
+        "日式干荞麦面",
+        "dry Japanese soba"
+      ],
+      "category": "noodles",
+      "state": "dry",
+      "preparation": "Dry Japanese soba",
+      "source": {
+        "fdc_id": 168906,
+        "ndb_number": "20114",
+        "publication_date": "2019-04-01",
+        "description": "Noodles, japanese, soba, dry",
+        "url": "https://fdc.nal.usda.gov/food-details/168906/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 336.0,
+          "source_row_id": 1398022
+        },
+        "protein_g": {
+          "amount": 14.38,
+          "source_row_id": 1398006
+        },
+        "carbohydrate_g": {
+          "amount": 74.62,
+          "source_row_id": 1398021
+        },
+        "fat_g": {
+          "amount": 0.71,
+          "source_row_id": 1398020
+        }
+      },
+      "limitations": [
+        "Soba formulations vary. This row does not identify a gluten-free product."
+      ]
+    },
+    {
+      "food_id": "soba_cooked",
+      "names": {
+        "zh_cn": "日式荞麦面（熟）",
+        "en_us": "Japanese soba (cooked)"
+      },
+      "aliases": [
+        "煮熟的日式荞麦面",
+        "cooked Japanese soba"
+      ],
+      "category": "noodles",
+      "state": "cooked",
+      "preparation": "Cooked Japanese soba",
+      "source": {
+        "fdc_id": 168907,
+        "ndb_number": "20115",
+        "publication_date": "2019-04-01",
+        "description": "Noodles, japanese, soba, cooked",
+        "url": "https://fdc.nal.usda.gov/food-details/168907/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 99.0,
+          "source_row_id": 1398054
+        },
+        "protein_g": {
+          "amount": 5.06,
+          "source_row_id": 1398106
+        },
+        "carbohydrate_g": {
+          "amount": 21.44,
+          "source_row_id": 1398053
+        },
+        "fat_g": {
+          "amount": 0.1,
+          "source_row_id": 1398052
+        }
+      },
+      "limitations": [
+        "Soba formulations vary. This row represents the noodles alone."
+      ]
+    },
+    {
+      "food_id": "whole_egg_raw",
+      "names": {
+        "zh_cn": "全鸡蛋（生，去壳）",
+        "en_us": "Whole egg (raw, without shell)"
+      },
+      "aliases": [
+        "生全蛋（去壳）"
+      ],
+      "category": "eggs",
+      "state": "raw",
+      "preparation": "Fresh whole egg content; shell excluded",
+      "source": {
+        "fdc_id": 171287,
+        "ndb_number": "1123",
+        "publication_date": "2019-04-01",
+        "description": "Egg, whole, raw, fresh",
+        "url": "https://fdc.nal.usda.gov/food-details/171287/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 143.0,
+          "source_row_id": 1597626
+        },
+        "protein_g": {
+          "amount": 12.56,
+          "source_row_id": 1597683
+        },
+        "carbohydrate_g": {
+          "amount": 0.72,
+          "source_row_id": 1597748
+        },
+        "fat_g": {
+          "amount": 9.51,
+          "source_row_id": 1597714
+        }
+      },
+      "limitations": [],
+      "portions": [
+        {
+          "source_row_id": 88374,
+          "amount": 1,
+          "measure_unit_id": 9999,
+          "modifier": "large",
+          "edible_grams": 50,
+          "applicability": "One raw whole egg explicitly identified as USDA large; edible contents only, without shell."
+        }
+      ]
+    },
+    {
+      "food_id": "whole_egg_hard_boiled",
+      "names": {
+        "zh_cn": "全熟水煮鸡蛋（去壳）",
+        "en_us": "Hard-boiled whole egg (without shell)"
+      },
+      "aliases": [
+        "全熟白煮蛋（去壳）",
+        "peeled hard-boiled egg"
+      ],
+      "category": "eggs",
+      "state": "cooked",
+      "preparation": "Hard-boiled whole egg content; shell excluded",
+      "source": {
+        "fdc_id": 173424,
+        "ndb_number": "1129",
+        "publication_date": "2019-04-01",
+        "description": "Egg, whole, cooked, hard-boiled",
+        "url": "https://fdc.nal.usda.gov/food-details/173424/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 155.0,
+          "source_row_id": 1777847
+        },
+        "protein_g": {
+          "amount": 12.58,
+          "source_row_id": 1777860
+        },
+        "carbohydrate_g": {
+          "amount": 1.12,
+          "source_row_id": 1777905
+        },
+        "fat_g": {
+          "amount": 10.61,
+          "source_row_id": 1777904
+        }
+      },
+      "limitations": [],
+      "portions": [
+        {
+          "source_row_id": 92500,
+          "amount": 1,
+          "measure_unit_id": 9999,
+          "modifier": "large",
+          "edible_grams": 50,
+          "applicability": "One hard-boiled whole egg explicitly identified as USDA large; edible contents only, without shell."
+        }
+      ]
+    },
+    {
+      "food_id": "whole_egg_poached",
+      "names": {
+        "zh_cn": "全鸡蛋（水煮荷包蛋）",
+        "en_us": "Whole egg (water-poached)"
+      },
+      "aliases": [
+        "水煮荷包蛋",
+        "water-poached egg"
+      ],
+      "category": "eggs",
+      "state": "cooked",
+      "preparation": "Whole egg poached in water",
+      "source": {
+        "fdc_id": 172186,
+        "ndb_number": "1131",
+        "publication_date": "2019-04-01",
+        "description": "Egg, whole, cooked, poached",
+        "url": "https://fdc.nal.usda.gov/food-details/172186/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 143.0,
+          "source_row_id": 1674965
+        },
+        "protein_g": {
+          "amount": 12.51,
+          "source_row_id": 1675014
+        },
+        "carbohydrate_g": {
+          "amount": 0.71,
+          "source_row_id": 1675007
+        },
+        "fat_g": {
+          "amount": 9.47,
+          "source_row_id": 1675006
+        }
+      },
+      "limitations": [
+        "Excludes pan-fried eggs and eggs cooked in broth or sauces."
+      ]
+    },
+    {
+      "food_id": "chicken_breast_skinless_boneless_raw",
+      "names": {
+        "zh_cn": "去皮去骨鸡胸肉（生）",
+        "en_us": "Skinless boneless chicken breast meat (raw)"
+      },
+      "aliases": [
+        "生去皮去骨鸡胸肉"
+      ],
+      "category": "poultry",
+      "state": "raw",
+      "preparation": "Skinless, boneless, breast meat only, raw",
+      "source": {
+        "fdc_id": 171077,
+        "ndb_number": "5062",
+        "publication_date": "2019-04-01",
+        "description": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw",
+        "url": "https://fdc.nal.usda.gov/food-details/171077/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 120.0,
+          "source_row_id": 1578066
+        },
+        "protein_g": {
+          "amount": 22.5,
+          "source_row_id": 1578105
+        },
+        "carbohydrate_g": {
+          "amount": 0.0,
+          "source_row_id": 1578117
+        },
+        "fat_g": {
+          "amount": 2.62,
+          "source_row_id": 1578065
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "chicken_breast_meat_roasted",
+      "names": {
+        "zh_cn": "烤鸡胸肉（仅肉）",
+        "en_us": "Roasted chicken breast (meat only)"
+      },
+      "aliases": [
+        "去皮去骨烤鸡胸肉",
+        "roasted skinless boneless chicken breast"
+      ],
+      "category": "poultry",
+      "state": "cooked",
+      "preparation": "Breast meat only, roasted",
+      "source": {
+        "fdc_id": 171477,
+        "ndb_number": "5064",
+        "publication_date": "2019-04-01",
+        "description": "Chicken, broilers or fryers, breast, meat only, cooked, roasted",
+        "url": "https://fdc.nal.usda.gov/food-details/171477/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 165.0,
+          "source_row_id": 1613020
+        },
+        "protein_g": {
+          "amount": 31.02,
+          "source_row_id": 1613048
+        },
+        "carbohydrate_g": {
+          "amount": 0.0,
+          "source_row_id": 1613019
+        },
+        "fat_g": {
+          "amount": 3.57,
+          "source_row_id": 1613018
+        }
+      },
+      "limitations": [
+        "Not a proxy for poached, stir-fried, or breaded chicken breast."
+      ]
+    },
+    {
+      "food_id": "chicken_breast_meat_stewed",
+      "names": {
+        "zh_cn": "炖鸡胸肉（仅肉）",
+        "en_us": "Stewed chicken breast (meat only)"
+      },
+      "aliases": [
+        "去皮去骨炖鸡胸肉",
+        "stewed skinless boneless chicken breast"
+      ],
+      "category": "poultry",
+      "state": "cooked",
+      "preparation": "Breast meat only, stewed",
+      "source": {
+        "fdc_id": 171478,
+        "ndb_number": "5065",
+        "publication_date": "2019-04-01",
+        "description": "Chicken, broilers or fryers, breast, meat only, cooked, stewed",
+        "url": "https://fdc.nal.usda.gov/food-details/171478/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 151.0,
+          "source_row_id": 1613149
+        },
+        "protein_g": {
+          "amount": 28.98,
+          "source_row_id": 1613116
+        },
+        "carbohydrate_g": {
+          "amount": 0.0,
+          "source_row_id": 1613148
+        },
+        "fat_g": {
+          "amount": 3.03,
+          "source_row_id": 1613147
+        }
+      },
+      "limitations": [
+        "Does not include the stew liquid or sauce."
+      ]
+    },
+    {
+      "food_id": "firm_tofu_calcium_sulfate_raw",
+      "names": {
+        "zh_cn": "石膏凝固硬豆腐（未烹调）",
+        "en_us": "Calcium sulfate firm tofu (raw)"
+      },
+      "aliases": [
+        "未烹调石膏硬豆腐"
+      ],
+      "category": "soy",
+      "state": "raw",
+      "preparation": "Firm tofu prepared with calcium sulfate; no additional cooking",
+      "source": {
+        "fdc_id": 172475,
+        "ndb_number": "16426",
+        "publication_date": "2019-04-01",
+        "description": "Tofu, raw, firm, prepared with calcium sulfate",
+        "url": "https://fdc.nal.usda.gov/food-details/172475/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 144.0,
+          "source_row_id": 1698051
+        },
+        "protein_g": {
+          "amount": 17.27,
+          "source_row_id": 1698062
+        },
+        "carbohydrate_g": {
+          "amount": 2.78,
+          "source_row_id": 1698050
+        },
+        "fat_g": {
+          "amount": 8.72,
+          "source_row_id": 1698091
+        }
+      },
+      "limitations": [
+        "Coagulant and firmness matter. Do not substitute silken, nigari, or cooked tofu."
+      ]
+    },
+    {
+      "food_id": "bok_choy_raw",
+      "names": {
+        "zh_cn": "小白菜（生）",
+        "en_us": "Bok choy (raw)"
+      },
+      "aliases": [
+        "生小白菜",
+        "raw pak choi"
+      ],
+      "category": "vegetables",
+      "state": "raw",
+      "preparation": "Pak choi, raw",
+      "source": {
+        "fdc_id": 170390,
+        "ndb_number": "11116",
+        "publication_date": "2019-04-01",
+        "description": "Cabbage, chinese (pak-choi), raw",
+        "url": "https://fdc.nal.usda.gov/food-details/170390/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 13.0,
+          "source_row_id": 1519755
+        },
+        "protein_g": {
+          "amount": 1.5,
+          "source_row_id": 1519677
+        },
+        "carbohydrate_g": {
+          "amount": 2.18,
+          "source_row_id": 1519754
+        },
+        "fat_g": {
+          "amount": 0.2,
+          "source_row_id": 1519694
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "bok_choy_boiled_unsalted",
+      "names": {
+        "zh_cn": "小白菜（水煮沥干，无盐）",
+        "en_us": "Bok choy (boiled, drained, without salt)"
+      },
+      "aliases": [
+        "无盐水煮小白菜（沥干）"
+      ],
+      "category": "vegetables",
+      "state": "cooked",
+      "preparation": "Pak choi, boiled, drained, without salt",
+      "source": {
+        "fdc_id": 170391,
+        "ndb_number": "11117",
+        "publication_date": "2019-04-01",
+        "description": "Cabbage, chinese (pak-choi), cooked, boiled, drained, without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/170391/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 12.0,
+          "source_row_id": 1519786
+        },
+        "protein_g": {
+          "amount": 1.56,
+          "source_row_id": 1519808
+        },
+        "carbohydrate_g": {
+          "amount": 1.78,
+          "source_row_id": 1519785
+        },
+        "fat_g": {
+          "amount": 0.16,
+          "source_row_id": 1519807
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "broccoli_raw",
+      "names": {
+        "zh_cn": "西兰花（生）",
+        "en_us": "Broccoli (raw)"
+      },
+      "aliases": [
+        "生西兰花",
+        "raw broccoli"
+      ],
+      "category": "vegetables",
+      "state": "raw",
+      "preparation": "Broccoli, raw",
+      "source": {
+        "fdc_id": 170379,
+        "ndb_number": "11090",
+        "publication_date": "2019-04-01",
+        "description": "Broccoli, raw",
+        "url": "https://fdc.nal.usda.gov/food-details/170379/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 34.0,
+          "source_row_id": 1518809
+        },
+        "protein_g": {
+          "amount": 2.82,
+          "source_row_id": 1518850
+        },
+        "carbohydrate_g": {
+          "amount": 6.64,
+          "source_row_id": 1518808
+        },
+        "fat_g": {
+          "amount": 0.37,
+          "source_row_id": 1518830
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "broccoli_boiled_unsalted",
+      "names": {
+        "zh_cn": "西兰花（水煮沥干，无盐）",
+        "en_us": "Broccoli (boiled, drained, without salt)"
+      },
+      "aliases": [
+        "无盐水煮西兰花（沥干）"
+      ],
+      "category": "vegetables",
+      "state": "cooked",
+      "preparation": "Broccoli, boiled, drained, without salt",
+      "source": {
+        "fdc_id": 169967,
+        "ndb_number": "11091",
+        "publication_date": "2019-04-01",
+        "description": "Broccoli, cooked, boiled, drained, without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/169967/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 35.0,
+          "source_row_id": 1483810
+        },
+        "protein_g": {
+          "amount": 2.38,
+          "source_row_id": 1483773
+        },
+        "carbohydrate_g": {
+          "amount": 7.18,
+          "source_row_id": 1483809
+        },
+        "fat_g": {
+          "amount": 0.41,
+          "source_row_id": 1483734
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "carrot_raw",
+      "names": {
+        "zh_cn": "胡萝卜（生）",
+        "en_us": "Carrot (raw)"
+      },
+      "aliases": [
+        "生胡萝卜",
+        "raw carrots"
+      ],
+      "category": "vegetables",
+      "state": "raw",
+      "preparation": "Carrot, raw",
+      "source": {
+        "fdc_id": 170393,
+        "ndb_number": "11124",
+        "publication_date": "2019-04-01",
+        "description": "Carrots, raw",
+        "url": "https://fdc.nal.usda.gov/food-details/170393/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 41.0,
+          "source_row_id": 1519996
+        },
+        "protein_g": {
+          "amount": 0.93,
+          "source_row_id": 1519940
+        },
+        "carbohydrate_g": {
+          "amount": 9.58,
+          "source_row_id": 1519995
+        },
+        "fat_g": {
+          "amount": 0.24,
+          "source_row_id": 1519947
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "carrot_boiled_unsalted",
+      "names": {
+        "zh_cn": "胡萝卜（水煮沥干，无盐）",
+        "en_us": "Carrot (boiled, drained, without salt)"
+      },
+      "aliases": [
+        "无盐水煮胡萝卜（沥干）"
+      ],
+      "category": "vegetables",
+      "state": "cooked",
+      "preparation": "Carrot, boiled, drained, without salt",
+      "source": {
+        "fdc_id": 170394,
+        "ndb_number": "11125",
+        "publication_date": "2019-04-01",
+        "description": "Carrots, cooked, boiled, drained, without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/170394/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 35.0,
+          "source_row_id": 1520137
+        },
+        "protein_g": {
+          "amount": 0.76,
+          "source_row_id": 1520085
+        },
+        "carbohydrate_g": {
+          "amount": 8.22,
+          "source_row_id": 1520136
+        },
+        "fat_g": {
+          "amount": 0.18,
+          "source_row_id": 1520070
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "green_soybeans_boiled_unsalted",
+      "names": {
+        "zh_cn": "毛豆仁（水煮沥干，无盐）",
+        "en_us": "Edamame kernels (boiled, drained, without salt)"
+      },
+      "aliases": [
+        "无盐水煮毛豆仁（沥干）"
+      ],
+      "category": "soy",
+      "state": "cooked",
+      "preparation": "Green soybean kernels, boiled, drained, without salt",
+      "source": {
+        "fdc_id": 169283,
+        "ndb_number": "11451",
+        "publication_date": "2019-04-01",
+        "description": "Soybeans, green, cooked, boiled, drained, without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/169283/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 141.0,
+          "source_row_id": 1429842
+        },
+        "protein_g": {
+          "amount": 12.35,
+          "source_row_id": 1429875
+        },
+        "carbohydrate_g": {
+          "amount": 11.05,
+          "source_row_id": 1429841
+        },
+        "fat_g": {
+          "amount": 6.4,
+          "source_row_id": 1429840
+        }
+      },
+      "limitations": [
+        "Exclude pods from the edible weight."
+      ]
+    },
+    {
+      "food_id": "potato_flesh_and_skin_raw",
+      "names": {
+        "zh_cn": "土豆（生，带皮）",
+        "en_us": "Potato (raw, flesh and skin)"
+      },
+      "aliases": [
+        "带皮生土豆"
+      ],
+      "category": "tubers",
+      "state": "raw",
+      "preparation": "Potato flesh and skin, raw",
+      "source": {
+        "fdc_id": 170026,
+        "ndb_number": "11352",
+        "publication_date": "2019-04-01",
+        "description": "Potatoes, flesh and skin, raw",
+        "url": "https://fdc.nal.usda.gov/food-details/170026/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 77.0,
+          "source_row_id": 1488814
+        },
+        "protein_g": {
+          "amount": 2.05,
+          "source_row_id": 1488836
+        },
+        "carbohydrate_g": {
+          "amount": 17.49,
+          "source_row_id": 1488857
+        },
+        "fat_g": {
+          "amount": 0.09,
+          "source_row_id": 1488784
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "potato_peeled_boiled_unsalted",
+      "names": {
+        "zh_cn": "土豆（去皮水煮，无盐）",
+        "en_us": "Peeled potato (boiled without salt)"
+      },
+      "aliases": [
+        "无盐水煮去皮土豆"
+      ],
+      "category": "tubers",
+      "state": "cooked",
+      "preparation": "Potato flesh, boiled without skin, without salt",
+      "source": {
+        "fdc_id": 170440,
+        "ndb_number": "11367",
+        "publication_date": "2019-04-01",
+        "description": "Potatoes, boiled, cooked without skin, flesh, without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/170440/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 86.0,
+          "source_row_id": 1524014
+        },
+        "protein_g": {
+          "amount": 1.71,
+          "source_row_id": 1524037
+        },
+        "carbohydrate_g": {
+          "amount": 20.01,
+          "source_row_id": 1523972
+        },
+        "fat_g": {
+          "amount": 0.1,
+          "source_row_id": 1524020
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "sweet_potato_raw",
+      "names": {
+        "zh_cn": "红薯（生）",
+        "en_us": "Sweet potato (raw)"
+      },
+      "aliases": [
+        "生红薯",
+        "raw sweet potato"
+      ],
+      "category": "tubers",
+      "state": "raw",
+      "preparation": "Sweet potato, raw and unprepared",
+      "source": {
+        "fdc_id": 168482,
+        "ndb_number": "11507",
+        "publication_date": "2019-04-01",
+        "description": "Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)",
+        "url": "https://fdc.nal.usda.gov/food-details/168482/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 86.0,
+          "source_row_id": 1364142
+        },
+        "protein_g": {
+          "amount": 1.57,
+          "source_row_id": 1364224
+        },
+        "carbohydrate_g": {
+          "amount": 20.12,
+          "source_row_id": 1364141
+        },
+        "fat_g": {
+          "amount": 0.05,
+          "source_row_id": 1364199
+        }
+      },
+      "limitations": [
+        "Cultivar and preparation differences may affect applicability."
+      ]
+    },
+    {
+      "food_id": "sweet_potato_flesh_baked_unsalted",
+      "names": {
+        "zh_cn": "烤红薯（仅薯肉，无盐）",
+        "en_us": "Baked sweet potato (flesh only, without salt)"
+      },
+      "aliases": [
+        "无盐烤红薯肉"
+      ],
+      "category": "tubers",
+      "state": "cooked",
+      "preparation": "Baked in skin, flesh only, without salt",
+      "source": {
+        "fdc_id": 168483,
+        "ndb_number": "11508",
+        "publication_date": "2019-04-01",
+        "description": "Sweet potato, cooked, baked in skin, flesh, without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/168483/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 90.0,
+          "source_row_id": 1364254
+        },
+        "protein_g": {
+          "amount": 2.01,
+          "source_row_id": 1364334
+        },
+        "carbohydrate_g": {
+          "amount": 20.71,
+          "source_row_id": 1364253
+        },
+        "fat_g": {
+          "amount": 0.15,
+          "source_row_id": 1364310
+        }
+      },
+      "limitations": [
+        "Measure flesh only; this row does not cover steaming or added toppings."
+      ]
+    },
+    {
+      "food_id": "oats_unfortified_dry",
+      "names": {
+        "zh_cn": "未强化燕麦片（干）",
+        "en_us": "Unfortified regular or quick oats (dry)"
+      },
+      "aliases": [
+        "干燕麦片（未强化）"
+      ],
+      "category": "grains",
+      "state": "dry",
+      "preparation": "Regular or quick oats, unfortified, dry",
+      "source": {
+        "fdc_id": 173904,
+        "ndb_number": "8120",
+        "publication_date": "2019-04-01",
+        "description": "Cereals, oats, regular and quick, not fortified, dry",
+        "url": "https://fdc.nal.usda.gov/food-details/173904/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 379.0,
+          "source_row_id": 1815029
+        },
+        "protein_g": {
+          "amount": 13.15,
+          "source_row_id": 1815039
+        },
+        "carbohydrate_g": {
+          "amount": 67.7,
+          "source_row_id": 1815028
+        },
+        "fat_g": {
+          "amount": 6.52,
+          "source_row_id": 1815027
+        }
+      },
+      "limitations": []
+    },
+    {
+      "food_id": "plain_oats_water_cooked_unsalted",
+      "names": {
+        "zh_cn": "原味燕麦（水煮、未强化、无盐）",
+        "en_us": "Unenriched oats (cooked in water without salt)"
+      },
+      "aliases": [
+        "无盐水煮未强化燕麦"
+      ],
+      "category": "grains",
+      "state": "cooked",
+      "preparation": "Unenriched oats cooked in water without salt",
+      "source": {
+        "fdc_id": 173905,
+        "ndb_number": "8121",
+        "publication_date": "2019-04-01",
+        "description": "Cereals, oats, regular and quick, unenriched, cooked with water (includes boiling and microwaving), without salt",
+        "url": "https://fdc.nal.usda.gov/food-details/173905/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 71.0,
+          "source_row_id": 1815107
+        },
+        "protein_g": {
+          "amount": 2.54,
+          "source_row_id": 1815072
+        },
+        "carbohydrate_g": {
+          "amount": 12.0,
+          "source_row_id": 1815106
+        },
+        "fat_g": {
+          "amount": 1.52,
+          "source_row_id": 1815105
+        }
+      },
+      "limitations": [
+        "Reference hydration may differ from homemade oats; excludes milk and toppings."
+      ]
+    },
+    {
+      "food_id": "banana_raw",
+      "names": {
+        "zh_cn": "香蕉（生，去皮）",
+        "en_us": "Banana (raw, without peel)"
+      },
+      "aliases": [
+        "去皮生香蕉",
+        "raw peeled banana"
+      ],
+      "category": "fruit",
+      "state": "raw",
+      "preparation": "Raw banana flesh",
+      "source": {
+        "fdc_id": 173944,
+        "ndb_number": "9040",
+        "publication_date": "2019-04-01",
+        "description": "Bananas, raw",
+        "url": "https://fdc.nal.usda.gov/food-details/173944/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 89.0,
+          "source_row_id": 1817900
+        },
+        "protein_g": {
+          "amount": 1.09,
+          "source_row_id": 1817943
+        },
+        "carbohydrate_g": {
+          "amount": 22.84,
+          "source_row_id": 1817899
+        },
+        "fat_g": {
+          "amount": 0.33,
+          "source_row_id": 1817956
+        }
+      },
+      "limitations": [],
+      "portions": [
+        {
+          "source_row_id": 93515,
+          "amount": 1,
+          "measure_unit_id": 9999,
+          "modifier": "medium (7\" to 7-7/8\" long)",
+          "edible_grams": 118,
+          "applicability": "One medium raw banana, 7 to 7-7/8 inches long per USDA; edible flesh only, without peel."
+        }
+      ]
+    },
+    {
+      "food_id": "canola_oil_as_sold",
+      "names": {
+        "zh_cn": "低芥酸菜籽油",
+        "en_us": "Canola oil"
+      },
+      "aliases": [
+        "芥花油"
+      ],
+      "category": "oil",
+      "state": "as_sold",
+      "preparation": "Canola oil as sold",
+      "source": {
+        "fdc_id": 172336,
+        "ndb_number": "4582",
+        "publication_date": "2019-04-01",
+        "description": "Oil, canola",
+        "url": "https://fdc.nal.usda.gov/food-details/172336/nutrients"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "amount": 884.0,
+          "source_row_id": 1686730
+        },
+        "protein_g": {
+          "amount": 0.0,
+          "source_row_id": 1686713
+        },
+        "carbohydrate_g": {
+          "amount": 0.0,
+          "source_row_id": 1686723
+        },
+        "fat_g": {
+          "amount": 100.0,
+          "source_row_id": 1686687
+        }
+      },
+      "limitations": [
+        "Log amount consumed, not pan input. This row is not a proxy for unspecified cooking oil."
+      ]
+    }
+  ]
+}
