@@ -14,8 +14,8 @@ const mock = http.createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   if (req.method === 'OPTIONS') return res.end()
   const path = req.url.split('?')[0]
-  // Only forward the routes under test. In particular, no AI endpoints.
-  if (!/^\/api\/v1\/(?:health|food-normalization\/preview|food-logs(?:\/[0-9a-f-]+(?:\/confirm)?)?|nutrition\/daily)$/.test(path)) {
+  // Recognition is forwarded only to the isolated backend with an injected fixture provider.
+  if (!/^\/api\/v1\/(?:health|food-normalization\/preview|food-logs(?:\/recognize-text|\/[0-9a-f-]+(?:\/confirm)?)?|nutrition\/daily)$/.test(path)) {
     res.statusCode = 404
     return res.end('{}')
   }
@@ -38,7 +38,7 @@ try {
     mock.once('error', reject)
     mock.listen(5919, '127.0.0.1', resolve)
   })
-  backend=spawn('.venv/bin/python',['-m','uvicorn','app.main:app','--host','127.0.0.1','--port','5921'],
+  backend=spawn('.venv/bin/python',['-m','uvicorn','food_workflow_browser_app:app','--app-dir','tests','--host','127.0.0.1','--port','5921'],
     {cwd:'backend',env:{...process.env,GEMINI_API_KEY:'',MEALMIND_ENVIRONMENT:'development',
       MEALMIND_FOOD_LOG_DB_PATH:profile+'/isolated.sqlite',MEALMIND_CATALOG_PERSONALIZATION:'false'},stdio:['ignore','ignore','pipe']})
   let backendOutput = ''
@@ -219,6 +219,161 @@ with closing(sqlite3.connect(Path(sys.argv[1]).as_uri() + '?mode=ro', uri=True))
       reason: scenario === 'G' ? 'unsupported_serving_conversion' : 'portion_needs_review' })
     console.log(`PASS ${scenario}: outgoing payload → SQLite → confirmed log → Daily Nutrition → Today`)
   }
+  const recognizedCases = [
+    { description: '吃了150g去皮去骨鸡胸肉（生）', amount: 150, evidence: '150g', bind: true, calculate: true },
+    { description: '吃了150g去皮去骨鸡胸肉（生）', amount: 150, evidence: '150g', calculate: false, reason: 'portion_needs_review' },
+    { description: '吃了150g去皮去骨鸡胸肉（生）', amount: 150, evidence: '150g', editAmount: 151, calculate: false, reason: 'portion_needs_review' },
+    { description: '买了200g鸡胸肉，只吃了一部分', amount: null, evidence: '200g', calculate: false },
+    { description: '半碗糙米饭', amount: .5, evidence: '半碗', calculate: false },
+    { description: '吃了些低芥酸菜籽油', amount: null, evidence: null, calculate: false, reason: 'quantity_unknown' },
+  ]
+  for (const scenario of recognizedCases) {
+    await open('/log')
+    await until(() => js("!!document.querySelector('textarea')"))
+    await fill('textarea', scenario.description)
+    await click('AI 识别食物')
+    await visible('原文：「')
+    if (scenario.amount === null) {
+      assert.equal(await js("document.querySelector('input[type=number]').value"), '')
+    } else {
+      assert.equal(Number(await js("document.querySelector('input[type=number]').value")), scenario.amount)
+    }
+    const before = writes.length
+    await click('保存草稿')
+    await until(() => writes.length > before)
+    assert.equal(writes.at(-1).source, 'ai_text')
+    assert.equal(writes.at(-1).items[0].quantity, scenario.amount)
+    assert.equal(writes.at(-1).items[0].recognition_evidence.portion_text, scenario.evidence)
+    let draft = await until(async () => (await logs()).find((log) => log.status === 'draft'))
+    assert.equal(draft.recognition_weight_review, true)
+    assert.deepEqual(draft.items[0].recognition_evidence, writes.at(-1).items[0].recognition_evidence)
+    if (scenario.bind) {
+      await click('纠正草稿')
+      await visible('原文：「')
+      await click('查看食物匹配')
+      await until(() => js("!!document.querySelector('input[type=checkbox]')"))
+      await toggle()
+      await confirmReference()
+      await click('保存草稿')
+      draft = await until(async () => (await logs()).find((log) => log.status === 'draft' && log.revision === 2))
+      assert.equal(writes.at(-1).items[0].reference_binding.edible_weight_confirmed, true)
+      assert.equal(draft.items[0].reference_binding.food_id, raw)
+      assert.deepEqual(draft.items[0].recognition_evidence, writes.at(-1).items[0].recognition_evidence)
+    }
+    if (scenario.editAmount) {
+      await click('纠正草稿')
+      await visible('原文：「')
+      await fill('input[type=number]', String(scenario.editAmount))
+      await until(() => js("!document.body.innerText.includes('原文：「')"))
+      await click('保存草稿')
+      draft = await until(async () => (await logs()).find((log) => log.status === 'draft' && log.revision === 2))
+      assert.equal(writes.at(-1).items[0].recognition_evidence, undefined)
+      assert.equal(draft.items[0].recognition_evidence, undefined)
+      assert.equal(draft.items[0].quantity, scenario.editAmount)
+      assert.equal(draft.recognition_weight_review, true)
+    }
+    await click('确认实际吃过')
+    const confirmed = await until(async () => (await logs()).find((log) => log.status === 'confirmed'))
+    assert.deepEqual(confirmed.items, draft.items)
+    const daily = await (await fetch(api + '/api/v1/nutrition/daily?date=' + date)).json()
+    const result = daily.logs.find((log) => log.log_id === confirmed.id).items[0]
+    assert.equal(result.status, scenario.calculate ? 'calculated' : 'not_calculable')
+    assert.equal(daily.calculated_item_count, scenario.calculate ? 1 : 0)
+    if (scenario.calculate) {
+      assert.equal(Number(result.edible_grams), 150)
+      assert(Object.values(result.nutrients).every((value) => value !== null))
+    } else {
+      assert.equal(result.edible_grams, null)
+      if (scenario.reason) assert(result.reasons.includes(scenario.reason))
+    }
+    await open('/today')
+    await visible(scenario.calculate ? '已计算 1/1' : '已计算 0/1')
+    const timeOrigin = await js('performance.timeOrigin')
+    await cdp('Page.reload')
+    await until(async () => (await js('performance.timeOrigin')) !== timeOrigin)
+    await visible(scenario.calculate ? '已计算 1/1' : '已计算 0/1')
+    const deleted = await fetch(api + '/api/v1/food-logs/' + confirmed.id + '?expected_revision=' + confirmed.revision, { method: 'DELETE' })
+    assert.equal(deleted.status, 204)
+    console.log(`PASS recognition: ${scenario.description}; bound=${Boolean(scenario.bind)}; calculated=${scenario.calculate}`)
+  }
+
+  const cookingCases = [
+    ['炒菜用了8g油，但锅里还剩一些。', [''], [''], '炒菜用了8g油'],
+    ['炒菜用了8g油，但锅里还剩一些。 ', [''], [''], '炒菜用了8g油'],
+    ['炒菜用了8g油，但锅里还剩一些', [''], [''], '炒菜用了8g油'],
+    ['我吃了6g低芥酸菜籽油。', ['低芥酸菜籽油'], ['6'], null],
+    ['做菜用了9g菜籽油，这些油没吃，倒掉了。', [''], [''], '做菜用了9g菜籽油'],
+    ['我吃了150g糙米饭、一个鸡蛋，炒菜用了8g油，但锅里还剩一些。', ['糙米饭', '鸡蛋'], ['150', '1'], '炒菜用了8g油'],
+    ['没有吃午饭。', [''], [''], null],
+    ['我吃了食物，但测试提供方出错。', [''], [''], null, true],
+  ]
+  for (const [description, expectedNames, expectedQuantities, cookingQuote, fails] of cookingCases) {
+    await open('/log')
+    await until(() => js("!!document.querySelector('textarea')"))
+    await fill('textarea', description)
+    const count = writes.length
+    await click('AI 识别食物')
+    const errorText = 'AI 未能生成有效的识别建议。请重试或手动录入。'
+    if (fails) {
+      await visible(errorText)
+    } else if (cookingQuote) {
+      await visible('烹调用量证据。实际食用量未知。')
+      assert(await js(`[...document.querySelectorAll('li')].some(el=>el.textContent===${JSON.stringify(cookingQuote)})`))
+    } else if (expectedNames[0]) {
+      await visible('原文：「')
+    } else {
+      await visible('没有识别到食物。你可以手动添加，或调整描述后重试。')
+    }
+    assert.deepEqual(await js(`[...document.querySelectorAll(${JSON.stringify(names)})].map(el=>el.value)`), expectedNames)
+    assert.deepEqual(await js("[...document.querySelectorAll('input[type=number]')].map(el=>el.value)"), expectedQuantities)
+    assert.equal(await js(`document.body.innerText.includes(${JSON.stringify(errorText)})`), Boolean(fails))
+    assert.equal(writes.length, count)
+    assert.deepEqual(await logs(), [])
+    console.log(`PASS cooking evidence with mocked provider: ${description}`)
+  }
+
+  // Manual entry through the UI, then a synthetic pre-policy AI record in this database only.
+  await open('/log')
+  await until(() => js(`!!document.querySelector(${JSON.stringify(names)})`))
+  await fill(names, '低芥酸菜籽油')
+  await fill('input[type=number]', '6')
+  await fill(unit, 'g')
+  await click('保存草稿')
+  await until(async () => (await logs()).some((log) => log.status === 'draft'))
+  assert.equal(writes.at(-1).source, 'manual_text')
+  await click('确认实际吃过')
+  const manual = await until(async () => (await logs()).find((log) => log.status === 'confirmed'))
+  assert.equal(manual.recognition_weight_review, undefined)
+  await open('/today')
+  await visible('已计算 1/1')
+  assert.equal((await fetch(api + '/api/v1/food-logs/' + manual.id + '?expected_revision=' + manual.revision,
+                           { method: 'DELETE' })).status, 204)
+
+  const legacyDraft = await (await fetch(api + '/api/v1/food-logs', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      source: 'ai_text', consumed_at: date + 'T12:00:00+08:00',
+      items: [{ name: '低芥酸菜籽油', quantity: 6, unit: 'g' }],
+    }),
+  })).json()
+  const legacyResponse = await fetch(api + '/api/v1/food-logs/' + legacyDraft.id + '/confirm', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ expected_revision: 1 }),
+  })
+  assert.equal(legacyResponse.status, 200)
+  const legacy = await legacyResponse.json()
+  delete legacy.recognition_weight_review
+  const legacySeed = spawnSync('.venv/bin/python', ['-c', `
+import sqlite3, sys
+from contextlib import closing
+with closing(sqlite3.connect(sys.argv[1])) as db, db:
+ db.execute('UPDATE food_logs SET document = ? WHERE id = ?', (sys.argv[2], sys.argv[3]))
+`, profile + '/isolated.sqlite', JSON.stringify(legacy), legacy.id], { cwd: 'backend', encoding: 'utf8' })
+  assert.equal(legacySeed.status, 0, legacySeed.stderr)
+  const beforeAnalysis = await readFile(profile + '/isolated.sqlite')
+  await open('/today')
+  await visible('已计算 1/1')
+  assert.deepEqual(await readFile(profile + '/isolated.sqlite'), beforeAnalysis)
+  console.log('PASS manual and pre-policy unbound entries: SQLite → Daily Nutrition → Today')
 } finally {
   ws?.close()
   chrome?.kill()

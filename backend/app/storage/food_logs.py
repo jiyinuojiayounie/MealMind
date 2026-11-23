@@ -94,7 +94,9 @@ class FoodLogStore:
     def create(self, payload: FoodLogCreate) -> FoodLog:
         now = datetime.now(timezone.utc)
         log = FoodLog(
-            **payload.model_dump(exclude={"items"}), items=bind_draft_items(payload.items, now), id=uuid4(), status="draft", revision=1, created_at=now, updated_at=now,
+            **payload.model_dump(exclude={"items"}), items=bind_draft_items(payload.items, now, payload.description),
+            recognition_weight_review=payload.source != "manual_text" or any(item.recognition_evidence for item in payload.items),
+            id=uuid4(), status="draft", revision=1, created_at=now, updated_at=now,
         )
         with self.connection(write=True) as db:
             db.execute(
@@ -138,14 +140,20 @@ class FoodLogStore:
             raise FoodLogStorageUnavailable from None
         return sorted(logs, key=lambda log: (log.consumed_at, log.id))
 
-    def update(self, log_id: UUID, payload: FoodLogDraft, expected_revision: int) -> FoodLog:
+    def update(
+        self, log_id: UUID, payload: FoodLogDraft, expected_revision: int, *, recognition_applied: bool = False,
+    ) -> FoodLog:
         with self.connection(write=True) as db:
             log = self._read(db, log_id)
             if log.status != "draft" or log.revision != expected_revision:
                 raise FoodLogConflict
             now = datetime.now(timezone.utc)
             log = log.model_copy(update={
-                **payload.model_dump(exclude={"items"}), "items": bind_draft_items(payload.items, now),
+                **payload.model_dump(exclude={"items"}), "items": bind_draft_items(payload.items, now, payload.description),
+                "recognition_weight_review": (
+                    log.recognition_weight_review or log.source != "manual_text" or recognition_applied
+                    or any(item.recognition_evidence for item in payload.items)
+                ),
                 "revision": log.revision + 1, "updated_at": now,
             })
             self._save(db, log)

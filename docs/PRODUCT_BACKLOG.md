@@ -4,7 +4,10 @@ These improvements follow the first end-to-end MVP core loop (Plan → Log → A
 
 | Priority | Deferred issue | Production-quality review |
 | --- | --- | --- |
-| P0 | Food normalization and reference matching (P0.1) | Review the bilingual, state-aware matching design and 50-case evaluation. Separate food identity, catalog gaps and portion conversion. Preserve original logs and use verified reference candidates only. [Design](FOOD_NORMALIZATION_DESIGN.md) |
+| P0 | Protect consumed-weight evidence (P0.2D) | Abstain on pan input and measurement-state or edible-basis conflict. Add regression fixtures before broadening food identity matching. |
+| P0 | Improve food normalization beyond exact labels | Parse explicit state and preparation clauses, recognize reviewed bilingual synonyms, and separate known catalog gaps from unresolved identities. Evaluate changes on a new independently reviewed sample. [Holdout results](../evaluation/FOOD_NORMALIZATION_HOLDOUT_V1_REPORT.md) |
+| P1 | Expand verified nutrition reference coverage | Prioritize common staples, beverages and nonmatching preparations by usage evidence. Add only traceable compatible references and serving conversions. |
+| P1 | Measure optional semantic matching | Defer until deterministic retrieval produces usable verified shortlists and weight safety passes. Use a controlled opt-in comparison with server validation and user confirmation. |
 | P0 | Complete-meal quality and verified portions | Review complete lunches and dinners for practical protein, staple, and vegetable coverage. Verify edible weights and serving sizes before using portions in nutrition estimates. |
 | P0 | Cooking effort and practical one-person templates | Cook through representative single-serving meals and check declared prerequisites, elapsed time, and independently prepared dishes. Revalidate convenience ranking against those estimates. |
 | P1 | Breakfast simplicity | Curate and test combined breakfasts and cooked dishes with ready-to-eat accompaniments. Check whether they reduce separate cooking work while covering the intended breakfast roles. |

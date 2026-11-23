@@ -30,6 +30,17 @@ class FoodItem(FoodLogInput):
     preparation_method: ShortText | None = None
 
 
+class RecognitionEvidence(FoodLogInput):
+    name: ShortText
+    preparation_method: ShortText | None = None
+    quote: Annotated[str, Field(min_length=1, max_length=600)]
+    portion_text: ShortText | None = None
+    weighing_text: ShortText | None = None
+    context: ShortText
+    decision: Literal["accepted", "withheld", "unspecified"]
+    reason: ShortText | None = None
+
+
 class FoodReferenceSelection(FoodLogInput):
     food_id: ShortText
     reference_version: ShortText
@@ -59,10 +70,12 @@ class InvalidFoodReferenceBinding(FoodLogInput):
 
 
 class FoodItemDraft(FoodItem):
+    recognition_evidence: RecognitionEvidence | None = None
     reference_binding: FoodReferenceSelection | None = None
 
 
 class LoggedFoodItem(FoodItem):
+    recognition_evidence: RecognitionEvidence | None = Field(default=None, exclude_if=lambda value: value is None)
     reference_binding: FoodReferenceBinding | InvalidFoodReferenceBinding | None = Field(
         default=None, exclude_if=lambda binding: binding is None,
     )
@@ -105,6 +118,7 @@ class FoodLogCreate(FoodLogDraft):
 
 class FoodLogUpdate(FoodLogDraft):
     expected_revision: Revision
+    recognition_applied: StrictBool = False
 
 
 class FoodLogConfirmation(FoodLogInput):
@@ -112,6 +126,7 @@ class FoodLogConfirmation(FoodLogInput):
 
 
 class FoodLog(FoodLogCreate):
+    recognition_weight_review: StrictBool = Field(default=False, exclude_if=lambda value: not value)
     items: Annotated[list[LoggedFoodItem], Field(min_length=1, max_length=50)]
     id: UUID
     status: FoodLogStatus

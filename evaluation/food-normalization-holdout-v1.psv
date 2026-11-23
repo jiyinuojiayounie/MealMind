@@ -1,0 +1,81 @@
+id|category|input|identity|references|clarification|portion|reason
+01|rice_grains|昨晚剩的无盐长粒白米饭，米是未强化的，称了 115g|M|white_rice_long_grain_unenriched_cooked|none|E|Leftover cooked rice and all reference qualifiers are stated.
+02|rice_grains|淘洗前称了 75 克未强化的生长粒白米|M|white_rice_long_grain_unenriched_raw|none|E|Mass measured before cooking and variety and enrichment are explicit.
+03|rice_grains|Long-grain brown rice straight from the cooker, an unknown amount|M|brown_rice_long_grain_cooked|none|Q|Cooker and cooked-food context establish state, no amount.
+04|rice_grains|分装的长粒糙米，没煮，一小把|M|brown_rice_long_grain_raw|none|X|Uncooked variety is explicit, handful has no verified conversion.
+05|rice_grains|杂粮饭 120g|G||none|E|Mixed grain rice has no exact reference and no known recipe.
+06|rice_grains|煮好的粳米饭 130g|G||none|E|Explicit short or medium grain japonica cannot be substituted with long grain.
+07|rice_grains|一口剩米饭|C||required|X|Cooked rice, but variety and enrichment unknown, bite has no verified conversion.
+08|rice_grains|plain quick oats, not fortified, weighed 35 g before cooking|M|oats_unfortified_dry|none|E|Unfortified oats and pre-cooking measurement identify the dry reference.
+09|rice_grains|未强化燕麦用清水煮，不放盐，吃了两勺|M|plain_oats_water_cooked_unsalted|none|X|Ingredients and preparation fit, spoon has no verified conversion.
+10|rice_grains|半盒即食甜燕麦杯|G||none|X|Prepared sweetened oats have no matching record or box conversion.
+11|meat_eggs|鸡胸净肉，去骨去皮，还是生的，称了 125 克|M|chicken_breast_skinless_boneless_raw|none|E|Exact raw state and edible basis stated.
+12|meat_eggs|skinless chicken breast meat only, oven-roasted, 145g after roasting|M|chicken_breast_meat_roasted|none|E|Explicit roast and cooked edible weight.
+13|meat_eggs|鸡胸纯肉清炖好了，一小块|M|chicken_breast_meat_stewed|none|X|Stewed meat only, no verified piece conversion.
+14|meat_eggs|白灼鸡胸 90 克|G||none|R|Blanching is distinct from stewing or roasting; weight basis unspecified.
+15|meat_eggs|家里切的鸡胸，两片|C|chicken_breast_skinless_boneless_raw,chicken_breast_meat_roasted,chicken_breast_meat_stewed|required|X|No state or prep, candidates are conditional on confirmation.
+16|meat_eggs|chicken breast seasoned with salt, skin-on and oven roasted, ate 90g|G||none|R|Explicit skin-on preparation is incompatible with meat-only catalog.
+17|meat_eggs|打进碗里的生鸡蛋液，全蛋 48g，不含壳|M|whole_egg_raw|none|E|Whole raw egg and shelled mass, not processed carton egg.
+18|meat_eggs|早餐那颗蛋是清水煮到蛋黄全凝固的，剥完壳还没称|M|whole_egg_hard_boiled|none|X|One whole hard-boiled egg, generic count lacks size evidence.
+19|meat_eggs|我吃了个溏心蛋|G||none|X|Explicit soft-set yolk differs from hard-boiled; generic count unsupported.
+20|meat_eggs|鸡蛋羹，蒸的，称了净重 120g|G||none|E|Steamed custard has no exact reference and is not raw egg.
+21|noodles|越南米线还没煮，干货称了 65g|M|rice_noodles_dry|none|E|Dry rice noodle identity and weight explicit.
+22|noodles|room-temp plain rice vermicelli, boiled and drained then weighed 105 g|M|rice_noodles_cooked|none|E|Rice vermicelli is cooked and drained before measurement.
+23|noodles|从锅里捞起来的日式荞麦面，没有汤，一筷子|M|soba_cooked|none|X|Cooked Japanese soba explicit, chopstick portion has no verified weight.
+24|noodles|soba 日本荞麦面，直接拆包装称 dry 的，45g|M|soba_dry|none|E|Japanese soba and explicit dry measurement.
+25|noodles|100g noodle|C||required|R|Type and measurement state missing.
+26|noodles|乌冬面，不加汤，大概半包|G||none|X|Wheat udon absent, package conversion unavailable.
+27|noodles|粉丝捞了一小碗，绿豆做的|G||none|X|Mung bean glass noodle is distinct from rice noodle.
+28|noodles|plain ramen noodles, 95 g cooked|G||none|E|Ramen wheat noodles have no compatible record.
+29|noodles|干日式荞麦面约55克|M|soba_dry|none|R|Identity clear; approximate mass requires confirmation under conservative v1 policy.
+30|noodles|rice nodles, dry 30 g|C|rice_noodles_dry|required|E|Typo can offer a dry noodle candidate, confirmation required.
+31|vegetables_soy|北京小白菜，掰下来生吃的，没称|M|bok_choy_raw|none|Q|Explicit raw bok choy, no amount.
+32|vegetables_soy|bok choi, boiled in plain water and drained, no added salt, 85g|M|bok_choy_boiled_unsalted|none|E|Ordinary bok choy spelling and exact cooking evidence.
+33|vegetables_soy|西蓝花掰了三朵直接生吃|M|broccoli_raw|none|X|Common synonym and raw state clear, floret counts lack verified weight.
+34|vegetables_soy|西兰花炒蒜蓉，60g成菜|G||none|E|Stir-fried recipe has no corresponding boiled reference.
+35|vegetables_soy|红萝卜切条生吃的，称了 42 克|M|carrot_raw|none|E|Existing regional term denotes carrot; raw explicit.
+36|vegetables_soy|carrot sticks simmered with no salt, drained before weighing 55 g|M|carrot_boiled_unsalted|none|E|Plain water cooking and drained basis match.
+37|vegetables_soy|一勺毛豆，水煮的|C|green_soybeans_boiled_unsalted|required|X|Shelled, drained and unsalted basis missing, no spoon conversion.
+38|vegetables_soy|水煮毛豆剥出的豆仁，沥干没放盐，净重 52g|M|green_soybeans_boiled_unsalted|none|E|Kernel, plain cooking, drainage and mass specified.
+39|vegetables_soy|嫩豆腐，一小盒|G||none|X|Explicit soft tofu is outside firm tofu record.
+40|vegetables_soy|硬豆腐，一块，不知道凝固剂和做法|C|firm_tofu_calcium_sulfate_raw|required|X|Firmness alone cannot establish coagulant or preparation.
+41|roots_fruit_oil|potato, unpeeled and raw, 66g total|M|potato_flesh_and_skin_raw|none|E|Explicit raw whole edible peel and flesh.
+42|roots_fruit_oil|洋芋削皮清水煮，没加盐，捞出称 138 克|M|potato_peeled_boiled_unsalted|none|E|Regional potato term with plain peeled preparation and cooked mass.
+43|roots_fruit_oil|几口炸薯条|G||none|X|Fried preparation absent and bite count cannot be converted.
+44|roots_fruit_oil|sweet potato, skin removed, steamed, ate 70g|G||none|E|Steamed sweet potato differs materially from raw and baked.
+45|roots_fruit_oil|没烤的生地瓜，直接按可食部分称重 96g|M|sweet_potato_raw|none|E|Raw sweet potato synonym and edible weight stated.
+46|roots_fruit_oil|原味烤番薯 不加盐 只吃瓤 88克|M|sweet_potato_flesh_baked_unsalted|none|E|Baked flesh without salt, measured eaten mass.
+47|roots_fruit_oil|掰了半根大香蕉，剥皮生吃|M|banana_raw|none|X|Raw peeled identity explicit; large size is not verified medium.
+48|roots_fruit_oil|香蕉奶昔 200 ml|G||none|X|Mixed drink lacks catalog record and mass lookup.
+49|roots_fruit_oil|低芥酸菜籽油 6g，全部拌入并吃下|M|canola_oil_as_sold|none|E|Explicit canola and consumed mass.
+50|roots_fruit_oil|canola oil 8g in the skillet; some left behind|M|canola_oil_as_sold|none|Q|Food identified, amount consumed unknown; pan mass cannot stand in.
+51|mixed_dishes|一盘干锅花菜|G||none|X|Multi-ingredient restaurant dish absent.
+52|mixed_dishes|鸡丝凉面，半人份|G||none|X|Exact mixed dish absent; no fraction-of-serving weight.
+53|mixed_dishes|150g 咖喱鸡土豆成菜|G||none|E|Prepared mixture has edible mass but no reference.
+54|mixed_dishes|煲仔饭吃了100g，腊肠和饭一起称|G||none|E|Explicit mixture cannot use plain rice reference.
+55|mixed_dishes|两块锅包肉|G||none|X|Fried and sauced dish absent; piece size unknown.
+56|mixed_dishes|一小勺泡菜炒饭|G||none|X|Mixed fried rice has no verified reference or spoon conversion.
+57|mixed_dishes|一碗清汤馄饨 含汤|G||none|X|Bowl of broth and wontons lacks exact record.
+58|mixed_dishes|手撕鸡拌黄瓜 110g|G||none|E|Whole dish mass explicit; do not decompose.
+59|mixed_dishes|3 tbsp Japanese curry over rice|G||none|X|Mixed meal absent; volumetric unit unresolved.
+60|mixed_dishes|kimchi jjigae 一锅分了三人，我吃了一份|G||none|X|Mixed stew absent, fraction alone yields no edible mass.
+61|beverages_snacks|豆浆，无糖的，一袋|G||none|X|Soy beverage outside verified foods; bag unspecified.
+62|beverages_snacks|无糖乌龙茶 350 mL|G||none|X|No tea record or food-specific volume reference.
+63|beverages_snacks|matcha milk tea，加珍珠，中杯|G||none|X|Prepared milk tea absent; medium is vendor-specific.
+64|beverages_snacks|黑咖啡几口|G||none|X|Brewed coffee absent; sips are not weight.
+65|beverages_snacks|手冲咖啡 180毫升|G||none|X|No coffee or serving conversion.
+66|beverages_snacks|蛋卷一小包|C||required|X|Egg wafer and rolled omelet interpretations differ and neither is established.
+67|beverages_snacks|吃了两片海苔|G||none|X|Seaweed snack absent; sheets lack a verified mass.
+68|beverages_snacks|去壳茶叶蛋 一个|G||none|X|Marinated egg differs from plain hard-boiled reference.
+69|beverages_snacks|coconut jelly 75g|G||none|E|Exact snack absent; mass explicit.
+70|beverages_snacks|牛奶100ml|G||none|X|Dairy milk absent at any fat level; no conversion.
+71|uncertain_and_portion|全鸡蛋（生，去壳）- 50g|M|whole_egg_raw|none|R|Identity explicit; dash could be negative or separator, hold weight for confirmation.
+72|uncertain_and_portion|raw pak choi 1e2g|M|bok_choy_raw|none|R|Identity explicit; unsupported numeric notation must not become a partial mass.
+73|uncertain_and_portion|100g unsalted peeled boiled potato?|M|potato_peeled_boiled_unsalted|none|E|Trailing question punctuation leaves fully specified label and weight; disputable if it signals identity uncertainty.
+74|uncertain_and_portion|大概1到2片全熟的去壳水煮鸡蛋|M|whole_egg_hard_boiled|none|R|Identity clear, range and slices are not a single verified portion.
+75|uncertain_and_portion|USDA large whole egg (raw, without shell), count 2|M|whole_egg_raw|none|V|Explicit USDA large size, raw edible basis and count match existing serving.
+76|uncertain_and_portion|USDA medium banana, peeled, exactly 7.5 inches long, ate one|M|banana_raw|none|V|Explicit standard length and peeled whole fruit satisfy the verified row.
+77|uncertain_and_portion|熟洋芋 100 克，带皮，忘了怎么做的|C||required|R|State cooked, but incompatible with both observed reference states or preparation details; preparation and weight basis uncertain.
+78|uncertain_and_portion|那个白白的，吃了一点|U||identify|Q|Insufficient description to locate a food family or reliable weight.
+79|uncertain_and_portion|brkl with lunch, not sure how much|U||identify|Q|Abbreviation could refer to multiple foods, no reviewed resolution.
+80|uncertain_and_portion|便当右上角一坨，啥菜忘了|U||identify|X|Unknown food; colloquial blob count has no mass equivalence.

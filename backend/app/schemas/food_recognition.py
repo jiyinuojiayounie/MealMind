@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 from pydantic import Field, field_validator, model_validator
 
 from app.schemas.food_logs import (
-    Description, FoodItem, FoodLogInput, ShortText, require_nonblank_description,
+    Description, FoodItem, FoodLogInput, RecognitionEvidence, ShortText, require_nonblank_description,
 )
 
 
@@ -25,10 +25,17 @@ class QuotedFoods(FoodLogInput):
 
 
 class ProposedFoodItem(FoodItem):
+    recognition_evidence: RecognitionEvidence | None = Field(default=None, exclude_if=lambda value: value is None)
     portion_note: Literal["quantity_unspecified", "portion_needs_review"] | None = None
 
 
+class CookingOilEvidence(FoodLogInput):
+    quote: ShortText
+    portion_text: ShortText
+
+
 class FoodRecognitionResponse(FoodLogInput):
+    cooking_evidence: list[CookingOilEvidence] = Field(default_factory=list, exclude_if=lambda value: not value)
     description: Description
     source: Literal["ai_text"] = "ai_text"
     status: Literal["draft"] = "draft"

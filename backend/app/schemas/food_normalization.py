@@ -4,8 +4,12 @@ from typing import Annotated, Literal
 from pydantic import Field, StrictBool
 
 from app.schemas.food_logs import FoodItem, FoodLogInput
-
 from app.schemas.nutrition_reference import FoodNames, ReferenceRecord, Text
+
+PortionIssue = Literal[
+    "consumed_amount_unknown", "cooking_input", "purchased_or_prepared", "remaining_or_discarded",
+    "partial_consumption", "measurement_state_unclear", "edible_basis_unclear", "zero_amount",
+]
 
 IdentityStatus = Literal[
     "matched", "ambiguous_identity", "food_state_unknown", "unsupported_food", "insufficient_information",
@@ -44,6 +48,9 @@ class FoodNormalizationResult(ReferenceRecord):
     preparation: str | None = None
     food_state: FoodState | None = None
     quantity: Decimal | None = None
+    reported_quantity: Decimal | None = None
+    reported_unit: str | None = None
+    portion_issue: PortionIssue | None = None
     unit: str | None = None
     portion_status: PortionStatus
     requires_edible_weight_confirmation: bool

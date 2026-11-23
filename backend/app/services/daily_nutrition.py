@@ -33,7 +33,10 @@ def analyze_confirmed_logs(
             raise ValueError("Analysis requires distinct confirmed logs for the requested date.")
         seen_ids.add(log.id)
         items = tuple(
-            IndexedItemNutrition(item_index=index, **calculator.calculate_item(item).model_dump())
+            IndexedItemNutrition(
+                item_index=index,
+                **calculator.calculate_item(item, recognition_weight_review=log.recognition_weight_review).model_dump(),
+            )
             for index, item in enumerate(log.items)
         )
         analyses.append(LogNutritionAnalysis(

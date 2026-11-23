@@ -27,7 +27,7 @@ def normalizer():
         ("海南鸡饭一份", "unsupported_food", None, "conversion_unavailable"),
         ("Latte", "unsupported_food", None, "quantity_unknown"),
         ("  80Ｇ，生西蘭花。 ", "matched", "broccoli_raw", "edible_mass"),
-        ("canola oil in the pan, 15g", "matched", "canola_oil_as_sold", "quantity_unknown"),
+        ("canola oil in the pan, 15g", "matched", "canola_oil_as_sold", "needs_review"),
         ("烤鸡胸肉（仅肉），150 g，生重", "food_state_unknown", None, "needs_review"),
         ("三杯鸡", "unsupported_food", None, "quantity_unknown"),
     ],
@@ -137,3 +137,42 @@ def test_structured_pan_quantity_still_requires_review(normalizer):
     result = normalizer.match_item(FoodItem(name="canola oil in the pan", quantity=15, unit="g"))
     assert result.quantity == Decimal(15)
     assert result.portion_status == "needs_review"
+
+
+@pytest.mark.parametrize(("phrase", "amount", "issue"), [
+    ("7g canola oil poured into a wok, 还有剩余", 7, "remaining_or_discarded"),
+    ("倒入锅的菜籽油 12g", 12, "cooking_input"),
+    ("买了生鸡胸肉 300g", 300, "purchased_or_prepared"),
+    ("I made 175g of rice noodles but only ate part", 175, "partial_consumption"),
+    ("oven-roasted chicken breast, weighed raw 88g", 88, "measurement_state_unclear"),
+    ("带骨的鸡腿 97g", 97, "edible_basis_unclear"),
+    ("skin-on roasted chicken breast 93g", 93, "edible_basis_unclear"),
+    ("banana weighed with the peel 130g", 130, "edible_basis_unclear"),
+    ("pasta 125g", 125, "measurement_state_unclear"),
+])
+def test_reports_unsafe_weight_evidence_without_upgrading_to_consumed_weight(normalizer, phrase, amount, issue):
+    result = normalizer.match_text(phrase)
+    assert result.original == phrase
+    assert result.reported_quantity == amount
+    assert result.reported_unit == "g"
+    assert result.portion_status == "needs_review"
+    assert result.portion_issue == issue
+    assert not result.requires_edible_weight_confirmation
+    assert result.portion_source_row_id is None
+
+
+def test_zero_consumption_is_distinct_from_unknown_and_neither_can_calculate(normalizer):
+    zero = normalizer.match_text("canola oil 0g")
+    unknown = normalizer.match_text("canola oil, amount eaten unknown")
+    assert zero.reported_quantity == 0 and zero.portion_issue == "zero_amount"
+    assert zero.portion_status == "needs_review" and not zero.requires_edible_weight_confirmation
+    assert unknown.reported_quantity is None and unknown.portion_status == "quantity_unknown"
+
+
+def test_explicit_edible_grams_and_household_measure_are_distinct(normalizer):
+    edible = normalizer.match_text("canola oil, 4g edible")
+    bowl = normalizer.match_text("one bowl of cooked long-grain brown rice")
+    assert edible.quantity == 4 and edible.portion_status == "edible_mass"
+    assert edible.requires_edible_weight_confirmation
+    assert bowl.reported_quantity == 1 and bowl.portion_status == "conversion_unavailable"
+    assert bowl.portion_source_row_id is None

@@ -10,6 +10,17 @@ export type FoodItem = {
   preparation_method: string | null
 }
 
+export type RecognitionEvidence = {
+  name: string
+  preparation_method: string | null
+  quote: string
+  portion_text: string | null
+  weighing_text: string | null
+  context: string
+  decision: 'accepted' | 'withheld' | 'unspecified'
+  reason: string | null
+}
+
 export const foodStates = ['raw', 'cooked', 'dry', 'as_sold'] as const
 export type FoodState = (typeof foodStates)[number]
 
@@ -28,6 +39,7 @@ export type SavedReference = ReferenceSelection & {
 }
 
 type LoggedFoodItem = FoodItem & {
+  recognition_evidence?: RecognitionEvidence
   reference_binding?: SavedReference | { status: 'invalid_binding' } | null
 }
 
@@ -45,7 +57,7 @@ export type FoodLogDraft = {
   meal_type: (typeof logMealTypes)[number]
   consumed_at: string
   description: string | null
-  items: (FoodItem & { reference_binding?: ReferenceSelection })[]
+  items: (FoodItem & { reference_binding?: ReferenceSelection; recognition_evidence?: RecognitionEvidence })[]
 }
 
 export type FoodLogSource = 'manual_text' | 'ai_text' | 'ai_image'
@@ -53,7 +65,11 @@ export type RecognitionSource = Exclude<FoodLogSource, 'manual_text'>
 export type PortionNote = 'quantity_unspecified' | 'portion_needs_review' | null
 type RecognitionNote = 'no_identifiable_foods' | 'description_needs_review'
 
-type RecognizedItem = FoodItem & { portion_note: PortionNote; identity_uncertain?: boolean }
+type RecognizedItem = FoodItem & {
+  portion_note: PortionNote
+  identity_uncertain?: boolean
+  recognition_evidence?: RecognitionEvidence
+}
 
 export type FoodRecognition = ({
   source: 'ai_text'
@@ -65,9 +81,11 @@ export type FoodRecognition = ({
   notes: ('no_identifiable_foods' | 'image_needs_review')[]
 }) & {
   items: RecognizedItem[]
+  cooking_evidence?: { quote: string; portion_text: string }[]
 }
 
 export type FoodLog = Omit<FoodLogDraft, 'items'> & {
+  recognition_weight_review?: boolean
   items: LoggedFoodItem[]
   id: string
   source: FoodLogSource
@@ -107,9 +125,18 @@ function isShortText(value: unknown): value is string {
   return typeof value === 'string' && value.trim() !== '' && Array.from(value).length <= 120
 }
 
+function isEvidence(value: unknown): value is RecognitionEvidence {
+  return isRecord(value) && isShortText(value.name) && typeof value.quote === 'string'
+    && value.quote.length > 0 && value.quote.length <= 1200 && isShortText(value.context)
+    && (value.decision === 'accepted' || value.decision === 'withheld' || value.decision === 'unspecified')
+    && [value.preparation_method, value.portion_text, value.weighing_text, value.reason]
+      .every((field) => field === null || isShortText(field))
+}
+
 function isRecognizedItem(value: unknown): value is RecognizedItem {
   return isRecord(value) && (value.portion_note === null || value.portion_note === 'quantity_unspecified'
-    || value.portion_note === 'portion_needs_review') && isItem(value)
+    || value.portion_note === 'portion_needs_review')
+    && (value.recognition_evidence === undefined || isEvidence(value.recognition_evidence)) && isItem(value)
 }
 
 function isRecognitionNote(value: unknown): value is RecognitionNote {
@@ -123,6 +150,7 @@ function isTimestamp(value: unknown): value is string {
 function isLoggedItem(value: unknown): value is LoggedFoodItem {
   if (!isRecord(value)) return false
   const binding = value.reference_binding
+  if (value.recognition_evidence !== undefined && !isEvidence(value.recognition_evidence)) return false
   if (!isItem(value)) return false
   if (binding == null) return true
   if (!isRecord(binding)) return false
@@ -167,8 +195,11 @@ export function recognizeFoodText(description: string, signal: AbortSignal): Pro
   return requestJson(`${path}/recognize-text`, (value) => {
     if (isRecord(value) && value.description === description && value.source === 'ai_text' && value.status === 'draft'
       && Array.isArray(value.items) && value.items.length <= 50 && value.items.every(isRecognizedItem)
-      && Array.isArray(value.notes) && value.notes.every(isRecognitionNote)) {
-      return { source: 'ai_text', description, items: value.items, notes: value.notes }
+      && Array.isArray(value.notes) && value.notes.every(isRecognitionNote)
+      && (value.cooking_evidence === undefined || (Array.isArray(value.cooking_evidence)
+        && value.cooking_evidence.every((entry: unknown) => isRecord(entry) && isShortText(entry.quote)
+          && isShortText(entry.portion_text))))) {
+      return { cooking_evidence: value.cooking_evidence, source: 'ai_text', description, items: value.items, notes: value.notes }
     }
     throw new Error('Invalid food recognition proposal')
   }, { ...options, timeoutMs: 35_000, body: { description }, signal })
@@ -204,7 +235,7 @@ export function saveFoodLog(
 ) {
   if (existing) {
     return requestJson(`${path}/${encodeURIComponent(existing.id)}`, parseLog, {
-      ...options, method: 'PUT', body: { ...draft, expected_revision: existing.revision }, signal,
+      ...options, method: 'PUT', body: { ...draft, expected_revision: existing.revision, recognition_applied: source !== 'manual_text' }, signal,
     })
   }
   return requestJson(path, parseLog, { ...options, body: { ...draft, source }, signal })

@@ -77,8 +77,8 @@ def list_logs(
 @router.put("/{log_id}")
 def correct_draft(log_id: UUID, payload: FoodLogUpdate, store: Store) -> FoodLog:
     return store.update(
-        log_id, FoodLogDraft.model_validate(payload.model_dump(exclude={"expected_revision"})),
-        payload.expected_revision,
+        log_id, FoodLogDraft.model_validate(payload.model_dump(exclude={"expected_revision", "recognition_applied"})),
+        payload.expected_revision, recognition_applied=payload.recognition_applied,
     )
 
 

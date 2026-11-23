@@ -298,6 +298,13 @@
       "items": "食物明细",
       "manualHelp": "请手动填写至少一项食物。如果填写描述，原文会单独保存，不确定的数量可以留空。",
       "ai": {
+        "evidence": "原文：「{{quote}}」",
+        "weighing": "称重信息：{{text}}",
+        "cookingContextOnly": "烹调用量证据。实际食用量未知。",
+        "noConsumedItems": "这段文字没有明确说明吃了什么。",
+        "cookingEvidence": "原文是烹调用量。如果知道实际吃了多少，可以填写。",
+        "withheldEvidence": "原文无法确定实际食用量。",
+        "reviewWeight": "如需按重量估算营养，请确认食物参考和对应的可食重量。",
         "action": "AI 识别食物",
         "loading": "正在识别食物…",
         "help": "可选。识别时会把描述发送给 Gemini，你也可以手动填写。",

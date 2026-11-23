@@ -301,6 +301,13 @@
       "items": "Food items",
       "manualHelp": "Add at least one food item by hand. If you enter a description, it’s saved separately. Leave quantities blank if you don’t know them.",
       "ai": {
+        "evidence": "Source: “{{quote}}”",
+        "weighing": "Weighing information: {{text}}",
+        "cookingContextOnly": "Cooking evidence. The amount eaten is unknown.",
+        "noConsumedItems": "No confirmed food intake was identified in this text.",
+        "cookingEvidence": "The amount is for cooking. Enter the amount eaten only if known.",
+        "withheldEvidence": "The source does not establish how much you ate.",
+        "reviewWeight": "For nutrition estimates from an entered weight, confirm the food reference and its edible weight.",
         "action": "Recognize with AI",
         "loading": "Recognizing food…",
         "help": "Optional. Recognition sends your description to Gemini for suggestions. You can also enter the items yourself.",

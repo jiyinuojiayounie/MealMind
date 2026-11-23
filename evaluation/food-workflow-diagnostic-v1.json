@@ -1,0 +1,17 @@
+[
+  {"id":"T01","origin":"new_synthetic","text":"我吃了150g糙米饭","provider":[["糙米饭","150g糙米饭","150g",null]],"gold":[["糙米饭",null,150,"g","C",null,true]]},
+  {"id":"T02","origin":"new_synthetic","text":"炒菜用了8g油，但锅里还剩一些","provider":[["油","8g油","8g",null]],"gold":[["油",null,null,null,"U",null,true]]},
+  {"id":"T03","origin":"existing_test","text":" 午饭吃了150g鸡胸肉、半碗糙米饭，还有一些青菜。 ","provider":[["鸡胸肉","150g鸡胸肉","150g",null],["糙米饭","半碗糙米饭","半碗",null],["青菜","一些青菜","一些",null]],"gold":[["鸡胸肉",null,150,"g","C",null,true],["糙米饭",null,0.5,"碗","C",null,true],["青菜",null,null,null,"C",null,true]]},
+  {"id":"T04","origin":"existing_test","text":"I ate 1–2 bowls of rice.","provider":[["rice","1–2 bowls of rice","1–2 bowls",null]],"gold":[["rice",null,null,null,"U",null,true]]},
+  {"id":"T05","origin":"new_synthetic","text":"I ate 84g skinless boneless chicken breast, stewed","provider":[["skinless boneless chicken breast","84g skinless boneless chicken breast, stewed","84g","stewed"]],"gold":[["skinless boneless chicken breast","stewed",84,"g","M","chicken_breast_meat_stewed",true]]},
+  {"id":"T06","origin":"new_synthetic","text":"一碗海南鸡饭","provider":[["海南鸡饭","一碗海南鸡饭","一碗",null]],"gold":[["海南鸡饭",null,1,"碗","G",null,true]]},
+  {"id":"T07","origin":"existing_test","text":"I ate 2 grilled eggs and half a bowl of rice.","provider":[["eggs","2 grilled eggs","2","grilled"],["rice","half a bowl of rice","half a bowl",null]],"gold":[["eggs","grilled",2,null,"C",null,true],["rice",null,0.5,"bowl","U",null,true]]},
+  {"id":"T08","origin":"new_synthetic","text":"I ate 120g Rice noodles (cooked)","provider":[["Rice noodles (cooked)","120g Rice noodles (cooked)","120g",null]],"gold":[["Rice noodles (cooked)",null,120,"g","M","rice_noodles_cooked",true]]},
+  {"id":"T09","origin":"new_synthetic","text":"I ate 6g canola oil mixed into the dressing","provider":[["canola oil","6g canola oil mixed into the dressing","6g",null]],"gold":[["canola oil",null,6,"g","M","canola_oil_as_sold",true]]},
+  {"id":"T10","origin":"new_synthetic","text":"没有吃晚餐","provider":[],"gold":[]},
+  {"id":"T11","origin":"existing_test","text":"I poured canola oil 11g into the skillet and discarded the rest.","provider":[["canola oil","canola oil 11g","11g",null]],"gold":[["canola oil",null,null,null,"M","canola_oil_as_sold",true]]},
+  {"id":"T12","origin":"new_synthetic","text":"I bought 200g chicken breast but only ate half","provider":[["chicken breast","200g chicken breast","200g",null]],"gold":[["chicken breast",null,null,null,"C",null,true]]},
+  {"id":"P01","origin":"new_synthetic_provider_fixture","photo_stub":true,"visible":[{"name":"全熟去壳水煮蛋","count":2,"count_unit":"个","identity_uncertain":false}],"gold":[["全熟去壳水煮蛋",null,2,"个","M","whole_egg_hard_boiled",true]]},
+  {"id":"P02","origin":"new_synthetic_provider_fixture","photo_stub":true,"visible":[{"name":"糙米饭","count":null,"count_unit":null,"identity_uncertain":true}],"gold":[["糙米饭",null,null,null,"C",null,true]]},
+  {"id":"P03","origin":"new_synthetic_provider_fixture","photo_stub":true,"visible":[{"name":"海南鸡饭","count":null,"count_unit":null,"identity_uncertain":false}],"gold":[["海南鸡饭",null,null,null,"G",null,true]]}
+]

@@ -9,7 +9,7 @@ import {
   canUseFoodLogs, confirmFoodLog, deleteFoodLog, listFoodLogs, logMealTypes, maxFoodPhotoBytes,
   readBindingError, recognizeFoodImage, recognizeFoodText, referenceSelection, sameFoodItem, saveFoodLog,
 } from '../services/foodLogs'
-import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote, RecognitionSource, ReferenceSelection } from '../services/foodLogs'
+import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote, RecognitionEvidence, RecognitionSource, ReferenceSelection } from '../services/foodLogs'
 import { localDateTimeValue, timestampAtLocalTime } from '../types/localTime'
 
 const button = 'min-h-11 cursor-pointer rounded-xl border border-border px-3 py-2 font-semibold text-forest hover:bg-sage disabled:cursor-not-allowed disabled:opacity-50'
@@ -23,11 +23,14 @@ type RowBinding = {
   saved: boolean
 }
 
-function foodRow(item?: FoodItem, portionNote: PortionNote = null, identityUncertain = false) {
+function foodRow(
+  item?: FoodItem & { recognition_evidence?: RecognitionEvidence },
+  portionNote: PortionNote = null, identityUncertain = false,
+) {
   return {
     key: crypto.randomUUID(), name: item?.name ?? '', quantity: item?.quantity?.toString() ?? '',
     unit: item?.unit ?? '', method: item?.preparation_method ?? '', portionNote, identityUncertain,
-    binding: null as RowBinding | null, invalidBinding: false,
+    evidence: item?.recognition_evidence, binding: null as RowBinding | null, invalidBinding: false,
   }
 }
 
@@ -43,7 +46,7 @@ function rowItem(row: ReturnType<typeof foodRow>): FoodItem {
 function initialForm() {
   return { description: '', consumedAt: localDateTimeValue(new Date()), mealType: 'unspecified' as FoodLogDraft['meal_type'],
     rows: [foodRow()], editing: null as FoodLog | null,
-    recognized: null as Pick<FoodRecognition, 'source' | 'description' | 'notes'> | null }
+    recognized: null as Pick<FoodRecognition, 'source' | 'description' | 'notes' | 'cooking_evidence'> | null }
 }
 
 function recognitionError(error: unknown) {
@@ -103,6 +106,9 @@ function LocalFoodLogs() {
   const proposal = recognition.proposal
   const proposalStale = proposal?.source === 'ai_text' && proposal.description !== form.description
   const appliedStale = form.recognized?.source === 'ai_text' && form.recognized.description !== form.description
+  const cookingEvidence = proposal
+    ? (proposalStale ? undefined : proposal.cooking_evidence)
+    : (appliedStale ? undefined : form.recognized?.cooking_evidence)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -193,7 +199,7 @@ function LocalFoodLogs() {
     setForm((previous) => ({
       ...previous,
       rows: result.items.map((item) => foodRow(item, item.portion_note, item.identity_uncertain)),
-      recognized: { source: result.source, description: result.description, notes: result.notes },
+      recognized: { source: result.source, description: result.description, notes: result.notes, cooking_evidence: result.cooking_evidence },
     }))
     setRecognition({})
   }
@@ -242,7 +248,7 @@ function LocalFoodLogs() {
       rows: previous.rows.map((row) => row.key === key
         ? { ...row, [field]: value, portionNote: field === 'method' ? row.portionNote : null,
             identityUncertain: field === 'name' ? false : row.identityUncertain,
-            binding: null, invalidBinding: false } : row),
+            evidence: undefined, binding: null, invalidBinding: false } : row),
     }))
   }
 
@@ -310,7 +316,7 @@ function LocalFoodLogs() {
       return
     }
     const items = form.rows.map((row) => {
-      const item = rowItem(row)
+      const item = { ...rowItem(row), ...(row.evidence && { recognition_evidence: row.evidence }) }
       return row.binding?.selection.confirmed && sameFoodItem(item, row.binding.selection.item)
         ? { ...item, reference_binding: { ...row.binding.selection, confirmed: true as const } }
         : item
@@ -369,7 +375,13 @@ function LocalFoodLogs() {
             {t('pages.log.description')}
             <textarea className="planning-input" rows={4} maxLength={2000} value={form.description}
               placeholder={t('pages.log.example')}
-              onChange={(event) => setForm({ ...form, description: event.target.value })} />
+              onChange={(event) => {
+                const description = event.target.value
+                setForm((previous) => ({
+                  ...previous, description,
+                  rows: previous.rows.map((row) => row.evidence ? { ...row, evidence: undefined } : row),
+                }))
+              }} />
           </label>
           <div className="grid justify-items-start gap-2">
             <button type="button" className={button} aria-describedby="food-recognition-help"
@@ -443,6 +455,9 @@ function LocalFoodLogs() {
               <h3 className="mt-0">{t('pages.log.items')}</h3>
               <p className="mt-1 text-sm text-muted">{t('pages.log.manualHelp')}</p>
             </div>
+            {(form.recognized || form.editing?.recognition_weight_review) && (
+              <p className="text-sm text-muted">{t('pages.log.ai.reviewWeight')}</p>
+            )}
             {(proposalStale || appliedStale) && (
               <p role="status" className="rounded-xl bg-paper p-3 text-sm">{t('pages.log.ai.stale')}</p>
             )}
@@ -452,9 +467,17 @@ function LocalFoodLogs() {
                 {form.recognized.notes.map((note) => <p key={note}>{t(`pages.log.ai.notes.${note}`)}</p>)}
               </div>
             )}
+            {cookingEvidence && cookingEvidence.length > 0 && (
+              <div className="grid gap-1 rounded-xl bg-sage p-3 text-sm" role="status">
+                <p>{t('pages.log.ai.cookingContextOnly')}</p>
+                <ul className="list-disc pl-5">
+                  {cookingEvidence.map(({ quote }, index) => <li key={index}>{quote}</li>)}
+                </ul>
+              </div>
+            )}
             {proposal && (
               <div className="grid gap-2 rounded-xl border border-border bg-paper p-3">
-                <p role="status">{t(proposal.items.length ? 'pages.log.ai.pending' : 'pages.log.ai.empty')}</p>
+                <p role="status">{t(proposal.items.length ? 'pages.log.ai.pending' : cookingEvidence?.length ? 'pages.log.ai.noConsumedItems' : 'pages.log.ai.empty')}</p>
                 {proposal.notes.filter((note) => note !== 'no_identifiable_foods')
                   .map((note) => <p className="text-sm text-muted" key={note}>{t(`pages.log.ai.notes.${note}`)}</p>)}
                 {proposal.items.length > 0 && (
@@ -503,6 +526,18 @@ function LocalFoodLogs() {
                     ].filter(Boolean).join(' ') || undefined}
                     value={row.quantity} onChange={(event) => updateRow(row.key, 'quantity', event.target.value)} />
                 </label>
+                {row.evidence && (
+                  <div className="col-span-2 break-words rounded-xl bg-sage p-2 text-sm">
+                    <p>{t('pages.log.ai.evidence', { quote: row.evidence.quote })}</p>
+                    {row.evidence.weighing_text && (
+                      <p>{t('pages.log.ai.weighing', { text: row.evidence.weighing_text })}</p>
+                    )}
+                    {row.evidence.decision === 'withheld' && (
+                      <p>{t(row.evidence.context === 'cooking_input'
+                        ? 'pages.log.ai.cookingEvidence' : 'pages.log.ai.withheldEvidence')}</p>
+                    )}
+                  </div>
+                )}
                 {row.portionNote && (
                   <p id={`portion-${row.key}`} className="col-span-2 text-sm text-muted">
                     {t(`pages.log.ai.portions.${row.portionNote}`)}

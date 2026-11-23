@@ -7,10 +7,11 @@ from pathlib import Path
 
 from app.schemas.food_logs import FoodItem
 from app.schemas.food_normalization import (
-    FoodAliasIndex, FoodCandidate, FoodNormalizationResult, FoodState, IdentityStatus, PortionStatus,
+    FoodAliasIndex, FoodCandidate, FoodNormalizationResult, FoodState, IdentityStatus, PortionIssue, PortionStatus,
 )
 from app.schemas.nutrition_reference import NutritionFood, NutritionReference
 from app.services.nutrition_units import MASS_FACTORS, PORTION_UNITS, PREPARATIONS, STATES
+from app.services.portion_evidence import portion_context_issue
 from app.services.nutrition_reference import load_nutrition_reference
 
 ALIAS_PATH = Path(__file__).resolve().parents[3] / "data" / "nutrition" / "food-aliases-v1.json"
@@ -36,6 +37,8 @@ UNKNOWN_AMOUNT = re.compile(r"\bamount eaten unknown\b|实际食用量未知|用
 PAN_AMOUNT = re.compile(r"\bin the pan\b|下锅用量|锅中用量", re.I)
 SIZE_NOTE = re.compile(r"[,;]?\s*(?:大小不详|size unknown)\s*$", re.I)
 BANANA_DESCRIPTOR = re.compile(r"[,;]\s*(?:长度符合 usda|length meets usda standard)(?=[)]|$)", re.I)
+# Generic staple labels do not establish whether the mass refers to dry or cooked food.
+STATE_DEPENDENT_MASS_LABELS = {"noodle", "noodles", "pasta", "rice", "面条", "挂面", "大米"}
 PEELED_BANANA_LABELS = {"香蕉 去皮", "去皮香蕉", "peeled banana", "banana without peel"}
 
 
@@ -55,6 +58,9 @@ class Evidence:
     portion_selector: str | None = None
     portion_needs_review: bool = False
     specification_rule: str | None = None
+    portion_issue: PortionIssue | None = None
+    reported_quantity: Decimal | None = None
+    reported_unit: str | None = None
 
 
 def _number(value: str) -> Decimal:
@@ -63,7 +69,9 @@ def _number(value: str) -> Decimal:
 
 def _read_evidence(text: str) -> Evidence:
     phrase = unicodedata.normalize("NFKC", text).casefold()
+    issue = portion_context_issue(phrase)
     unknown_consumption = bool(UNKNOWN_AMOUNT.search(phrase) or PAN_AMOUNT.search(phrase))
+    review = issue is not None and issue != "consumed_amount_unknown"
     portion_selector = None
     # These markers narrow the portion to an existing USDA row. They are not size estimates.
     if re.search(r"美标大号|\busda large\b", phrase):
@@ -96,8 +104,9 @@ def _read_evidence(text: str) -> Evidence:
         ):
             return Evidence(text, None, None, preparation, portion_needs_review=True)
         phrase = phrase[:match.start()] + " " + phrase[match.end():]
-        quantity = None if unknown_consumption else _number(match["number"])
-        unit = None if unknown_consumption else match["unit"]
+        stated_quantity = _number(match["number"])
+        stated_unit = match["unit"]
+        quantity, unit = (None, None) if issue else (stated_quantity, stated_unit)
         # A measurement qualifier may be attached immediately before its amount.
         weight = re.search(r"(?:[,;]\s*|^)(生重|熟重|raw weight|cooked weight)\s*[,; ]*$", phrase)
         if weight:
@@ -107,7 +116,7 @@ def _read_evidence(text: str) -> Evidence:
         if match["unit"] in MASS_FACTORS:
             phrase = re.sub(r"(?:[,;]\s*|\s+)edible\s*$", "", phrase)
     else:
-        quantity = unit = None
+        quantity = unit = stated_quantity = stated_unit = None
     if unknown_consumption:
         phrase = UNKNOWN_AMOUNT.sub("", PAN_AMOUNT.sub("", phrase))
     phrase = SIZE_NOTE.sub("", phrase)
@@ -120,7 +129,8 @@ def _read_evidence(text: str) -> Evidence:
         specification_rule = "usda_medium_peeled_banana_specification"
     return Evidence(
         phrase, quantity, unit, preparation, portion_selector,
-        len(matches) > 1 and not unknown_consumption, specification_rule,
+        review or (len(matches) > 1 and not unknown_consumption), specification_rule,
+        issue, stated_quantity, stated_unit,
     )
 
 
@@ -219,7 +229,8 @@ class FoodNormalizer:
         label = _read_evidence(item.name)
         # The structured path can interpret qualifiers, but must not discard a
         # quantity embedded in a name or replace the item's recorded portion.
-        amount_uncertain = bool(PAN_AMOUNT.search(item.name) or UNKNOWN_AMOUNT.search(item.name))
+        issue = portion_context_issue(f"{item.name}; {item.preparation_method or ''}")
+        amount_uncertain = issue is not None
         use_label = label.quantity is None and not label.portion_needs_review and not amount_uncertain
         selector = unit if unit in PORTION_UNITS else label.portion_selector if use_label else None
         method = MEASUREMENT.get(preparation, preparation) or None
@@ -232,6 +243,7 @@ class FoodNormalizer:
             item.unit, method or label_method, selector,
             portion_needs_review=amount_uncertain and item.quantity is not None,
             specification_rule=label.specification_rule if use_label else None,
+            portion_issue=issue, reported_quantity=label.reported_quantity, reported_unit=label.reported_unit,
         )
 
     def _identify(self, key: str, preparation: str | None):
@@ -271,6 +283,16 @@ class FoodNormalizer:
         if identity_uncertain and food_id is not None:
             status, food_id, rule, candidates, clarification = "ambiguous_identity", None, None, (food_id,), "confirm_identity"
         portion_status, portion_id = self._portion(evidence, food_id, clarification)
+        issue = evidence.portion_issue
+        if portion_status == "edible_mass" and food_id is None and re.search(r"鸡胸|\bchicken breast\b", key):
+            portion_status, issue = "needs_review", "edible_basis_unclear"
+        if portion_status == "edible_mass" and food_id is None and key in STATE_DEPENDENT_MASS_LABELS:
+            portion_status, issue = "needs_review", "measurement_state_unclear"
+        if issue is None and portion_status == "needs_review":
+            if evidence.quantity == 0:
+                issue = "zero_amount"
+            elif clarification == "conflicting_preparation":
+                issue = "measurement_state_unclear"
         state = self.foods[food_id].state if food_id else _state(evidence.preparation)
         return FoodNormalizationResult(
             original=original, food_label=evidence.label, preparation=evidence.preparation, food_state=state,
@@ -278,8 +300,10 @@ class FoodNormalizer:
             matched_rule=(evidence.specification_rule or rule) if rule else None,
             matched_alias=key if rule else None, candidates=tuple(map(self._candidate, candidates)),
             clarification=clarification, quantity=evidence.quantity, unit=evidence.unit, portion_status=portion_status,
+            portion_issue=issue, reported_quantity=evidence.reported_quantity, reported_unit=evidence.reported_unit,
             requires_edible_weight_confirmation=(
-                evidence.quantity is not None and label_key(evidence.unit or "") in MASS_FACTORS
+                issue is None and evidence.quantity is not None
+                and evidence.quantity > 0 and label_key(evidence.unit or "") in MASS_FACTORS
             ),
             portion_source_row_id=portion_id, reference_version=self.reference.reference_version,
             source_release=self.reference.source.release, alias_version=self.aliases.version,

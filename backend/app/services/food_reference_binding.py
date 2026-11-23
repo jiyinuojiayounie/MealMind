@@ -6,6 +6,7 @@ from app.schemas.food_logs import (
 )
 from app.schemas.nutrition_reference import NutritionFood
 from app.services.food_normalization import FoodNormalizer, get_food_normalizer
+from app.services.food_recognition import validate_saved_recognition_evidence
 
 BindingFailure = Literal["catalog_version_unavailable", "item_changed", "reference_not_applicable", "invalid_binding"]
 
@@ -63,7 +64,7 @@ def _normalizer_for_write() -> FoodNormalizer:
         raise FoodReferenceBindingUnavailable from None
 
 
-def bind_draft_items(items: list[FoodItemDraft], now: datetime) -> list[LoggedFoodItem]:
+def bind_draft_items(items: list[FoodItemDraft], now: datetime, description: str | None = None) -> list[LoggedFoodItem]:
     bound = []
     for index, item in enumerate(items):
         selection = item.reference_binding
@@ -78,7 +79,10 @@ def bind_draft_items(items: list[FoodItemDraft], now: datetime) -> list[LoggedFo
                 state=food.state, preparation=food.preparation,
                 fdc_id=food.source.fdc_id, source_release=normalizer.reference.source.release, confirmed_at=now,
             )
-        bound.append(LoggedFoodItem(**item_fields(item).model_dump(), reference_binding=binding))
+        bound.append(LoggedFoodItem(
+            **item_fields(item).model_dump(), reference_binding=binding,
+            recognition_evidence=validate_saved_recognition_evidence(item, description),
+        ))
     return bound
 
 

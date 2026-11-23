@@ -96,7 +96,7 @@ class NutritionCalculator:
             return None, "food_reference_binding_invalid"
         return food, None
 
-    def calculate_item(self, item: FoodItem) -> ItemNutritionResult:
+    def calculate_item(self, item: FoodItem, *, recognition_weight_review: bool = False) -> ItemNutritionResult:
         bound_portion_row = None
         review_weight = False
         unit = normalize_food_label(item.unit or "")
@@ -110,6 +110,7 @@ class NutritionCalculator:
                 )
         else:
             food, match_issue = self._match(item)
+            review_weight = recognition_weight_review and item.quantity is not None and unit in MASS_FACTORS
         quantity, quantity_issue = _quantity(item.quantity)
         reasons = tuple(issue for issue in (match_issue, quantity_issue) if issue is not None)
         if food is None:

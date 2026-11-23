@@ -1,0 +1,18 @@
+[
+  {"text":"午饭吃了150g生鸡胸肉","status":"interpreted","names":["鸡胸肉"],"preparations":["raw"],"amounts":[["150","g"]],"contexts":["consumed"]},
+  {"text":"150g chicken breast, cooked","status":"interpreted","names":["chicken breast"],"preparations":["cooked"],"amounts":[["150","g"]],"contexts":["unknown"]},
+  {"text":"半碗糙米饭","status":"interpreted","names":["糙米饭"],"preparations":[null],"amounts":[["0.5","碗"]],"contexts":["unknown"]},
+  {"text":"炒了8g油但锅里还剩一些","status":"review_required","names":["油"],"preparations":[null],"amounts":[["8","g"]],"contexts":["cooking_input"]},
+  {"text":"买了200g鸡胸肉，只吃了一部分","status":"review_required","names":["鸡胸肉"],"preparations":[null],"amounts":[["200","g"]],"contexts":["purchased"]},
+  {"text":"带骨鸡腿200g","status":"review_required","names":["带骨鸡腿"],"preparations":[null],"amounts":[["200","g"]],"contexts":["unknown"]},
+  {"text":"吃了一个鸡蛋和一些青菜","status":"interpreted","names":["鸡蛋","青菜"],"preparations":[null,null],"amounts":[["1","个"]],"contexts":["consumed"]},
+  {"text":"100g干面煮熟以后吃掉了","status":"review_required","names":["干面"],"preparations":["cooked"],"amounts":[["100","g"]],"contexts":["prepared"]},
+  {"text":"没有吃午饭","status":"no_consumption","names":[],"preparations":[],"amounts":[],"contexts":[]},
+  {"text":"昨天剩下的饭，今天吃了一半","status":"review_required","names":["昨天剩下的饭"],"preparations":[null],"amounts":[["0.5","fraction_of_described_food"]],"contexts":["consumed"]},
+  {"text":"I ate 92g skinless boneless chicken breast, stewed","status":"interpreted","names":["skinless boneless chicken breast"],"preparations":["stewed"],"amounts":[["92","g"]],"contexts":["consumed"]},
+  {"text":"喝了200ml 豆浆","status":"interpreted","names":["豆浆"],"preparations":[null],"amounts":[["200","ml"]],"contexts":["consumed"]},
+  {"text":"I ate one piece of coconut jelly","status":"interpreted","names":["coconut jelly"],"preparations":[null],"amounts":[["1","piece"]],"contexts":["consumed"]},
+  {"text":"I want to eat 90g chicken breast","status":"review_required","names":[null],"preparations":[null],"amounts":[],"contexts":[]},
+  {"text":"一碗海南鸡饭","status":"interpreted","names":["海南鸡饭"],"preparations":[null],"amounts":[["1","碗"]],"contexts":["unknown"]},
+  {"text":"I served 80g rice noodles, cooked","status":"interpreted","names":["rice noodles"],"preparations":["cooked"],"amounts":[["80","g"]],"contexts":["served"]}
+]

@@ -96,3 +96,11 @@ Only confirmed logs participate in Daily Nutrition. A valid binding resolves ide
 ## P0.2C-2 confirmation in the draft editor
 
 The preview response exposes `requires_edible_weight_confirmation` to identify entered mass independently of food matching. This flag asks for evidence and conveys no estimate. The editor tracks selections per row and retains a saved binding only while the four recorded item fields still agree with the binding snapshot. The draft save and consumption confirmation remain distinct actions. Today localizes the review reasons for unusable bindings on confirmed entries.
+
+## P0.3B-1 deterministic interpretation preview
+
+A separate local-only `POST /api/v1/food-normalization/interpret` accepts a single text description and returns source-bounded observations, existing structured item proposals and match results. The structured matcher remains the authority for verified identities and candidate eligibility. In the preview, gram observations remain outside the proposal pending user review. A future edit or recognition UX can show the evidence and collect the existing explicit identity and edible-weight confirmations before saving a draft. See [layered evaluation](../evaluation/FOOD_NORMALIZATION_P03B1.md).
+
+## P0.3B-2 production fit
+
+Keep the existing recognition paths. Use deterministic validation to retain quoted portion evidence and distinguish a supported editable quantity from independently confirmed edible weight. Keep the full interpretation endpoint separate as a diagnostic. The [workflow comparison and proposed contract](../evaluation/FOOD_WORKFLOW_FIT_P03B2.md) include the legacy unbound calculation boundary and acceptance criteria.

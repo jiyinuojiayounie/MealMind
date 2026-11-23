@@ -1,0 +1,22 @@
+holdout_id|name|preparation|quantity|unit|identity|reference|portion
+01|未强化长粒白米饭（无盐）||115|g|M|white_rice_long_grain_unenriched_cooked|E
+03|长粒糙米|cooked|||M|brown_rice_long_grain_cooked|Q
+05|杂粮饭||120|g|G||E
+07|白米饭||1|bite|C||X
+11|去皮去骨鸡胸肉|raw|125|g|M|chicken_breast_skinless_boneless_raw|E
+14|白灼鸡胸||90|g|G||R
+15|鸡胸肉||2|片|C||X
+19|溏心蛋||1|个|G||X
+22|rice noodles|cooked|105|g|M|rice_noodles_cooked|E
+25|noodle||100|g|C||R
+26|乌冬面||0.5|包|G||X
+33|生西蓝花||3|朵|M|broccoli_raw|X
+37|水煮毛豆||1|勺|C||X
+40|硬豆腐||1|块|C||X
+41|土豆（生，带皮）||66|g|M|potato_flesh_and_skin_raw|E
+48|香蕉奶昔||200|ml|G||X
+50|canola oil|in the skillet, some left behind|8|g|U||R
+51|干锅花菜||1|盘|G||X
+53|咖喱鸡土豆||150|g|G||E
+61|无糖豆浆||1|袋|G||X
+68|茶叶蛋||1|个|G||X

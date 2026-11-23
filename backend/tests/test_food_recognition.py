@@ -315,3 +315,180 @@ def test_oversized_webp_canvas_is_rejected_before_opening_decoder(tmp_path, gemi
         response = test.post(IMAGE_PATH, files={"image": ("large.webp", oversized_canvas)})
     assert response.status_code == 413
     gemini[0].assert_not_called()
+
+
+@pytest.mark.parametrize(("description", "name", "evidence", "amount"), [
+    ("I put canola oil 9g into a wok; left some behind.", "canola oil", "canola oil 9g", "9g"),
+    ("买了 200g 生小白菜，只吃了一半。", "生小白菜", "200g 生小白菜", "200g"),
+    ("140g roasted chicken breast, weighed raw.", "roasted chicken breast", "140g roasted chicken breast", "140g"),
+    ("Ate banana 120g, weighed with the peel.", "banana", "banana 120g", "120g"),
+])
+def test_short_recognition_quote_cannot_erase_unsafe_weight_context(tmp_path, gemini, description, name, evidence, amount):
+    output(gemini, [item(name, evidence, amount)])
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(PATH, json={"description": description})
+    assert response.status_code == 200
+    assert response.json()["description"] == description
+    suggestion = response.json()["items"][0]
+    assert suggestion["name"] == name
+    assert suggestion["quantity"] is None and suggestion["unit"] is None
+    assert suggestion["portion_note"] == "portion_needs_review"
+
+
+def test_cooking_input_cannot_reach_legacy_nutrition_through_recognition(tmp_path, gemini):
+    description = "I poured canola oil 11g into the skillet and discarded the rest."
+    output(gemini, [item("canola oil", "canola oil 11g", "11g")])
+    with client(tmp_path / "logs.sqlite3") as test:
+        suggestion, = test.post(PATH, json={"description": description}).json()["items"]
+        suggestion.pop("portion_note")
+        draft = test.post("/api/v1/food-logs", json={
+            "description": description, "consumed_at": "2026-11-22T20:10:00+08:00",
+            "source": "ai_text", "items": [suggestion],
+        })
+        assert draft.status_code == 201
+        saved = draft.json()
+        confirmation = test.post(f"/api/v1/food-logs/{saved['id']}/confirm", json={"expected_revision": 1})
+        assert confirmation.status_code == 200
+        analysis = test.get("/api/v1/nutrition/daily?date=2026-11-22").json()
+    assert analysis["calculated_item_count"] == 0
+    nutrition = analysis["logs"][0]["items"][0]
+    assert nutrition["provenance"]["food_id"] == "canola_oil_as_sold"
+    assert nutrition["edible_grams"] is None
+    assert nutrition["reasons"] == ["quantity_unknown"]
+
+
+@pytest.mark.parametrize(("description", "name", "quote", "portion", "quantity", "unit", "decision"), [
+    ("我吃了150g糙米饭", "糙米饭", "150g糙米饭", "150g", 150, "g", "accepted"),
+    ("买了200g鸡胸肉，只吃了一部分", "鸡胸肉", "200g鸡胸肉", "200g", None, None, "withheld"),
+    ("半碗糙米饭", "糙米饭", "半碗糙米饭", "半碗", .5, "碗", "accepted"),
+])
+def test_evidence_survives_save_and_reopen_without_attesting_to_edible_weight(
+    tmp_path, gemini, description, name, quote, portion, quantity, unit, decision,
+):
+    output(gemini, [item(name, quote, portion)])
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(PATH, json={"description": description})
+        assert response.status_code == 200
+        proposal, = response.json()["items"]
+        evidence = proposal["recognition_evidence"]
+        assert evidence["quote"] == quote and evidence["portion_text"] == portion
+        assert evidence["decision"] == decision
+        assert (proposal["quantity"], proposal["unit"]) == (quantity, unit)
+        proposal.pop("portion_note")
+        payload = {"description": description, "consumed_at": "2026-11-22T20:10:00+08:00",
+                   "items": [proposal]}
+        saved = test.post("/api/v1/food-logs", json={**payload, "source": "ai_text"}).json()
+        assert saved["recognition_weight_review"] is True
+        assert saved["items"][0]["recognition_evidence"] == evidence
+        edited = test.put(f"/api/v1/food-logs/{saved['id']}", json={
+            **payload, "expected_revision": 1, "items": [{**proposal, "quantity": 10}],
+        }).json()
+        assert edited["recognition_weight_review"] is True
+        assert "recognition_evidence" not in edited["items"][0]
+        assert "reference_binding" not in edited["items"][0]
+
+
+@pytest.mark.parametrize(("source", "guarded"), [("ai_text", True), ("ai_image", True), ("manual_text", False)])
+def test_mass_calculation_guard_is_persisted_for_new_recognition_logs(tmp_path, source, guarded):
+    with client(tmp_path / "logs.sqlite3") as test:
+        payload = {"source": source, "consumed_at": "2026-11-22T20:10:00+08:00",
+                   "items": [{"name": "canola oil", "quantity": 6, "unit": "g"}]}
+        log = test.post("/api/v1/food-logs", json=payload).json()
+        confirmed = test.post(f"/api/v1/food-logs/{log['id']}/confirm", json={"expected_revision": 1}).json()
+        assert confirmed.get("recognition_weight_review", False) is guarded
+        daily = test.get("/api/v1/nutrition/daily?date=2026-11-22").json()
+    assert daily["calculated_item_count"] == (0 if guarded else 1)
+    assert daily["logs"][0]["items"][0]["reasons"] == (["portion_needs_review"] if guarded else [])
+
+
+def test_existing_unbound_recognition_log_without_policy_marker_is_unchanged(tmp_path):
+    import sqlite3
+    from contextlib import closing
+
+    database = tmp_path / "historical.sqlite3"
+    with client(database) as test:
+        payload = {"source": "ai_text", "consumed_at": "2026-11-22T20:10:00+08:00",
+                   "items": [{"name": "canola oil", "quantity": 6, "unit": "g"}]}
+        log = test.post("/api/v1/food-logs", json=payload).json()
+        confirmed = test.post(f"/api/v1/food-logs/{log['id']}/confirm", json={"expected_revision": 1}).json()
+        confirmed.pop("recognition_weight_review")
+        # The temporary SQLite row now has the pre-policy persisted JSON shape.
+        with closing(sqlite3.connect(database)) as db, db:
+            db.execute("UPDATE food_logs SET document = ? WHERE id = ?", (json.dumps(confirmed), log["id"]))
+        before = database.read_bytes()
+        daily = test.get("/api/v1/nutrition/daily?date=2026-11-22").json()
+    assert daily["calculated_item_count"] == 1
+    assert database.read_bytes() == before
+
+
+def test_recognition_applied_to_existing_manual_draft_cannot_clear_mass_guard(tmp_path):
+    with client(tmp_path / "logs.sqlite3") as test:
+        payload = {"consumed_at": "2026-11-22T20:10:00+08:00",
+                   "items": [{"name": "canola oil", "quantity": 6, "unit": "g"}]}
+        log = test.post("/api/v1/food-logs", json=payload).json()
+        path = f"/api/v1/food-logs/{log['id']}"
+        applied = test.put(path, json={**payload, "expected_revision": 1, "recognition_applied": True}).json()
+        edited = test.put(path, json={**payload, "expected_revision": 2}).json()
+        assert applied["recognition_weight_review"] is edited["recognition_weight_review"] is True
+        assert test.post(f"{path}/confirm", json={"expected_revision": 3}).status_code == 200
+        assert test.get("/api/v1/nutrition/daily?date=2026-11-22").json()["calculated_item_count"] == 0
+
+
+@pytest.mark.parametrize(("description", "provider", "expected_items", "cooking_portion"), [
+    ("炒菜用了8g油，但锅里还剩一些。", [], [], "8g"),
+    ("炒菜用了8g油，但锅里还剩一些。", [item("油", "8g油", "8g")], [], "8g"),
+    ("炒菜用了8g油，但锅里还剩一些。", [item("油", "8g油", "8g油")], [], "8g"),
+    ("炒菜用了8g油，但锅里还剩一些。", [item("油", "炒菜用了8g油，但锅里还剩一些。")], [], "8g"),
+    ("炒菜用了8g油，我吃了2g油。", [item("油", "8g油", "8g"), item("油", "2g油", "2g")],
+     [("油", 2)], "8g"),
+    ("我吃了6g低芥酸菜籽油。", [item("低芥酸菜籽油", "6g低芥酸菜籽油", "6g")],
+     [("低芥酸菜籽油", 6)], None),
+    ("做菜用了9g菜籽油，这些油没吃，倒掉了。", [], [], "9g"),
+    ("我吃了150g糙米饭、一个鸡蛋，炒菜用了8g油，但锅里还剩一些。",
+     [item("糙米饭", "150g糙米饭", "150g"), item("鸡蛋", "一个鸡蛋", "一个"), item("油", "8g油", "8g")],
+     [("糙米饭", 150), ("鸡蛋", 1)], "8g"),
+    ("没有吃午饭。", [], [], None),
+])
+def test_text_contract_preserves_cooking_evidence_outside_consumed_items(
+    tmp_path, gemini, description, provider, expected_items, cooking_portion,
+):
+    output(gemini, provider)
+    database = tmp_path / "logs.sqlite3"
+    with client(database) as test:
+        response = test.post(PATH, json={"description": description})
+    assert response.status_code == 200
+    parsed = response.json()
+    assert [(entry["name"], entry["quantity"]) for entry in parsed["items"]] == expected_items
+    if cooking_portion:
+        evidence, = parsed["cooking_evidence"]
+        assert evidence["portion_text"] == cooking_portion and evidence["quote"] in description
+        assert set(evidence) == {"quote", "portion_text"}
+    else:
+        assert "cooking_evidence" not in parsed
+    assert not database.exists()
+    gemini[1].assert_called_once()
+
+
+@pytest.mark.parametrize("invalid_provider", ["schema", "grounding"])
+def test_only_cooking_evidence_survives_invalid_recognition_output(tmp_path, gemini, invalid_provider):
+    description = "炒菜用了8g油，但锅里还剩一些"
+    if invalid_provider == "schema":
+        gemini[1].side_effect = None
+        gemini[1].return_value = SimpleNamespace(text='{"items":null,"needs_clarification":true}')
+    else:
+        output(gemini, [item("油", "8g油", "8 g")])
+    database = tmp_path / "logs.sqlite3"
+    with client(database) as test:
+        response = test.post(PATH, json={"description": description})
+    assert response.status_code == 200
+    assert response.json()["items"] == []
+    assert response.json()["cooking_evidence"] == [{"quote": "炒菜用了8g油", "portion_text": "8g"}]
+    assert not database.exists()
+    gemini[1].assert_called_once()
+
+
+def test_mixed_input_recognition_failure_is_not_hidden_by_cooking_evidence(tmp_path, gemini):
+    output(gemini, [item("米饭", "150 g米饭", "150 g")])
+    with client(tmp_path / "logs.sqlite3") as test:
+        response = test.post(PATH, json={"description": "我吃了150g米饭，炒菜用了8g油，但锅里还剩一些"})
+    assert response.status_code == 502
