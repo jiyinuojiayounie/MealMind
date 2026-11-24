@@ -1,13 +1,14 @@
 {
+  "release": {"checkingPlan": "正在检查本地餐单…", "stalePlan": "餐单已更新，请重新检查餐次后再保存。", "saveFailed": "此浏览器暂时无法保存餐单。", "confirmAdd": "确认加入计划", "browserOnly": "餐单仅保存在此浏览器，不会跨设备同步。计划不记录实际食用。", "cookNotice": "作品集演示 · 食谱已选入演示，耗时为估算，包装成分与过敏原尚未核验。", "add": "加入计划", "replaceSlot": "替换", "replacePrompt": "请确认要替换的餐次", "currentMeal": "当前餐食：{{meal}}", "proposedMeal": "拟保存餐食：{{meal}}", "reviewReplacement": "查看替换内容", "planDetails": "查看当前餐单做法", "history": "历史版本", "version": "第 {{revision}} 版", "sampleTitle": "示例三餐", "planningExample": "公开演示使用固定示例，不调用 AI。可预览餐单并保存到此浏览器。", "loadExample": "查看示例餐单", "nutritionExample": "示例：已确认食用且份量可核实的食物才纳入估算。公开演示不读取个人记录或计算实时营养。", "replanExample": "示例：午餐一旦确认吃过便锁定，晚餐可预览替换。公开演示不生成新的重新规划结果。"},
+  "blindBox": {"closePanel": "关闭", "title": "吃什么盲盒", "slot": "选一餐", "draw": "开始抽取", "redraw": "再抽一次", "demo": "候选餐、用量和耗时仍待核验。", "restrictions": "过敏与饮食限制（可选）", "declare": "我有需要核验的食物过敏或饮食限制", "unverified": "演示候选缺少已审核的食材或过敏原证据，暂无可推荐餐食。", "empty": "这个餐次暂时没有可抽的候选，试试其他餐次。", "noApproved": "暂无已审核的盲盒餐食。", "serving": "一人份，克重按步骤所列食材状态估算。", "saveTitle": "保存到餐单", "date": "日期", "replace": "当前餐食：{{meal}}。要替换这一餐吗？", "confirmNew": "将这份餐食加入所选餐次？", "confirmReplace": "确认替换", "confirmSave": "确认保存", "cancel": "取消", "reviewSave": "检查餐次并保存", "checking": "正在检查餐单和食用记录…", "stale": "餐单或食用记录已更新，请重新检查后再保存。", "locked": "这餐已有确认的食用记录，无法替换。", "saved": "已保存到餐单。", "saveFailed": "无法安全保存：请确认本地后端及浏览器餐单存储可用。", "heading": "今天吃什么？", "intro": "挑个餐次，转一圈就知道。", "spinning": "转盘转动中…", "viewRecipe": "查看做法", "addToPlan": "加入计划", "oneServing": "一人份", "lanSave": "手机预览可抽取和查看做法。请在 Mac 本机加入计划。", "meals": {"recipe_000003": {"description": "甜玉米带一点自然甜味，煮成一碗热乎的轻早餐。"}, "recipe_000016": {"description": "蛋香裹着熟米饭，小白菜添一口清脆。"}, "recipe_000017": {"description": "蒜香虾仁和西兰花，连锅汁一起浇在热饭上。"}, "recipe_000018": {"description": "鲜香菇、北豆腐和青菜，煮成一锅清鲜热汤面。"}, "recipe_000021": {"description": "香蕉的甜味配原味酸奶，拌一碗就能开吃。"}, "recipe_000022": {"description": "软嫩炒蛋、全麦面包和脆黄瓜，简单就能装盘。"}, "recipe_000023": {"description": "细米粉、鸡蛋和小白菜，一锅煮成清汤早餐。"}, "recipe_000025": {"description": "咸香鸡腿肉配脆嫩卷心菜和弹口乌冬。"}, "recipe_000026": {"description": "酸香番茄、软糯土豆和鹰嘴豆，热乎又有嚼劲。"}, "recipe_000027": {"description": "梨丁煮软后带一点甜，白芝麻添香。"}, "recipe_000028": {"description": "葱香配甜玉米，两张小饼一锅煎。"}, "recipe_000029": {"description": "烤吐司上抹花生酱，香蕉自然带甜。"}, "recipe_000030": {"description": "软甜南瓜配脆籽和一杯奶。"}, "recipe_000031": {"description": "清鲜紫菜、嫩蛋花和热饭，一碗吃完。"}, "recipe_000032": {"description": "酸奶拌金枪鱼，夹上清脆黄瓜。"}, "recipe_000034": {"description": "撕好的鸡丝夹进软饼，生菜黄瓜保留脆口。"}, "recipe_000035": {"description": "软甜洋葱与肥牛一起煮，锅汁拌热饭。"}, "recipe_000036": {"description": "三样蔬菜配牛肉，拌入韩式甜辣酱。"}, "recipe_000037": {"description": "甜咸照烧汁挂在鸡腿和西兰花上。"}, "recipe_000038": {"description": "番茄酱带微酸甜味，外面是一张薄蛋皮。"}, "recipe_000039": {"description": "茄子焖到软糯，和蒜香肉末一起拌饭。"}, "recipe_000040": {"description": "清蒸鱼柳留住汁水，姜葱提香。"}, "recipe_000041": {"description": "肉丝鲜香，芹菜脆、香干有嚼劲。"}, "recipe_000042": {"description": "番茄煮出微酸汤底，牛肉米线热腾腾。"}, "recipe_000043": {"description": "四季豆和肉末裹上酱汁，面条一起吸味。"}, "recipe_000044": {"description": "凉面带芝麻香，黄瓜清脆，毛豆有嚼劲。"}, "recipe_000045": {"description": "鲜鱼和豆腐吸入味噌汤的咸鲜。"}, "recipe_000046": {"description": "酸辣泡菜煮成汤底，豆腐和粉丝一起吸汁。"}, "recipe_000047": {"description": "南瓜慢煮变甜，红扁豆把咖喱汤收浓。"}, "recipe_000048": {"description": "一锅煮饺子和菠菜，蘸一点米醋。"}, "recipe_000049": {"description": "煎鱼上挤柠檬，配片状土豆和西兰花。"}, "recipe_000051": {"description": "蒜香烤鸡腿和焦边南瓜，一盘出炉。"}, "recipe_000052": {"description": "豆腐饼外面带焦香，木耳增脆。"}}},
   "language": "界面语言",
   "backend": {"loading": "正在检查 API 连接…", "connected": "API 已连接", "unavailable": "API 当前不可用", "retry": "重试 API 连接"},
   "skip": "跳到主要内容",
   "navigation": "主导航",
-  "nav": { "today": "今日", "log": "记录", "pantry": "食材", "profile": "我的" },
+  "nav": { "today": "今日", "plan": "智能规划", "log": "记录", "profile": "我的" },
   "feature": {
     "plan": "餐食规划",
     "log": "餐食记录",
-    "pantry": "我的食材",
     "profile": "个人设置"
   },
   "welcome": {
@@ -140,7 +141,6 @@
     "assistantHint": "助手功能预览。当前版本暂不支持发送 AI 请求。",
     "assistantExample": "鸡蛋和番茄可以做什么？",
     "direct": "直接开始规划",
-    "shortcuts": "快捷操作",
     "overview": "今日餐单",
     "empty": "暂无安排",
     "breakfast": "早餐",
@@ -165,7 +165,7 @@
         "temporary": "{{date}} 的餐单建议 · 尚未保存。",
         "errors": {
           "unavailable": "当前浏览器无法访问已保存餐单。你仍可在此页使用临时建议。",
-          "invalid": "无法安全读取或保存此餐单，原有内容仍保留。",
+        "invalid": "无法安全读取或保存此餐单，原有内容仍保留。",
           "stale": "其他标签页已更新餐单。请核对当前版本后再保存。"
         }
       },
@@ -206,17 +206,14 @@
         "dinner": "晚餐",
         "snack": "加餐"
       },
-      "preview": {
-        "mode": "推荐模式",
-        "original": "原版 AI 生成",
-        "catalog": "目录引导规划（开发预览）",
-        "notice": "开发预览 — 食谱和用量尚未经过独立核实。"
-      },
       "errors": {
         "requirements": "请输入 1 到 2,000 个字符的餐食需求。",
         "ingredientsRequired": "选择仅使用现有食材时，请至少填写一种食材。",
         "ingredientLimit": "最多填写 60 种食材，每项不超过 120 个字符。",
         "time": "请输入 1 到 480 之间的整数分钟数。",
+        "dietaryUnverified": "MealMind 无法核验生成餐食是否符合这项饮食限制。",
+        "ingredientsUnverified": "无法核验食材限制。请在更多选项中选择仅用现有食材，并列出允许使用的食材。",
+        "timeUnverified": "无法确认时间上限适用于哪一餐。请在更多选项中设置每餐的时间上限。",
         "invalid": "请检查餐食需求、食材和时间上限后重试。",
         "rateLimit": "请求过于频繁，请稍等片刻后重试。",
         "generation": "暂时无法生成餐单，请重试或调整需求。",
@@ -224,11 +221,6 @@
         "timeout": "生成餐单超时，请稍后重试。",
         "network": "无法连接餐食规划服务，请检查连接后重试。",
         "networkDev": "无法连接餐食规划服务。请确认 FastAPI 已在配置的 API 地址启动，然后重试。",
-        "catalogNoPlan": "当前食谱目录没有符合要求的餐单。请检查食材、餐次范围或时间上限。",
-        "catalogClarification": "目录规划需要更明确的要求。请说明餐次、食材或时间上限后重试。",
-        "catalogSafetyClarification": "预览暂无法确认这项过敏或饮食限制，未生成餐单。",
-        "catalogUnsupported": "目录预览暂无法验证一项或多项要求，例如辣度或全天总时间上限，未生成餐单。",
-        "catalogDisabled": "本地后端尚未启用目录规划。请开启目录规划设置并重启 FastAPI。",
         "catalogLocalOnly": "草稿食谱仅限本地开发后端使用。请检查后端配置和回环地址。",
         "unexpected": "获取餐单时发生错误，请重试。"
       }
@@ -398,10 +390,6 @@
         "network": "无法连接食物记录服务，请检查本地后端后重试。",
         "saveUnknown": "无法确认草稿是否已保存。请先重新加载实际用餐日期的记录，再尝试保存。"
       }
-    },
-    "pantry": {
-      "intro": "用食材快照记录手边的食材。",
-      "status": "当前版本暂不支持保存或更新食材快照。"
     },
     "profile": {
       "intro": "营养档案为可选项，你可以以游客身份浏览应用。",

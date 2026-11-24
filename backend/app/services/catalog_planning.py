@@ -74,6 +74,7 @@ def merge_planning_request(payload: MealPlanRequest, *, infer_scope: bool) -> Pl
         cuisine_preference=intent.cuisine_preference,
         flavor_preference=intent.flavor_preference,
         servings=intent.servings,
+        vegetarian_preference=intent.vegetarian_preference,
         cooking_effort_preference=intent.cooking_effort_preference,
         allergy_statements=intent.allergy_statements,
         dietary_exclusions=intent.dietary_exclusions,
@@ -199,6 +200,17 @@ def _build_response(
                 "已优先考虑省事，但现有目录只能部分满足这一偏好。"
                 if chinese else " Ranked for easier preparation, but the catalog could only partly meet this preference."
             )
+    if any(meal.meal_type == "breakfast" and meal.required_roles
+           and len(meal.recipes) > 1 and meal.estimated_total_minutes > 25 for meal in plan.meals):
+        explanation += (
+            "在当前限制下，目录的完整早餐选项有限，这份需要分开准备。"
+            if chinese else " Complete breakfast options are limited under these constraints. This breakfast requires separate preparation."
+        )
+    if intent.vegetarian_preference:
+        explanation += (
+            "按草稿食材筛选素食偏好；商品配料和交叉接触仍需自行核对。"
+            if chinese else " Vegetarian preference screened from ingredient lists; check product labels and cross-contact."
+        )
     if mode == "development_drafts":
         explanation += "本地开发草稿，份量和耗时待核实。" if chinese else " Local draft. Portions and times are unverified."
     return MealPlanResponse(

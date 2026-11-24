@@ -4,7 +4,9 @@ MealMind is a mobile-first, Simplified Chinese and English meal planning assista
 
 ## Project status
 
-The frontend runs locally with bilingual navigation and feature previews. FastAPI serves health checks and a Gemini-backed meal planning endpoint. The frontend checks API reachability in development and generates meal plans when requested from Today → Meal planning.
+The public portfolio build provides a nine-meal Blind Box and a single browser-local daily plan with revision history. Smart Planning shows a fixed labeled example. Nutrition and Replan show example workflows. Food Logging and live Gemini are available in the private local development setup. The public site deploys only the static frontend and does not collect logs or call a model.
+
+[Static deployment and release notes](docs/PORTFOLIO_RELEASE.md) · [Recipe review and provenance](docs/BLIND_BOX_REVIEW.md)
 
 | Directory | Purpose |
 | --- | --- |
@@ -15,7 +17,7 @@ The frontend runs locally with bilingual navigation and feature previews. FastAP
 | `evaluation/` | Future AI evaluation cases, scoring, and reports |
 | `docs/` | Product requirements and decision history |
 
-Supabase Auth is the planned authentication service. Gemini is the initial multimodal model candidate. The deployment target is Render, with a Static Site for the frontend and a Web Service for the backend.
+Supabase Auth is the planned authentication service. Gemini is the initial multimodal model candidate. The public portfolio release targets Render Static Site and publishes only the frontend assets. The FastAPI service runs separately for private local development.
 
 ## Manage local development on macOS
 
@@ -55,6 +57,21 @@ npm run dev
 Open [http://127.0.0.1:5173](http://127.0.0.1:5173) or [http://localhost:5173](http://localhost:5173). Vite uses port 5173 and exits if that port is occupied. The development frontend checks the API at `http://127.0.0.1:8000` by default. To use a different backend, set `VITE_API_BASE_URL` in `frontend/.env.local` and restart Vite. The frontend opens in Simplified Chinese on first visit and remembers the selected language in this browser.
 
 From `frontend/`, run `npm run lint` and `npm run build` to check the source and generate the production build.
+
+## Preview the Blind Box on your phone
+
+Use a trusted network and keep FastAPI bound to `127.0.0.1`. Keep the backend running on port 8000, using the existing local development instructions. In a separate terminal, start a second Vite process on a different port so that the regular Mac app remains available:
+
+```sh
+MAC_LAN_IP="$(ipconfig getifaddr en0)"
+printf '%s\n' "$MAC_LAN_IP"
+cd ~/Desktop/MealMind/frontend
+VITE_LAN_PREVIEW=1 npm run dev -- --host "$MAC_LAN_IP" --port 5174 --strictPort
+```
+
+If the IP is blank, go to **System Settings → Network → Wi‑Fi → Details → TCP/IP**, find the IPv4 address, and set `MAC_LAN_IP` to that address before starting Vite. Open `http://<MAC_LAN_IP>:5174/blind-box` on a phone on the same network, for example `http://192.168.1.42:5174/blind-box`.
+
+In this mode the browser uses relative API paths, and Vite forwards only the read-only health check to the Mac's loopback backend. You can draw, redraw and view recipes on the phone. Adding to a plan, AI generation and private log data are available through the regular loopback app on the Mac. Browser storage is per origin and device. No plan or log data is shared with the phone. If the page is unreachable, check the network address, Mac firewall and whether the Wi-Fi network isolates clients. Stop the LAN preview with Ctrl+C when finished.
 
 ## Run the backend locally
 
@@ -124,7 +141,7 @@ curl -fsS http://127.0.0.1:8000/api/v1/meal-plans/generate \
 
 The response contains a title, meals with dishes and approximate ingredient quantities and units, cooking instructions, estimated preparation minutes per meal, an explanation, and any additional ingredients. `meal_type` is optional for `single_meal` and must be omitted or null for `full_day`. For a full day, the time limit applies to each meal. Existing mode requires an ingredient list and rejects unlisted structured ingredients, including unlisted staples. Available ingredient labels are preserved across languages so the backend can compare them against the request.
 
-Invalid input returns HTTP 422. Missing credentials return 503, provider or invalid output errors return 502, and transport timeouts return 504. Each generation makes at most one provider attempt. For local troubleshooting, set `MEALMIND_GEMINI_DIAGNOSTICS=true` in `backend/.env` and restart FastAPI to log upstream HTTP codes and sanitized diagnostic summaries. API tests mock Gemini and run without credentials. The endpoint is intended for local development and has no authentication or rate limiting. Check dietary restrictions and allergies before using generated recipes.
+Invalid input returns HTTP 422. Missing credentials return 503, provider or invalid output errors return 502, and transport timeouts return 504. A generation makes at most two provider attempts, with a single retry only after an upstream HTTP 503. For local troubleshooting, set `MEALMIND_GEMINI_DIAGNOSTICS=true` in `backend/.env` and restart FastAPI to log upstream HTTP codes and sanitized diagnostic summaries. API tests mock Gemini and run without credentials. The endpoint is intended for local development and has no authentication or rate limiting. Check dietary restrictions and allergies before using generated recipes.
 
 ## Try catalog-guided planning locally
 
@@ -139,9 +156,9 @@ MEALMIND_CATALOG_USE_DRAFTS=true
 MEALMIND_CATALOG_PERSONALIZATION=false
 ```
 
-To show the selector, add `VITE_CATALOG_PLANNING_PREVIEW=true` to `frontend/.env.local` and restart the Vite development server on port 5173. Open [the Planning page](http://127.0.0.1:5173/plan), then choose **Catalog-guided planning (development preview)**. Switching modes preserves text and advanced options. Submit explicitly. The original mode may call Gemini when submitted with a configured key. Keep catalog personalization disabled for deterministic local review.
+Smart Planning uses Gemini in private local development. For developer-only catalog testing, send the same request body directly to `POST /api/v1/meal-plans/generate?planning_mode=catalog` on the loopback backend. Keep catalog personalization disabled for deterministic local review. Catalog Replan can be exercised through the local preview API or backend tests.
 
-Edit the local env files in place to preserve the API key and any other values. Before starting either server, stop any existing MealMind instance from its original terminal. The [backend command](#run-the-backend-locally) binds FastAPI to `127.0.0.1:8000` with reload. The [frontend command](#run-the-frontend-locally) uses Vite on port 5173. The preview flag is public frontend configuration and has no effect in production builds. Server-side development and loopback checks still control draft access.
+Edit the local env files in place to preserve the API key and any other values. Before starting either server, stop any existing MealMind instance from its original terminal. The [backend command](#run-the-backend-locally) binds FastAPI to `127.0.0.1:8000` with reload. The [frontend command](#run-the-frontend-locally) uses Vite on port 5173. Server-side development and loopback checks still control draft access.
 
 Try an explicit single dinner with known ingredients. This call is deterministic with the settings above and requires no Gemini key.
 

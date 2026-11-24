@@ -43,22 +43,33 @@ class MealCombination:
         return "multi_dish"
 
 
+def heated_components(recipe: CatalogRecipe) -> int:
+    if recipe.cooking_components is not None:
+        return recipe.cooking_components
+    return int(recipe.times.cooking_minutes > 0)
+
+
 @dataclass(frozen=True)
 class CookingEffortScore:
     dishes: int
     total_minutes: int
     distinct_ingredients: int
     prerequisites: int
+    heated_components: int
+    equipment_load: int
 
     @property
     def points(self) -> int:
-        return 12 * self.dishes + self.total_minutes + 3 * self.distinct_ingredients + 8 * self.prerequisites
+        return (
+            12 * self.dishes + self.total_minutes + 3 * self.distinct_ingredients + 8 * self.prerequisites
+            + 6 * self.heated_components + self.equipment_load
+        )
 
     @property
     def meets_simple_meal_target(self) -> bool:
         return (
             self.dishes <= 2 and self.total_minutes <= 30
-            and self.distinct_ingredients <= 8 and self.prerequisites == 0
+            and self.distinct_ingredients <= 8 and self.prerequisites == 0 and self.heated_components <= 1
         )
 
 
@@ -70,6 +81,8 @@ def score_cooking_effort(meals: Collection[MealCombination]) -> CookingEffortSco
         total_minutes=sum(meal.estimated_total_minutes for meal in meals),
         distinct_ingredients=len({item.ingredient_id for item in items}),
         prerequisites=len({(item.ingredient_id, item.state) for item in items if item.required_starting_state}),
+        heated_components=sum(heated_components(recipe) for recipe in dishes),
+        equipment_load=sum(len({*recipe.equipment} - {"knife", "cutting_board", "spoon"}) for recipe in dishes),
     )
 
 
@@ -86,7 +99,7 @@ class DiversityScore:
     def points(self) -> int:
         return (
             -100 * self.repeated_recipes - 50 * self.repeated_families
-            - 4 * self.repeated_primary_ingredients - 2 * self.recent_family_matches
+            - 4 * self.repeated_primary_ingredients - 18 * self.recent_family_matches
             + 2 * self.distinct_methods + 2 * self.distinct_compositions
         )
 
@@ -119,6 +132,9 @@ def _matches_constraints(
     request: CompositionRequest,
     available: set[tuple[str, str]],
 ) -> bool:
+    vegetarian = recipe.dietary.get("vegetarian")
+    if request.vegetarian_preference and (vegetarian is None or vegetarian.status == "unknown"):
+        return False
     if request.require_non_spicy and not (
         recipe.flavor and recipe.flavor.has_verified_heat and recipe.flavor.heat == "non_spicy"
     ):
@@ -265,10 +281,19 @@ def compose_candidates(
             sum(meal.estimated_total_minutes for meal in meals),
             tuple(tuple(recipe.recipe_id for recipe in meal.recipes) for meal in meals),
         )
-        if request.prefer_low_effort:
+        if all(slot.style == "complete_meal" for slot in slots):
+            effort = score_cooking_effort(meals)
             rank = (
-                score_cooking_effort(meals).points - diversity.points,
+                effort.points * (2 if request.prefer_low_effort else 1) - diversity.points,
                 sum(meal.composition_type == "multi_dish" for meal in meals),
+                *rank,
+            )
+        # Breakfast preference is soft. Catalog coverage and hard constraints still determine feasibility.
+        breakfast = next((meal for meal in meals if meal.meal_type == "breakfast" and meal.required_roles), None)
+        if breakfast:
+            rank = (
+                breakfast.estimated_total_minutes > 15,
+                sum(heated_components(recipe) for recipe in breakfast.recipes) > 1,
                 *rank,
             )
         if len(ranked) < limit or rank < ranked[-1][0]:

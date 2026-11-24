@@ -99,7 +99,7 @@ def test_conversational_full_day_reaches_composition(gemini, prompt, ranks_for_e
     assert response.status_code == 200
     result = MealPlanResponse.model_validate(response.json())
     assert [meal.meal_type for meal in result.meals] == ["breakfast", "lunch", "dinner"]
-    assert ("只能部分满足这一偏好" in result.explanation) is ranks_for_effort
+    assert ("已按目录估算优先选择" in result.explanation) is ranks_for_effort
     assert "部分偏好尚无法应用" not in result.explanation
     gemini[0].assert_not_called()
 
@@ -236,8 +236,8 @@ def test_prompt_only_remains_default_with_catalog_enabled(gemini):
             "estimated_preparation_minutes": 10,
             "dishes": [{
                 "name": "Baseline dish",
-                "ingredients": [{"name": "Water", "quantity": 1, "unit": "cup"}],
-                "instructions": ["Example baseline instruction."],
+                "ingredients": [{"name": name, "quantity": 80, "unit": "g"} for name in ("tofu", "rice", "bok choy")],
+                "instructions": ["Simmer tofu with bok choy and serve over rice."],
             }],
         }],
         "explanation": "Baseline explanation.",
@@ -302,4 +302,65 @@ def test_full_day_rejects_distinct_ids_from_same_family(monkeypatch, gemini):
 
     assert response.status_code == 409
     assert response.json()["detail"]["reason"] == "no_distinct_day"
+    gemini[0].assert_not_called()
+
+
+def test_full_day_explains_when_the_draft_catalog_cannot_offer_a_simple_breakfast(gemini, monkeypatch):
+    legacy = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH.with_name("catalog-v3.json"))
+    monkeypatch.setattr("app.api.meal_plans.load_recipe_catalog", lambda _: legacy)
+    with api(**LOCAL) as client:
+        response = client.post(CATALOG_PATH, json={**BASE, "user_request": "Plan a full day", "scope": "full_day"})
+    assert response.status_code == 200
+    assert "Complete breakfast options are limited" in response.json()["explanation"]
+    gemini[1].assert_not_called()
+
+
+def test_quick_breakfast_preserves_exact_ready_to_eat_inventory(gemini):
+    with api(**LOCAL) as client:
+        response = client.post(CATALOG_PATH, json={
+            **BASE, "user_request": "早餐，少洗锅", "language": "zh-CN", "meal_type": "breakfast",
+            "ingredient_mode": "existing", "cooking_time_limit": 10,
+            "available_ingredients": ["原味无糖酸奶", "香蕉", "即食燕麦片（可直接食用）"],
+        })
+    assert response.status_code == 200, response.text
+    plan = response.json()
+    assert plan["additional_ingredients"] == []
+    assert plan["meals"][0]["estimated_preparation_minutes"] == 5
+    assert [dish["name"] for dish in plan["meals"][0]["dishes"]] == ["香蕉酸奶燕麦碗"]
+    gemini[0].assert_not_called()
+
+
+def test_vegetarian_preference_is_feasible_but_strict_diet_is_not_verified(gemini):
+    with api(**LOCAL) as client:
+        request = {**BASE, "scope": "full_day", "language": "zh-CN",
+                   "user_request": "安排今天三餐，适合一个人做，偏好素食，少洗锅"}
+        result = client.post(CATALOG_PATH, json=request)
+        strict = client.post(CATALOG_PATH, json={**request, "user_request": "安排今天三餐，严格素食"})
+    assert result.status_code == 200, result.text
+    plan = result.json()
+    assert "草稿食材筛选素食偏好" in plan["explanation"]
+    catalog = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH)
+    by_name = {recipe.names.zh_cn: recipe for recipe in catalog.recipes}
+    selected = [by_name[dish["name"]] for meal in plan["meals"] for dish in meal["dishes"]]
+    assert all(recipe.dietary["vegetarian"].status == "unverified" for recipe in selected)
+    assert all(recipe.servings == 1 and recipe.cooking_components <= 1 for recipe in selected)
+    assert strict.status_code == 422
+    assert "unconfirmed_dietary_exclusions" in strict.json()["detail"]["reasons"]
+    gemini[0].assert_not_called()
+
+
+def test_v4_quick_chinese_day_remains_complete_and_family_distinct(gemini):
+    with api(**LOCAL) as client:
+        response = client.post(CATALOG_PATH, json={
+            **BASE, "scope": "full_day", "language": "zh-CN",
+            "user_request": "安排今天三餐，中式家常菜，适合一个人做，少洗锅",
+        })
+    assert response.status_code == 200, response.text
+    result = response.json()
+    catalog = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH)
+    recipes = {recipe.names.zh_cn: recipe for recipe in catalog.recipes}
+    selected = [recipes[dish["name"]] for meal in result["meals"] for dish in meal["dishes"]]
+    assert len(selected) == len({recipe.dish_family_id for recipe in selected}) == 3
+    assert result["meals"][0]["estimated_preparation_minutes"] <= 15
+    assert all({"protein", "staple", "vegetable"} <= set(recipe.dish_roles) for recipe in selected[1:])
     gemini[0].assert_not_called()

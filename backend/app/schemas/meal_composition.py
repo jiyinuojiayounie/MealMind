@@ -30,6 +30,7 @@ class CompositionRequest(CatalogRecord):
     required_dietary_tags: frozenset[Tag] = frozenset()
     unresolved_constraints: tuple[Text, ...] = ()
     prefer_low_effort: bool = False
+    vegetarian_preference: bool = False
 
     @model_validator(mode="after")
     def validate_slots(self):

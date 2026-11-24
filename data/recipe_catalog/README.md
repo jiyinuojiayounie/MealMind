@@ -15,3 +15,7 @@ Use edible portion weight as the target basis for gram quantities, with each ing
 ## Catalog version 3
 
 The development loader now uses `catalog-v3.json`. This revision prepares the 12 batch 01 selections for human review and preserves the other eight records. It adds provisional flavor descriptions, serving context and revised instructions. All records remain drafts. Time, ingredient amount, allergen, household-measure and reuse verification remains pending. See the [release candidate review cards](../../docs/RECIPE_RELEASE_CANDIDATE_01.md).
+
+## Catalog version 4
+
+The development loader uses `catalog-v4.json`. This snapshot preserves the earlier recipe and family IDs, identifies the equipment and separately heated components implied by the draft steps, and adds six one-person recipes. A zero time or component count is used only for a no-cook draft. Absence of the new metadata remains valid on old snapshots. Ingredient screening for an explicit vegetarian preference is provisional. Strict dietary and allergen eligibility still need reviewed evidence. See the [full audit and offline comparison](../../docs/RECIPE_CATALOG_PRACTICALITY_AUDIT.md).

@@ -1,13 +1,14 @@
 {
+  "release": {"checkingPlan": "Checking your local plan…", "stalePlan": "The plan changed. Review the slot again before saving.", "saveFailed": "This browser could not save the plan.", "confirmAdd": "Confirm add to plan", "browserOnly": "Plans stay in this browser and do not sync across devices. Plans do not record consumption.", "cookNotice": "Portfolio demo. Recipe timing is estimated. Packaged ingredient and allergen evidence is unverified.", "add": "Add to plan", "replaceSlot": "Replace", "replacePrompt": "Confirm which meals to replace", "currentMeal": "Current meal: {{meal}}", "proposedMeal": "Proposed meal: {{meal}}", "reviewReplacement": "Review replacements", "planDetails": "View current recipes", "history": "Version history", "version": "Version {{revision}}", "sampleTitle": "Sample full-day plan", "planningExample": "This public demo uses a fixed sample and does not call AI. Preview the meals and save them in this browser.", "loadExample": "View sample plan", "nutritionExample": "Example: nutrition estimates use confirmed food logs with verifiable portions. The public demo does not read personal logs or calculate live nutrition.", "replanExample": "Example: a confirmed lunch is locked; a replacement dinner can be previewed. This demo does not generate replans."},
+  "blindBox": {"closePanel": "Close", "title": "What to Eat? Blind Box", "slot": "Choose a meal", "draw": "Start draw", "redraw": "Draw again", "demo": "Meals, portions, and times are awaiting verification.", "restrictions": "Allergies and dietary restrictions (optional)", "declare": "I have an allergy or dietary restriction that needs checking", "unverified": "No meal can be recommended because the demo lacks reviewed ingredient or allergen evidence.", "empty": "No candidates for this meal. Try another meal type.", "noApproved": "No approved blind-box meals are available yet.", "serving": "One serving. Gram amounts are estimates for the ingredient state described in the steps.", "saveTitle": "Save to meal plan", "date": "Date", "replace": "Current meal: {{meal}}. Replace this meal?", "confirmNew": "Add this meal to the selected slot?", "confirmReplace": "Confirm replacement", "confirmSave": "Confirm save", "cancel": "Cancel", "reviewSave": "Review slot and save", "checking": "Checking meal plans and confirmed logs…", "stale": "The plan or food logs changed. Review the slot again before saving.", "locked": "This slot has a confirmed food log and cannot be replaced.", "saved": "Saved to your meal plan.", "saveFailed": "Saving requires the local backend and browser plan storage to be available.", "heading": "What should I eat today?", "intro": "Choose a meal and give the wheel a spin.", "spinning": "Spinning…", "viewRecipe": "View recipe", "addToPlan": "Add to plan", "oneServing": "One serving", "lanSave": "Draw meals and view recipes on your phone. Use MealMind on your Mac to save a plan.", "meals": {"recipe_000003": {"description": "Sweetcorn brings a gentle sweetness to this warm, light porridge."}, "recipe_000016": {"description": "Egg and bok choy bring savory flavor and crunch to cooked rice."}, "recipe_000017": {"description": "Garlicky shrimp and broccoli with their pan juices over hot rice."}, "recipe_000018": {"description": "Shiitake, tofu and bok choy in a light noodle broth."}, "recipe_000021": {"description": "Sweet banana, plain yogurt and ready-to-eat oats in one bowl."}, "recipe_000022": {"description": "Soft scrambled eggs, whole-grain bread and crisp cucumber."}, "recipe_000023": {"description": "Fine rice noodles, egg and bok choy in a warm, clear broth."}, "recipe_000025": {"description": "Savory chicken thigh, tender cabbage and chewy udon."}, "recipe_000026": {"description": "Tangy tomato, soft potato and chickpeas in a warm stew."}, "recipe_000027": {"description": "Soft pear sweetens the porridge and sesame adds a toasty finish."}, "recipe_000028": {"description": "Two small skillet pancakes with sweetcorn and scallion."}, "recipe_000029": {"description": "Crisp toast with creamy peanut butter and sweet banana."}, "recipe_000030": {"description": "Soft pumpkin, crunchy seeds and a glass of milk."}, "recipe_000031": {"description": "Seaweed and ribbons of egg warm up a bowl of rice."}, "recipe_000032": {"description": "Yogurt-dressed tuna with crisp cucumber in whole-grain bread."}, "recipe_000034": {"description": "Shredded chicken, crisp greens and cucumber rolled in a warm tortilla."}, "recipe_000035": {"description": "Tender onion and sliced beef in a lightly sweet sauce over rice."}, "recipe_000036": {"description": "Beef and three vegetables tossed with sweet-hot Korean chili paste."}, "recipe_000037": {"description": "Sweet-savory glaze coats chicken thigh and broccoli."}, "recipe_000038": {"description": "A thin omelet drapes over tangy ketchup rice."}, "recipe_000039": {"description": "Soft eggplant and garlicky ground pork make a saucy rice topping."}, "recipe_000040": {"description": "Gently steamed fish with ginger, scallion and its cooking juices."}, "recipe_000041": {"description": "Tender pork, crisp celery and chewy pressed tofu over rice."}, "recipe_000042": {"description": "Thin beef and rice noodles in a bright tomato broth."}, "recipe_000043": {"description": "Green beans and pork tossed into soy-braised noodles."}, "recipe_000044": {"description": "Cool soba with crisp cucumber, edamame and nutty sesame."}, "recipe_000045": {"description": "Salmon and tofu in a savory miso broth."}, "recipe_000046": {"description": "Sour-spicy kimchi broth with tofu, mushrooms and glass noodles."}, "recipe_000047": {"description": "Pumpkin softens into a gently spiced red lentil stew."}, "recipe_000048": {"description": "One pot for dumplings and spinach, with a little vinegar for dipping."}, "recipe_000049": {"description": "Lemony skillet salmon with sliced potatoes and broccoli."}, "recipe_000051": {"description": "Garlicky chicken thigh and browned pumpkin off one tray."}, "recipe_000052": {"description": "Golden tofu patties with a little crunch from wood ear mushrooms."}}},
   "language": "Interface language",
   "backend": {"loading": "Checking API connection…", "connected": "API connected", "unavailable": "API unavailable", "retry": "Retry API connection"},
   "skip": "Skip to content",
   "navigation": "Primary navigation",
-  "nav": { "today": "Today", "log": "Log", "pantry": "Pantry", "profile": "Profile" },
+  "nav": { "today": "Today", "plan": "Smart Planning", "log": "Food Log", "profile": "Profile" },
   "feature": {
     "plan": "Meal planning",
     "log": "Food logging",
-    "pantry": "My pantry",
     "profile": "Personal settings"
   },
   "welcome": {
@@ -143,7 +144,6 @@
     "assistantHint": "Assistant preview. AI requests are unavailable in this version.",
     "assistantExample": "What can I cook with eggs?",
     "direct": "Start with meal planning",
-    "shortcuts": "Quick actions",
     "overview": "Daily meal overview",
     "empty": "No meal planned",
     "breakfast": "Breakfast",
@@ -168,7 +168,7 @@
         "temporary": "Suggestion for {{date}} · not saved.",
         "errors": {
           "unavailable": "Couldn’t access saved plans on this browser. You can still use the suggestion here.",
-          "invalid": "This plan could not be read or saved safely. Existing entries were kept.",
+        "invalid": "This plan could not be read or saved safely. Existing entries were kept.",
           "stale": "The saved plan changed in another tab. Review the active plan before saving again."
         }
       },
@@ -209,17 +209,14 @@
         "dinner": "Dinner",
         "snack": "Snack"
       },
-      "preview": {
-        "mode": "Recommendation mode",
-        "original": "Original AI generation",
-        "catalog": "Catalog-guided planning (development preview)",
-        "notice": "Development preview — recipes and quantities have not yet been independently verified."
-      },
       "errors": {
         "requirements": "Enter meal requirements using 1 to 2,000 characters.",
         "ingredientsRequired": "List at least one ingredient to use existing ingredients only.",
         "ingredientLimit": "Enter up to 60 ingredients, with up to 120 characters each.",
         "time": "Enter a whole number from 1 to 480 minutes.",
+        "dietaryUnverified": "MealMind cannot verify this dietary restriction for a generated meal.",
+        "ingredientsUnverified": "The ingredient restriction could not be verified. List allowed foods in More options using Existing ingredients only.",
+        "timeUnverified": "The time limit could not be applied safely. Set a time limit per meal in More options.",
         "invalid": "Check your meal requirements, ingredients, and time limit, then try again.",
         "rateLimit": "Too many requests. Wait a moment, then try again.",
         "generation": "We couldn’t generate a plan. Try again or adjust your requirements.",
@@ -227,11 +224,6 @@
         "timeout": "Meal planning took too long. Try again in a moment.",
         "network": "Couldn’t reach the meal planning service. Check your connection and try again.",
         "networkDev": "Couldn’t reach the meal planning API. Check that FastAPI is running at your configured API address, then try again.",
-        "catalogNoPlan": "The current catalog has no plan that meets these requirements. Review your ingredients, meal scope, or time limit.",
-        "catalogClarification": "Catalog planning needs more detail. Clarify the meal, ingredients, or time limit and try again.",
-        "catalogSafetyClarification": "The preview cannot confirm this allergy or dietary restriction. No meal plan was generated.",
-        "catalogUnsupported": "The catalog preview cannot verify one or more requirements, such as spice level or a whole-day time limit. No meal plan was generated.",
-        "catalogDisabled": "Catalog planning is disabled on the local backend. Enable the catalog planning setting and restart FastAPI.",
         "catalogLocalOnly": "Draft recipes are available only through a local development backend. Check the backend configuration and loopback address.",
         "unexpected": "Something went wrong while getting your meal plan. Try again."
       }
@@ -401,10 +393,6 @@
         "network": "Couldn’t reach the food log API. Check the local backend and try again.",
         "saveUnknown": "Couldn’t verify that the draft saved. Reload the records for the consumption date before saving again."
       }
-    },
-    "pantry": {
-      "intro": "Keep a snapshot of the ingredients you have on hand.",
-      "status": "Ingredient snapshots cannot be saved or updated in this version."
     },
     "profile": {
       "intro": "A nutrition profile is optional. You can explore the app as a guest.",

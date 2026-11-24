@@ -51,6 +51,15 @@ INGREDIENT_ALIASES = {
     "葱": ("ingredient_scallion", "raw"), "scallion": ("ingredient_scallion", "raw"),
     "食用油": ("ingredient_oil", "ready_to_use"), "cooking oil": ("ingredient_oil", "ready_to_use"),
     "蒜": ("ingredient_garlic", "raw"), "garlic": ("ingredient_garlic", "raw"),
+    "原味无糖酸奶": ("ingredient_yogurt", "ready_to_use"), "plain unsweetened yogurt": ("ingredient_yogurt", "ready_to_use"),
+    "香蕉": ("ingredient_banana", "raw"), "banana": ("ingredient_banana", "raw"),
+    "即食燕麦片(可直接食用)": ("ingredient_ready_oats", "ready_to_use"), "ready-to-eat oats": ("ingredient_ready_oats", "ready_to_use"),
+    "全麦面包": ("ingredient_wholegrain_bread", "ready_to_use"), "whole-grain bread": ("ingredient_wholegrain_bread", "ready_to_use"),
+    "快煮细米粉": ("ingredient_rice_vermicelli", "dry"), "quick-cooking thin rice vermicelli": ("ingredient_rice_vermicelli", "dry"),
+    "即食乌冬面(预熟)": ("ingredient_packed_udon", "ready_to_use"), "fully cooked packaged udon": ("ingredient_packed_udon", "ready_to_use"),
+    "土豆": ("ingredient_potato", "raw"), "potato": ("ingredient_potato", "raw"),
+    "熟鹰嘴豆(罐装沥干)": ("ingredient_cooked_chickpeas", "ready_to_use"),
+    "cooked chickpeas (canned, drained)": ("ingredient_cooked_chickpeas", "ready_to_use"),
 }
 # Split explicit clauses, but preserve closed inventory lists with “and” or “、”.
 CLAUSE_SEPARATOR = re.compile(r"[。!?;\n,]+|(?<=\D)\.\s+")
@@ -107,7 +116,9 @@ def extract_planning_intent(text: str) -> PlanningIntent:
             meal_types.add(MEAL_CLAUSES[clause])
         elif clause == "适合一个人做":
             fields.update(("servings", "cooking_effort"))
-        elif clause == "简单省事":
+        elif clause in {"偏好素食", "vegetarian preference", "prefer vegetarian meals"}:
+            fields.add("vegetarian_preference")
+        elif clause in {"简单省事", "少洗锅", "minimal cleanup"}:
             fields.add("cooking_effort")
         elif clause in {"不要辣", "not spicy", "no spice", "non-spicy"}:
             flavors.add("no_spicy")
@@ -180,6 +191,7 @@ def extract_planning_intent(text: str) -> PlanningIntent:
         time_basis="per_meal" if per_meal else "unspecified",
         cuisine_preference=cuisine,
         flavor_preference=next(iter(flavors)) if len(flavors) == 1 else None,
+        vegetarian_preference="vegetarian_preference" in fields,
         servings=1 if "servings" in fields else None,
         cooking_effort_preference="low" if "cooking_effort" in fields else None,
         allergy_statements=tuple(allergies),
@@ -260,13 +272,14 @@ def plan_from_intent(
         excluded_allergens=safety.excluded_allergens,
         required_dietary_tags=safety.required_dietary_tags,
         prefer_low_effort=intent.cooking_effort_preference == "low",
+        vegetarian_preference=intent.vegetarian_preference,
     )
     if intent.servings is not None:
         recipes = tuple(recipe for recipe in catalog.recipes if recipe.servings == intent.servings)
         catalog = catalog.model_copy(update={"recipes": recipes})
 
     unapplied = ("flavor_preference",) if intent.flavor_preference == "mild" else ()
-    if request.prefer_low_effort:
+    if request.prefer_low_effort or request.vegetarian_preference:
         # Keep the deterministic effort winner rather than handing the ranking to personalization.
         candidate_limit = 1
     if intent.cuisine_preference:

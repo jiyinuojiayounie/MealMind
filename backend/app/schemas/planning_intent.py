@@ -8,7 +8,7 @@ from app.schemas.recipe_catalog import CatalogRecord, IngredientId, Tag
 
 IntentField = Literal[
     "scope", "meal_type", "available_ingredients", "ingredient_mode", "cooking_time_limit",
-    "cuisine", "flavor", "servings", "cooking_effort", "allergies", "dietary_exclusions",
+    "cuisine", "flavor", "servings", "vegetarian_preference", "cooking_effort", "allergies", "dietary_exclusions",
 ]
 
 
@@ -40,6 +40,7 @@ class PlanningIntent(CatalogRecord):
     cuisine_preference: Tag | None = None
     flavor_preference: Literal["no_spicy", "mild"] | None = None
     servings: Literal[1] | None = None
+    vegetarian_preference: bool = False
     cooking_effort_preference: Literal["low"] | None = None
     allergy_statements: tuple[str, ...] = ()
     dietary_exclusions: tuple[str, ...] = ()

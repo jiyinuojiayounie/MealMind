@@ -5,7 +5,7 @@ import { BackendStatus } from '../components/BackendStatus'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { featurePaths } from '../types/navigation'
 
-const tabs = ['today', 'log', 'pantry', 'profile'] as const
+const tabs = ['today', 'plan', 'log', 'profile'] as const
 
 export function AppLayout() {
   const { t } = useTranslation()

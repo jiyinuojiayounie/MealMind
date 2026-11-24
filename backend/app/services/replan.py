@@ -114,7 +114,9 @@ def _earlier_variety(
 def generate_replan_preview(request: ReplanRequest, store: FoodLogStore, settings: Settings) -> ReplanPreview:
     context, logs = _read_preview_context(request, store)
     payload = _planning_request(request)
-    mode = request.planning_mode or (request.current_plan.source if request.current_plan else "prompt_only")
+    mode = request.planning_mode or (
+        "catalog" if request.current_plan and request.current_plan.source == "catalog" else "prompt_only"
+    )
     intent_payload = payload if mode == "catalog" else payload.model_copy(update={"available_ingredients": []})
     intent = merge_planning_request(intent_payload, infer_scope=False)
     if intent.allergy_statements or intent.dietary_exclusions:
@@ -135,6 +137,8 @@ def generate_replan_preview(request: ReplanRequest, store: FoodLogStore, setting
         raise ReplanBlocked(403, "catalog_disabled")
     labels: tuple[str, ...] = ()
     families: frozenset[str] = frozenset()
+    previous_meals = request.current_plan.plan.meals if request.current_plan else ()
+    recent_dishes = tuple(dict.fromkeys(dish.name for meal in previous_meals for dish in meal.dishes))[:16]
     catalog = None
     if mode == "catalog" or logs:
         try:
@@ -148,6 +152,11 @@ def generate_replan_preview(request: ReplanRequest, store: FoodLogStore, setting
     if mode == "catalog":
         if catalog is None:
             raise CatalogLoadError("Catalog is unavailable for replanning")
+        recent = {ingredient_key(name) for name in recent_dishes}
+        families |= frozenset(
+            recipe.dish_family_id for recipe in catalog.recipes
+            if recent.intersection((ingredient_key(recipe.names.zh_cn), ingredient_key(recipe.names.en_us)))
+        )
         plan = generate_catalog_plan(
             payload, settings.model_copy(update={"catalog_personalization": False}), catalog,
             mode="development_drafts" if settings.catalog_use_drafts else "production", recent_family_ids=families,
@@ -157,7 +166,9 @@ def generate_replan_preview(request: ReplanRequest, store: FoodLogStore, setting
         if isinstance(plan, NoFeasiblePlan):
             raise ReplanBlocked(409, plan.status, plan.reason)
     else:
-        plan = generate_meal_plan(payload, settings, replan_food_names=labels)
+        plan = generate_meal_plan(
+            payload, settings, replan_food_names=labels, replan_recent_dishes=recent_dishes,
+        )
     _check_suggestion(plan, request.target_meal_type)
     _read_preview_context(request, store, after_generation=True)
 

@@ -3,7 +3,6 @@ import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MealPlanResult } from './MealPlanResult'
 import { ApiError } from '../services/apiClient'
-import { catalogPreviewEnabled } from '../services/mealPlans'
 import type { MealType } from '../services/mealPlans'
 import { acceptMealPlan, getSavedMealPlan, PlanStorageError, settingsForMeal } from '../services/mealPlanRepository'
 import type { SavedMealPlan } from '../services/mealPlanRepository'
@@ -154,7 +153,6 @@ function ReplanTarget({ target, context, record, onStale, onApplied }: {
   const { t, i18n } = useTranslation()
   const active = record?.revisions.at(-1)
   const savedSettings = active ? settingsForMeal(active, target) : undefined
-  const [mode, setMode] = useState(savedSettings?.source ?? 'prompt_only')
   const [restriction, setRestriction] = useState('')
   const [busy, setBusy] = useState<'preview' | 'apply'>()
   const [error, setError] = useState('')
@@ -188,7 +186,6 @@ function ReplanTarget({ target, context, record, onStale, onApplied }: {
   function generate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (restriction !== 'none_declared' || operation.current) return
-    if (mode === 'catalog' && !catalogPreviewEnabled) { setError('catalog'); return }
     if (localDay() !== context.date) { onStale(); return }
     const form = new FormData(event.currentTarget)
     const pantry = String(form.get('ingredients') ?? '').split(/[,，、;；\n]+/).map((value) => value.trim()).filter(Boolean)
@@ -208,7 +205,7 @@ function ReplanTarget({ target, context, record, onStale, onApplied }: {
       current_plan: active && record ? {
         plan_id: record.planId, revision: record.revision, date: record.date, source: active.source, plan: active.plan,
       } : undefined,
-      planning_mode: mode,
+      planning_mode: 'prompt_only',
       constraints: {
         language: i18n.resolvedLanguage === 'zh-CN' ? 'zh-CN' : 'en-US',
         ingredient_mode: ingredientMode, available_ingredients: pantry, cooking_time_limit: minutes,
@@ -268,19 +265,6 @@ function ReplanTarget({ target, context, record, onStale, onApplied }: {
           </label>
           <p id="replan-review-help" className="text-sm text-muted">{t('replan.reviewHelp')}</p>
           {restriction === 'present' && <p role="status" className="text-sm text-muted">{t('replan.errors.unsupported')}</p>}
-          {(catalogPreviewEnabled || mode === 'catalog') && (
-            <label className="planning-field text-sm">
-              {t('pages.plan.preview.mode')}
-              <select className="planning-input" value={mode}
-                onChange={(event) => setMode(event.target.value === 'catalog' ? 'catalog' : 'prompt_only')}>
-                <option value="prompt_only">{t('pages.plan.preview.original')}</option>
-                <option value="catalog" disabled={!catalogPreviewEnabled}>{t('pages.plan.preview.catalog')}</option>
-              </select>
-            </label>
-          )}
-          {mode === 'catalog' && <p className="text-sm text-muted">
-            {t(catalogPreviewEnabled ? 'pages.plan.preview.notice' : 'replan.errors.catalog')}
-          </p>}
           <details className="rounded-xl bg-paper p-3">
             <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">{t('replan.constraints')}</summary>
             <div className="grid gap-2 pt-2">
@@ -316,7 +300,7 @@ function ReplanTarget({ target, context, record, onStale, onApplied }: {
             </div>
           </details>
           <button type="submit" className={`${primary} justify-self-start`}
-            disabled={restriction !== 'none_declared' || (mode === 'catalog' && !catalogPreviewEnabled)}>
+            disabled={restriction !== 'none_declared'}>
             {t(busy === 'preview' ? 'replan.generating' : 'replan.generate')}
           </button>
         </fieldset>

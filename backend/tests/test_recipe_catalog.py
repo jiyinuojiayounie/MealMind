@@ -1,5 +1,6 @@
 import json
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 
@@ -54,9 +55,9 @@ def reviewed(data):
 def test_development_catalog_loads_and_excludes_all_drafts():
     catalog = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH)
     assert catalog.schema_version == 1
-    assert catalog.catalog_version == 3
-    assert len(catalog.recipes) == 20
-    assert len(catalog.ingredients) == 29
+    assert catalog.catalog_version == 4
+    assert len(catalog.recipes) == 26
+    assert len(catalog.ingredients) == 37
     assert all(recipe.review.status == "draft" for recipe in catalog.recipes)
     assert not production_recipes(catalog)
     assert not production_recipes(catalog, excluded_allergens=["peanut"])
@@ -182,7 +183,7 @@ def test_verified_household_label(load, reviewed):
 
 def test_release_candidate_updates_only_selected_drafts():
     prior = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH.with_name("catalog-v2.json"))
-    candidate = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH)
+    candidate = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH.with_name("catalog-v3.json"))
     selected = {1, 2, 4, 5, 6, 8, 10, 14, 16, 17, 18, 19}
 
     assert candidate.ingredients == prior.ingredients
@@ -226,3 +227,29 @@ def test_rinsing_and_cooking_water_remain_separate():
         assert {i.quantity for i in recipe.ingredients if i.ingredient_id == "ingredient_water"} == {
             cooking_volume
         }
+
+
+def test_blind_box_batch_is_a_separate_one_person_draft_catalog():
+    batch_path = Path(__file__).resolve().parents[2] / "frontend/src/data/blind-box-batch-02.json"
+    batch = load_recipe_catalog(batch_path)
+    base = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH)
+    assert len(batch.recipes) == 24
+    assert not production_recipes(batch)
+    assert len({recipe.dish_family_id for recipe in batch.recipes}) == 24
+    assert {recipe.recipe_id for recipe in batch.recipes}.isdisjoint(recipe.recipe_id for recipe in base.recipes)
+    for slot, count in (("breakfast", 7), ("lunch", 20), ("dinner", 17)):
+        assert sum(slot in recipe.meal_types for recipe in batch.recipes) == count
+    external = [recipe for recipe in batch.recipes if recipe.provenance.source_kind == "licensed_external"]
+    assert len(external) == 5
+    for recipe in external:
+        source = recipe.provenance
+        assert source.attribution and source.source_reference.startswith("https://github.com/Anduin2017/HowToCook/")
+        assert "Unlicense" in source.license_or_permission
+    for recipe in batch.recipes:
+        assert recipe.servings == 1 and recipe.review.status == "draft" and recipe.review.evidence is None
+        assert recipe.verification_notes and len(recipe.steps.zh_cn) == len(recipe.steps.en_us) >= 3
+        assert all(assessment.status == "contains" and assessment.evidence is None
+                   for assessment in recipe.allergens.values())
+        for item in recipe.ingredients:
+            if item.ingredient_id == "ingredient_rice":
+                assert recipe.times.starting_assumptions and item.state == "cooked" and item.required_starting_state

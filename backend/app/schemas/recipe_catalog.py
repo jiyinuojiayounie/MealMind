@@ -141,6 +141,8 @@ class CatalogRecipe(CatalogRecord):
     dish_roles: tuple[DishRole, ...] = Field(min_length=1)
     cuisine: Tag
     cooking_methods: tuple[Tag, ...] = Field(min_length=1)
+    equipment: tuple[Tag, ...] = ()
+    cooking_components: Annotated[int, Field(ge=0)] | None = None
     flavor: FlavorProfile | None = None
     ingredients: tuple[RecipeIngredient, ...] = Field(min_length=1)
     process_water: ProcessWater | None = None

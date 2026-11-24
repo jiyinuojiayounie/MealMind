@@ -1,4 +1,4 @@
-export const apiBaseUrl = (
+export const apiBaseUrl = import.meta.env.DEV && import.meta.env.VITE_LAN_PREVIEW === '1' ? '' : (
   import.meta.env.VITE_API_BASE_URL?.trim() ||
   (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '')
 ).replace(/\/+$/, '')
@@ -28,6 +28,7 @@ export async function requestJson<T>(
   parse: (data: unknown) => T,
   { body, method = body ? 'POST' : 'GET', redirect, signal, timeoutMs }: JsonRequest,
 ): Promise<T> {
+  if (import.meta.env.PROD) throw new ApiError(403)
   const timeout = AbortSignal.timeout(timeoutMs)
   const multipart = body instanceof FormData
   const response = await fetch(`${apiBaseUrl}${path}`, {

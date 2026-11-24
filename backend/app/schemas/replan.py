@@ -29,7 +29,7 @@ class AcceptedPlan(StructuredOutput):
     plan_id: Annotated[UUID, Field(strict=False)]
     revision: Revision
     date: LocalDate
-    source: PlanningMode
+    source: Literal["prompt_only", "catalog", "blind_box"]
     plan: PlanSnapshot
 
 

@@ -1,4 +1,4 @@
-import { ApiError, postJson } from './apiClient'
+import { ApiError, requestJson } from './apiClient'
 
 export const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'] as const
 export type PlanningMode = 'prompt_only' | 'catalog'
@@ -91,5 +91,8 @@ export function generateMealPlan(
   if (inferScope) query.set('infer_scope', 'true')
   if (catalogPreviewEnabled && mode === 'catalog') query.set('planning_mode', 'catalog')
   const path = '/api/v1/meal-plans/generate'
-  return postJson(query.size ? `${path}?${query}` : path, payload, parseMealPlan, signal)
+  // Original AI mode can wait for two 25-second provider attempts plus backoff.
+  return requestJson(query.size ? `${path}?${query}` : path, parseMealPlan, {
+    body: payload, signal, timeoutMs: mode === 'catalog' && catalogPreviewEnabled ? 35_000 : 55_000,
+  })
 }

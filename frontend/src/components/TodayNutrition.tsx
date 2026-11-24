@@ -33,7 +33,7 @@ export function TodayNutrition() {
       <h2 id="nutrition-title">{t('nutrition.title')}</h2>
       {import.meta.env.DEV && canUseFoodLogs()
         ? <LocalNutrition />
-        : <p className="text-sm text-muted">{t('nutrition.localOnly')}</p>}
+        : <p className="text-sm text-muted">{t(import.meta.env.PROD ? 'release.nutritionExample' : 'nutrition.localOnly')}</p>}
     </section>
   )
 }

@@ -42,3 +42,9 @@ The following proposals record the approved product direction and the implementa
 | ID | Decision |
 | --- | --- |
 | D020 | Use traceable food-state reference data and deterministic nutrition calculations over confirmed logs grouped by the recorded local date. Preserve unknowns and distinguish partial estimates from complete intake. Scope v1 mappings to compatible food identities and preparations. Exclude model-invented nutrients or weights and assumed mixed-dish decomposition. See the [nutrition analysis design](NUTRITION_ANALYSIS_DESIGN.md). |
+
+## V2 navigation simplification
+
+| ID | Decision |
+| --- | --- |
+| D021 | Retire the separate Pantry page and manual inventory workflow. This supersedes the pantry-specific portions of D007, D008, and D010. Planning can use ingredients supplied for the current request in text or explicit options. Preserve ingredient data attached to saved plans. Remove Today's shortcuts and use Today, Smart Planning, Food Log, and Profile as the primary navigation. Today opens with Blind Box, followed by the daily plan and analysis. |

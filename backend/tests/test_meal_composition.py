@@ -86,7 +86,7 @@ def test_effort_counts_declared_prerequisite_without_relaxing_strict_inventory(c
     assert isinstance(result, ComposedPlan)
     effort = score_cooking_effort(result.meals)
     assert (effort.dishes, effort.total_minutes, effort.distinct_ingredients, effort.prerequisites) == (1, 16, 5, 1)
-    assert effort.points == 51
+    assert (effort.heated_components, effort.equipment_load, effort.points) == (1, 2, 59)
     assert not effort.meets_simple_meal_target
     no_cooked_rice = request.model_copy(update={"available_ingredients": tuple(
         item for item in request.available_ingredients if item.ingredient_id != "ingredient_rice"
@@ -98,12 +98,12 @@ def test_sequence_time_includes_all_dishes(catalog):
     selected = tuple(recipe for recipe in catalog.recipes if recipe.recipe_id in {"recipe_000008", "recipe_000014"})
     small_catalog = catalog.model_copy(update={"recipes": selected})
     slots = (MealSlot(meal_type="dinner"),)
-    too_short = CompositionRequest(slots=slots, max_total_minutes_per_meal=41)
-    enough = CompositionRequest(slots=slots, max_total_minutes_per_meal=42)
+    too_short = CompositionRequest(slots=slots, max_total_minutes_per_meal=46)
+    enough = CompositionRequest(slots=slots, max_total_minutes_per_meal=47)
     assert isinstance(compose_plan(small_catalog, too_short, mode=DEV_MODE), NoFeasiblePlan)
     result = compose_plan(small_catalog, enough, mode=DEV_MODE)
     assert isinstance(result, ComposedPlan)
-    assert result.meals[0].estimated_total_minutes == 42
+    assert result.meals[0].estimated_total_minutes == 47
 
 
 def test_retrieval_filters_roles_dietary_and_explicit_exclusions(catalog):
@@ -180,5 +180,17 @@ def test_catalog_preserves_recorded_times_and_draft_prerequisites(catalog):
             for recipe in snapshot.recipes
         ]
 
-    assert recorded_minutes(catalog) == recorded_minutes(original)
+    before = recorded_minutes(original)
+    after = recorded_minutes(catalog)
+    assert after[:13] == before[:13] and after[14:20] == before[14:]
+    assert after[13] == (6, 21, 5, 32)
     assert all(recipe.review.status == "draft" for recipe in catalog.recipes)
+
+
+def test_available_recent_family_can_be_avoided_without_losing_dinner_roles(catalog):
+    request = CompositionRequest(slots=(MealSlot(meal_type="dinner"),))
+    original = compose_plan(catalog, request, mode=DEV_MODE)
+    recent = {recipe.dish_family_id for recipe in original.meals[0].recipes}
+    alternative = compose_plan(catalog, request, mode=DEV_MODE, recent_family_ids=recent)
+    assert not recent.intersection(recipe.dish_family_id for recipe in alternative.meals[0].recipes)
+    assert {"protein", "staple", "vegetable"} <= alternative.meals[0].covered_roles

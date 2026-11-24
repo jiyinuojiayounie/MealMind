@@ -7,6 +7,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 
 const api = 'http://127.0.0.1:5921'
 const writes = []
+const planningRequests = []
 const mock = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5918')
   res.setHeader('Access-Control-Allow-Headers', 'content-type')
@@ -15,13 +16,14 @@ const mock = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return res.end()
   const path = req.url.split('?')[0]
   // Recognition is forwarded only to the isolated backend with an injected fixture provider.
-  if (!/^\/api\/v1\/(?:health|food-normalization\/preview|food-logs(?:\/recognize-text|\/[0-9a-f-]+(?:\/confirm)?)?|nutrition\/daily)$/.test(path)) {
+  if (!/^\/api\/v1\/(?:health|meal-plans\/generate|replan\/(?:context|preview)|food-normalization\/preview|food-logs(?:\/recognize-text|\/[0-9a-f-]+(?:\/confirm)?)?|nutrition\/daily)$/.test(path)) {
     res.statusCode = 404
     return res.end('{}')
   }
   let body = ''
   for await (const chunk of req) body += chunk
   if ((path === '/api/v1/food-logs' && req.method === 'POST') || req.method === 'PUT') writes.push(JSON.parse(body))
+  if (path === '/api/v1/meal-plans/generate') planningRequests.push(req.url)
   const response = await fetch(api + req.url, {
     method: req.method, headers: { 'Content-Type': 'application/json' }, body: body || undefined,
   })
@@ -44,7 +46,7 @@ try {
   let backendOutput = ''
   backend.stderr.on('data', (chunk) => { backendOutput += chunk })
   await until(() => backend.exitCode === null && backendOutput.includes('Uvicorn running on ' + api))
-  const env={...process.env,NODE_ENV:'development',VITE_API_BASE_URL:'http://127.0.0.1:5919'}
+  const env={...process.env,NODE_ENV:'development',VITE_CATALOG_PLANNING_PREVIEW:'true',VITE_API_BASE_URL:'http://127.0.0.1:5919'}
   const build=spawnSync('node',['node_modules/vite/bin/vite.js','build','--mode','development','--outDir',profile+'/site'],
     {cwd:'frontend',env,encoding:'utf8'})
   assert.equal(build.status,0,build.stdout+build.stderr)
@@ -68,7 +70,7 @@ try {
   }
   const visible=(phrase)=>until(()=>js(`document.body.innerText.includes(${JSON.stringify(phrase)})`))
   const click=async(label)=>{
-    const predicate = `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(label)})`
+    const predicate = `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(label)} && b.getClientRects().length > 0)`
     await until(()=>js(`!!(${predicate}) && !(${predicate}).matches(':disabled')`))
     await js(`(${predicate}).click()`)
   }
@@ -331,6 +333,360 @@ with closing(sqlite3.connect(Path(sys.argv[1]).as_uri() + '?mode=ro', uri=True))
     assert.deepEqual(await logs(), [])
     console.log(`PASS cooking evidence with mocked provider: ${description}`)
   }
+
+  async function pickOption(value) {
+    await until(() => js(`[...document.querySelectorAll('select')].some(el=>[...el.options].some(o=>o.value===${JSON.stringify(value)}))`))
+    await js(`(()=>{const select=[...document.querySelectorAll('select')].find(el=>[...el.options].some(o=>o.value===${JSON.stringify(value)})); select.value=${JSON.stringify(value)}; select.dispatchEvent(new Event('change',{bubbles:true}));})()`)
+  }
+  async function clickPlanningOptions() {
+    await visible('更多选项')
+    await js(`[...document.querySelectorAll('summary')].find(el => el.textContent.includes('更多选项')).click()`)
+  }
+  async function submitPlan(text, button = '生成餐单') {
+    await until(() => js("!!document.querySelector('textarea[name=requirements]')"))
+    await fill('textarea[name=requirements]', text)
+    await click(button)
+  }
+  const tomorrow = '帮我安排明天的一日三餐。我一个人做饭，偏爱中式家常菜，想吃得健康但也要好吃。早餐最好10分钟以内，中饭和晚饭各20分钟以内，食材要常见，尽量少洗锅，不要推荐重复的菜。'
+  await open('/')
+  await visible('直接开始')
+  await js("Array.from(document.querySelectorAll('a')).find(a=>a.textContent.includes('直接开始')).click()")
+  await until(() => js("location.pathname === '/today'"))
+  await visible('今天吃什么？')
+  assert(await js("location.pathname === '/today' && !!document.querySelector('.blind-wheel') && !document.querySelector('.blind-result')"))
+  const navLinks = () => js(`[...document.querySelectorAll('.site-nav a')].map(a => [a.getAttribute('href'), a.textContent.trim()])`)
+  assert.deepEqual(await navLinks(), [['/today', '今日'], ['/plan', '智能规划'], ['/log', '记录'], ['/profile', '我的']])
+  assert(await js(`!document.querySelector('#shortcuts-title, .shortcut, a[href="/pantry"]')`))
+  const followNav = (path) => js(`[...document.querySelectorAll('.site-nav a')].find(a=>a.getAttribute('href')===${JSON.stringify(path)}).click()`)
+  await followNav('/plan')
+  await until(() => js("location.pathname === '/plan'"))
+  await submitPlan('我只有番茄、鸡蛋和土豆，帮我规划一顿晚餐。')
+  await visible('测试番茄鸡蛋土豆')
+  assert.deepEqual(await js(`[...document.querySelectorAll('article ul li')].map(node=>node.firstElementChild.textContent)`), ['番茄', '鸡蛋', '土豆'])
+  await followNav('/log')
+  await until(() => js("location.pathname === '/log' && !!document.querySelector('main h1')"))
+  await followNav('/profile')
+  await until(() => js("location.pathname === '/profile'"))
+  await visible('个人设置')
+  await followNav('/today')
+  await until(() => js("location.pathname === '/today'"))
+  await visible('今天吃什么？')
+  await open('/pantry')
+  await until(() => js("location.pathname === '/today' && !!document.querySelector('.blind-wheel')"))
+  assert(await js(`!document.querySelector('a[href="/pantry"]') && !document.body.innerText.includes('快捷操作')`))
+  console.log('PASS navigation: Today, Smart Planning, Food Log, Profile, legacy Pantry redirect, and text-only ingredients')
+
+  const writesBeforeDraw = writes.length
+  const drawMetrics = await js(`(() => {
+    const counts = { requests: 0, writes: 0 }
+    const fetch = window.fetch
+    window.fetch = (...args) => { counts.requests++; return fetch(...args) }
+    const originals = Object.fromEntries(['put', 'add', 'delete', 'clear'].map((key) => [key, IDBObjectStore.prototype[key]]))
+    for (const [key, original] of Object.entries(originals)) {
+      IDBObjectStore.prototype[key] = function (...args) { counts.writes++; return original.apply(this, args) }
+    }
+    window.finishBlindBoxTest = () => {
+      window.fetch = fetch
+      Object.assign(IDBObjectStore.prototype, originals)
+      return counts
+    }
+    return true
+  })()`)
+  assert(drawMetrics)
+  const resultTitle = () => js("document.querySelector('.blind-meal h2')?.innerText")
+  const decoration = () => js(`[...document.querySelectorAll('.blind-wheel-spoke span')].map(icon => icon.textContent)`)
+  const icons = ['🥬', '🍜', '🍅', '🍚', '🥕', '🍳', '🍄', '🥟']
+  assert.deepEqual(await decoration(), icons)
+  await js(`window.originalBlindBoxRandom = Math.random; Math.random = () => 0.999999`)
+  const lastAdded = ['鸡丝生菜卷饼', '青菜豆腐煎饼配木耳', '青菜豆腐煎饼配木耳']
+  const viewports = [[375, 667], [390, 844], [360, 740]]
+  const bounds = () => js(`(() => {
+    const rect = selector => document.querySelector(selector).getBoundingClientRect()
+    return {
+      wheelTop: Math.round(rect('.blind-wheel').top),
+      wheelWidth: document.querySelector('.blind-wheel').offsetWidth,
+      redrawBottom: Math.round(rect('.blind-stage > button').bottom),
+      resultTop: Math.round(rect('.blind-result').top),
+      resultBottom: Math.round(rect('.blind-meal').bottom),
+      navTop: Math.round(rect('.site-nav').top),
+      scrollY: window.scrollY,
+    }
+  })()`)
+  async function pressKey(key, code) {
+    await cdp('Input.dispatchKeyEvent', { type:'rawKeyDown', key, windowsVirtualKeyCode:code })
+    await cdp('Input.dispatchKeyEvent', { type:'keyUp', key, windowsVirtualKeyCode:code })
+  }
+  for (const [index, label] of ['早餐', '午餐', '晚餐'].entries()) {
+    const [width, height] = viewports[index]
+    await cdp('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: true })
+    await js('window.scrollTo(0, 0)')
+    await js(`document.querySelectorAll('input[name=blind-box-slot]')[${index}].click()`)
+    if (index === 0) {
+      const idle = await js(`({
+        wheelWidth: document.querySelector('.blind-wheel').offsetWidth,
+        drawBottom: Math.round(document.querySelector('.blind-stage > button').getBoundingClientRect().bottom),
+        navTop: Math.round(document.querySelector('.site-nav').getBoundingClientRect().top),
+      })`)
+      assert(idle.wheelWidth >= 210 && idle.drawBottom <= idle.navTop, JSON.stringify(idle))
+      console.log('PASS Blind Box idle mobile', JSON.stringify(idle))
+      assert(await js(`(() => {
+        const button = document.querySelector('.blind-stage > button')
+        button.click()
+        button.click()
+        return true
+      })()`))
+      await visible('转盘转动中…')
+      assert(await js("document.querySelector('.blind-stage > button').disabled && !document.querySelector('.blind-result')"))
+      assert(await js("[...document.querySelectorAll('[name=blind-box-slot]')].every(input=>input.matches(':disabled'))"))
+    } else {
+      await click('开始抽取')
+    }
+    const first = await until(resultTitle)
+    assert.equal(first, lastAdded[index])
+    await visible('一人份')
+    assert(await js(`document.querySelector('.blind-meta span').textContent === ${JSON.stringify(label)}`))
+    assert.deepEqual(await decoration(), icons)
+    assert(await js("!document.querySelector('.blind-wheel [data-recipe-id]')"))
+    assert(await js("document.querySelector('.blind-meal').getBoundingClientRect().top >= document.querySelector('.blind-wheel').getBoundingClientRect().bottom"))
+    await until(() => js("document.querySelector('.blind-result').getAnimations().every(animation => animation.playState === 'finished')"))
+    const measurement = await bounds()
+    assert(measurement.wheelTop >= 0 && measurement.wheelWidth <= 80
+      && measurement.resultBottom <= measurement.navTop && measurement.redrawBottom <= measurement.navTop,
+      JSON.stringify({ width, height, ...measurement }))
+    console.log('PASS Blind Box viewport', JSON.stringify({ width, height, ...measurement }))
+    assert(await js("!document.querySelector('#blind-box-recipe').open"))
+    await click('查看做法')
+    assert(await js("document.querySelector('#blind-box-recipe').matches(':modal') && document.querySelector('#blind-box-recipe ol li') !== null"))
+    await pressKey('Tab', 9)
+    assert(await js("document.querySelector('#blind-box-recipe').contains(document.activeElement)"))
+    await pressKey('Escape', 27)
+    await until(() => js("!document.querySelector('#blind-box-recipe').open && document.activeElement.textContent === '查看做法'"))
+    await js('window.scrollTo(0, 20)')
+    const before = await bounds()
+    await click('再抽一次')
+    await visible('转盘转动中…')
+    assert.equal(await resultTitle(), first)
+    const during = await bounds()
+    assert.deepEqual([during.scrollY, during.wheelWidth], [before.scrollY, before.wheelWidth])
+    await until(async () => { const title = await resultTitle(); return title && title !== first })
+    const after = await bounds()
+    assert.deepEqual([after.scrollY, after.wheelWidth], [before.scrollY, before.wheelWidth])
+    assert.deepEqual(await decoration(), icons)
+    assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+  }
+  await js("document.querySelector('.blind-restrictions summary').click()")
+  await js("document.querySelector('.blind-restrictions input[type=checkbox]').click()")
+  assert.equal(await resultTitle(), undefined)
+  await click('开始抽取')
+  await visible('暂无可推荐餐食')
+  assert.equal(await resultTitle(), undefined)
+  assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+  await js("Math.random = window.originalBlindBoxRandom; delete window.originalBlindBoxRandom")
+  const onDisk = await logs()
+  assert.deepEqual(onDisk, [])
+  assert.equal(writes.length, writesBeforeDraw)
+  assert.deepEqual(await js('window.finishBlindBoxTest()'), { requests: 0, writes: 0 })
+  await cdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 667, deviceScaleFactor: 1, mobile: true })
+  await js('window.scrollTo(0, 0)')
+  await click('English')
+  await visible('No meal can be recommended')
+  assert.deepEqual(await navLinks(), [['/today', 'Today'], ['/plan', 'Smart Planning'], ['/log', 'Food Log'], ['/profile', 'Profile']])
+  await js("document.querySelector('.blind-restrictions input[type=checkbox]').click()")
+  await js("document.querySelector('.blind-restrictions').open = false")
+  await cdp('Emulation.setEmulatedMedia', { features: [{name:'prefers-reduced-motion', value:'reduce'}] })
+  await js('window.mealmindOriginalRandom = Math.random; Math.random = () => 0.999999')
+  await click('Start draw')
+  await visible('One serving')
+  const englishMobile = await bounds()
+  assert(englishMobile.resultBottom <= englishMobile.navTop, JSON.stringify(englishMobile))
+  console.log('PASS Blind Box English mobile', JSON.stringify(englishMobile))
+  assert(await js("!document.querySelector('.blind-wheel-disc').classList.contains('is-spinning')"))
+  await cdp('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false })
+  const desktop = await bounds()
+  assert(desktop.wheelWidth >= 260)
+  console.log('PASS Blind Box desktop', JSON.stringify(desktop))
+  assert.deepEqual(await decoration(), icons)
+  await cdp('Emulation.setEmulatedMedia', { features: [] })
+  await cdp('Emulation.clearDeviceMetricsOverride')
+  await js('Math.random = window.mealmindOriginalRandom; delete window.mealmindOriginalRandom')
+  await click('中文')
+  await visible('一人份')
+  console.log('PASS Today hero: decorative wheel, three slots, redraw, reduced motion, bilingual mobile and desktop, zero fetches and plan writes')
+
+  await open('/plan')
+  await until(() => js("!!document.querySelector('textarea[name=requirements]')"))
+  for (const width of [375, 1280]) {
+    await cdp('Emulation.setDeviceMetricsOverride', { width, height: 800, deviceScaleFactor: 1, mobile: width < 500 })
+    assert(await js("!document.querySelector('option[value=catalog], option[value=prompt_only]')"))
+  }
+  await cdp('Emulation.clearDeviceMetricsOverride')
+  await submitPlan('帮我生成今天的一日三餐')
+  assert.equal(planningRequests.at(-1), '/api/v1/meal-plans/generate?infer_scope=true')
+  await visible('测试早餐炒蛋吐司')
+  await visible('测试香菇青菜焖饭')
+  await visible('测试豆腐皮炒西葫芦')
+  await open('/plan')
+  await clickPlanningOptions()
+  await pickOption('dinner')
+  await submitPlan('晚餐只做一道菜')
+  await visible('测试替换晚餐番茄豆腐饭')
+  await open('/plan')
+  await submitPlan('我对花生过敏，请帮我安排晚餐')
+  await visible('MealMind 无法核验生成餐食是否符合这项饮食限制。')
+  await open('/plan')
+  await submitPlan(tomorrow)
+  await visible('测试早餐炒蛋吐司')
+  await visible('测试午餐豆腐小白菜饭')
+  await visible('测试晚餐番茄鸡肉面')
+  await submitPlan(tomorrow.replace('明天', '今天'))
+  await click('加入计划')
+  await visible('当前餐单 · 第 1 版')
+  await submitPlan('模拟失败')
+  await visible('暂时无法生成餐单，请重试或调整需求。')
+  await visible('当前餐单 · 第 1 版')
+  await submitPlan('模拟服务暂不可用', '重试')
+  await visible('餐食规划服务暂不可用，请稍后重试。')
+  await visible('当前餐单 · 第 1 版')
+  assert(planningRequests.every((url) => !url.includes('planning_mode')))
+  console.log('PASS Smart Planning: mobile/desktop selector absent, default API path, results, saving and errors')
+
+  await open('/log')
+  await until(() => js(`!!document.querySelector(${JSON.stringify(names)})`))
+  await fill(names, '熟长粒糙米')
+  await fill('input[type=number]', '150')
+  await fill(unit, 'g')
+  await pickOption('lunch')
+  await click('保存草稿')
+  await until(async () => (await logs()).some((record) => record.status === 'draft'))
+  const beforeConfirm = await (await fetch(api + '/api/v1/nutrition/daily?date=' + date)).json()
+  assert.equal(beforeConfirm.status, 'no_confirmed_logs')
+  await click('确认实际吃过')
+  const smokeLog = await until(async () => (await logs()).find((record) => record.status === 'confirmed'))
+  assert.equal(smokeLog.meal_type, 'lunch')
+  await open('/today')
+  await visible('已计算 1/1')
+  await visible('已锁定餐次：午餐。')
+  await js("Array.from(document.querySelectorAll('summary')).find(s=>s.textContent.trim()==='重新规划一餐').click()")
+  assert(await js("!document.querySelector('option[value=catalog], option[value=prompt_only]')"))
+  await pickOption('none_declared')
+  await click('生成预览')
+  await visible('测试替换晚餐番茄豆腐饭')
+  await click('保留当前餐单')
+  await visible('当前餐单 · 第 1 版')
+  await click('生成预览')
+  await visible('测试替换晚餐番茄豆腐饭')
+  await click('接受并保存这一餐')
+  await visible('当前餐单 · 第 2 版')
+  await open('/today')
+  await visible('原始采纳餐单 · 第 1 版')
+  await visible('当前餐单 · 第 2 版')
+  const savedMeals = await js(`Array.from(document.querySelectorAll('details')).filter(el=>el.querySelector('summary')?.textContent.includes('版')).map(el=>el.textContent)`)
+  assert(savedMeals.some(text=>text.includes('第 2 版') && text.includes('测试早餐炒蛋吐司') &&
+    text.includes('测试午餐豆腐小白菜饭') && text.includes('测试替换晚餐番茄豆腐饭')))
+  assert(savedMeals.some(text=>text.includes('第 1 版') && text.includes('测试晚餐番茄鸡肉面')))
+  const mealSnapshot = (day = date) => js(`new Promise((resolve, reject) => {
+    const open = indexedDB.open('mealmind-meal-plans')
+    open.onerror = reject
+    open.onsuccess = () => {
+      const db = open.result
+      const tx = db.transaction('plans')
+      const get = tx.objectStore('plans').get(${JSON.stringify(day)})
+      get.onsuccess = () => resolve(get.result)
+      get.onerror = reject
+      tx.oncomplete = () => db.close()
+    }
+  })`)
+  const initial = await mealSnapshot()
+  await visible('今天吃什么？')
+  await js(`document.querySelectorAll('input[name=blind-box-slot]')[1].click()`)
+  await click('开始抽取')
+  await click('加入计划')
+  await click('检查餐次并保存')
+  await visible('这餐已有确认的食用记录，无法替换。')
+  assert.deepEqual(await mealSnapshot(), initial)
+  await js(`document.querySelectorAll('input[name=blind-box-slot]')[2].click()`)
+  await js('Math.random = () => 0')
+  await click('开始抽取')
+  await visible('鸡蛋小白菜炒饭')
+  await click('查看做法')
+  await visible('熟米饭 170 g')
+  await click('关闭')
+  await click('加入计划')
+  await click('检查餐次并保存')
+  await visible('当前餐食：测试替换晚餐番茄豆腐饭')
+  await click('取消')
+  assert.deepEqual(await mealSnapshot(), initial)
+  await until(() => js("!document.querySelector('#blind-box-save').open && document.activeElement.textContent === '加入计划'"))
+  await click('加入计划')
+  await click('检查餐次并保存')
+  await visible('当前餐食：测试替换晚餐番茄豆腐饭')
+  await js(`new Promise((resolve, reject) => {
+    const open = indexedDB.open('mealmind-meal-plans')
+    open.onerror = reject
+    open.onsuccess = () => {
+      const db = open.result
+      const tx = db.transaction('plans', 'readwrite')
+      const record = ${JSON.stringify(initial)}
+      record.revision++
+      record.revisions.push({ ...record.revisions.at(-1), revision: record.revision, acceptanceId: crypto.randomUUID() })
+      tx.objectStore('plans').put(record)
+      tx.oncomplete = () => { db.close(); resolve(true) }
+      tx.onabort = reject
+    }
+  })`)
+  await click('确认替换')
+  await visible('餐单或食用记录已更新')
+  assert.equal((await mealSnapshot()).revision, 3)
+  await click('检查餐次并保存')
+  await visible('当前餐食：测试替换晚餐番茄豆腐饭')
+  await js(`(() => {
+    const button = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === '确认替换')
+    button.click()
+    button.click()
+  })()`)
+  await visible('已保存到餐单。')
+  await visible('当前餐单 · 第 4 版')
+  const accepted = await mealSnapshot()
+  assert.equal(accepted.revision, 4)
+  assert.deepEqual(accepted.revisions.slice(0, 2), initial.revisions)
+  assert.equal(accepted.revisions.at(-1).source, 'blind_box')
+  assert.deepEqual(accepted.revisions.at(-1).plan.meals.slice(0, 2), initial.revisions.at(-1).plan.meals.slice(0, 2))
+  assert.equal(accepted.revisions.at(-1).plan.meals[2].dishes[0].ingredients[0].name, '熟米饭')
+  assert.deepEqual(await logs(), [smokeLog])
+  await open('/today')
+  await visible('当前餐单 · 第 4 版')
+  await js("Array.from(document.querySelectorAll('summary')).find(s=>s.textContent.trim()==='重新规划一餐').click()")
+  assert(await js("!document.querySelector('option[value=catalog], option[value=prompt_only]')"))
+  await pickOption('none_declared')
+  await click('生成预览')
+  await visible('测试替换晚餐番茄豆腐饭')
+  await click('保留当前餐单')
+  assert.deepEqual(await mealSnapshot(), accepted)
+  await open('/blind-box')
+  await js("Math.random = () => 0")
+  await click('开始抽取')
+  await visible('鸡蛋小白菜炒饭')
+  await click('加入计划')
+  const futureDate = '2099-01-02'
+  await js(`(() => {
+    const dateInput = document.querySelector('#blind-box-save input[type=date]')
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(dateInput, ${JSON.stringify(futureDate)})
+    dateInput.dispatchEvent(new Event('input', { bubbles: true }))
+  })()`)
+  await pickOption('lunch')
+  await click('检查餐次并保存')
+  await visible('将这份餐食加入所选餐次？')
+  await click('确认加入计划')
+  await visible('已保存到餐单。')
+  const future = await mealSnapshot(futureDate)
+  assert.equal(future.revision, 1)
+  assert.deepEqual(future.revisions[0].plan.meals.map((meal) => meal.meal_type), ['lunch'])
+  assert.deepEqual(await mealSnapshot(), accepted)
+  assert.deepEqual(await logs(), [smokeLog])
+  console.log('PASS Blind Box save: selected date and slot, lock, cancel, stale version, replacement, duplicate click, reload and Replan compatibility')
+  assert.equal((await fetch(api + '/api/v1/food-logs/' + smokeLog.id + '?expected_revision=' + smokeLog.revision,
+                           { method: 'DELETE' })).status, 204)
+  console.log('PASS Core MVP: browser Plan → Log → Analyze → Replan; first version and locked lunch preserved')
 
   // Manual entry through the UI, then a synthetic pre-policy AI record in this database only.
   await open('/log')

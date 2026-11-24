@@ -1,11 +1,15 @@
 """Isolated Chrome fixture app. Start only from the browser regression runner."""
 
 import json
+from types import SimpleNamespace
+from unittest.mock import MagicMock
+
+from google.genai import errors
 
 from app.core.settings import Settings
 from app.main import create_app
 from app.schemas.food_recognition import QuotedFoodItem, QuotedFoods
-from app.services import food_recognition
+from app.services import food_recognition, meal_plans
 from app.services.meal_plans import PlannerFailure
 
 CASES = {
@@ -45,4 +49,42 @@ def recognition_fixture(_settings, *, contents, **_kwargs):
 
 
 food_recognition.generate_structured = recognition_fixture
-app = create_app(Settings(_env_file=None, GEMINI_API_KEY="", environment="development"))
+def plan_fixture(**kwargs):
+    request = json.loads(kwargs["contents"])
+    if "模拟服务暂不可用" in request["user_request"]:
+        raise errors.ServerError(503, {"error": {"message": "offline fixture"}})
+    if "模拟失败" in request["user_request"]:
+        return SimpleNamespace(text="{")
+    data = [
+        ("breakfast", "测试早餐炒蛋吐司", ("鸡蛋", "吐司"), 10),
+        ("lunch", "测试午餐豆腐小白菜饭", ("豆腐", "小白菜", "米饭"), 15),
+        ("dinner", "测试晚餐番茄鸡肉面", ("番茄", "鸡肉", "面条"), 18),
+    ]
+    if request["user_request"] == "帮我生成今天的一日三餐":
+        data[1] = ("lunch", "测试香菇青菜焖饭", ("香菇", "小白菜", "大米"), 15)
+        data[2] = ("dinner", "测试豆腐皮炒西葫芦", ("豆腐皮", "西葫芦"), 18)
+    if request["user_request"] == "我只有番茄、鸡蛋和土豆，帮我规划一顿晚餐。":
+        assert request["ingredient_mode"] == "flexible" and not request["available_ingredients"]
+        data = [("dinner", "测试番茄鸡蛋土豆", ("番茄", "鸡蛋", "土豆"), 19)]
+    if request.get("meal_type") == "dinner":
+        data = [("dinner", "测试替换晚餐番茄豆腐饭", ("番茄", "豆腐", "米饭"), 14)]
+    plan = {
+        "title": "隔离测试餐单", "explanation": "测试提供方回包。",
+        "meals": [
+            {"meal_type": slot, "estimated_preparation_minutes": minutes, "dishes": [{
+                "name": name, "ingredients": [{"name": item, "quantity": 80, "unit": "g"} for item in ingredients],
+                "instructions": ["把食材做熟并装碗。"],
+            }]}
+            for slot, name, ingredients, minutes in data
+        ],
+    }
+    return SimpleNamespace(text=json.dumps(plan, ensure_ascii=False))
+
+
+fixture_client = MagicMock()
+fixture_client.return_value.__enter__.return_value.models.generate_content.side_effect = plan_fixture
+meal_plans.genai.Client = fixture_client
+app = create_app(Settings(
+    _env_file=None, GEMINI_API_KEY="offline-fixture", environment="development",
+    catalog_planning_enabled=True, catalog_use_drafts=True, gemini_diagnostics=True,
+))

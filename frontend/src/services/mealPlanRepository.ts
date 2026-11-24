@@ -12,9 +12,11 @@ export type PlanConstraints = Pick<MealPlanRequest,
   preferLowEffort?: boolean
 }
 
+export type PlanSource = PlanningMode | 'blind_box'
+
 type PlanSettings = {
   language: MealPlanRequest['language']
-  source: PlanningMode
+  source: PlanSource
   constraints: PlanConstraints
 }
 
@@ -94,7 +96,7 @@ function parseConstraints(value: unknown): PlanConstraints {
 
 function parseSettings(value: unknown): PlanSettings {
   if (!isObject(value) || (value.language !== 'zh-CN' && value.language !== 'en-US')
-    || (value.source !== 'prompt_only' && value.source !== 'catalog')) throw new PlanStorageError('invalid')
+    || (value.source !== 'prompt_only' && value.source !== 'catalog' && value.source !== 'blind_box')) throw new PlanStorageError('invalid')
   return { language: value.language, source: value.source, constraints: parseConstraints(value.constraints) }
 }
 
@@ -208,19 +210,19 @@ export function settingsForMeal(snapshot: PlanAcceptance, slot: MealType): PlanS
   return snapshot.slotSettings?.[slot] ?? parseSettings(snapshot)
 }
 
-function mergeSingleMeal(current: PlanRevision | undefined, choice: PlanAcceptance): PlanAcceptance {
-  if (!current || choice.plan.meals.length !== 1) return choice
-  const target = choice.plan.meals[0]
-  const retained = current.plan.meals.filter((meal) => meal.meal_type !== target.meal_type)
+function mergeMealSlots(current: PlanRevision | undefined, choice: PlanAcceptance): PlanAcceptance {
+  if (!current) return choice
+  const targeted = new Set(choice.plan.meals.map((meal) => meal.meal_type))
+  const retained = current.plan.meals.filter((meal) => !targeted.has(meal.meal_type))
   if (!retained.length) return choice
-  const allMeals = [...retained, target].sort((a, b) => mealTypes.indexOf(a.meal_type) - mealTypes.indexOf(b.meal_type))
+  const allMeals = [...retained, ...choice.plan.meals].sort((a, b) => mealTypes.indexOf(a.meal_type) - mealTypes.indexOf(b.meal_type))
   const retainedNames = new Set(retained.flatMap((meal) => meal.dishes.flatMap((dish) =>
     dish.ingredients.map((ingredient) => ingredient.name))))
   return {
     ...choice,
     slotSettings: Object.fromEntries(allMeals.map((meal) => [
       meal.meal_type,
-      settingsForMeal(meal.meal_type === target.meal_type ? choice : current, meal.meal_type),
+      settingsForMeal(targeted.has(meal.meal_type) ? choice : current, meal.meal_type),
     ])),
     plan: {
       ...choice.plan, title: current.plan.title, meals: allMeals,
@@ -239,7 +241,7 @@ export function acceptMealPlan(date: string, choice: PlanAcceptance, expected: P
     if ((current?.planId ?? null) !== (expected?.planId ?? null)
       || (current?.revision ?? null) !== (expected?.revision ?? null)) throw new PlanStorageError('stale')
     const revision = (current?.revision ?? 0) + 1
-    const merged = mergeSingleMeal(current?.revisions.at(-1), accepted)
+    const merged = mergeMealSlots(current?.revisions.at(-1), accepted)
     const next: SavedMealPlan = {
       schemaVersion, date, planId: current?.planId ?? createPlanId(), revision,
       revisions: [...(current?.revisions ?? []), { ...merged, revision, savedAt: new Date().toISOString() }],

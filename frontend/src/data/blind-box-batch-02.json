@@ -1,0 +1,3175 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "ingredients": [
+    {
+      "ingredient_id": "ingredient_rice",
+      "names": {
+        "zh-CN": "大米",
+        "en-US": "Rice"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_millet",
+      "names": {
+        "zh-CN": "小米",
+        "en-US": "Millet"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wheat_noodles",
+      "names": {
+        "zh-CN": "小麦面条",
+        "en-US": "Wheat noodles"
+      },
+      "allergens": {
+        "wheat": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_corn",
+      "names": {
+        "zh-CN": "玉米粒",
+        "en-US": "Corn kernels"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_egg",
+      "names": {
+        "zh-CN": "鸡蛋",
+        "en-US": "Egg"
+      },
+      "allergens": {
+        "egg": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tofu",
+      "names": {
+        "zh-CN": "北豆腐",
+        "en-US": "Firm tofu"
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_chicken",
+      "names": {
+        "zh-CN": "鸡腿肉",
+        "en-US": "Chicken thigh"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pork",
+      "names": {
+        "zh-CN": "猪里脊",
+        "en-US": "Pork tenderloin"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_white_fish",
+      "names": {
+        "zh-CN": "白肉鱼片",
+        "en-US": "White fish fillet"
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tomato",
+      "names": {
+        "zh-CN": "番茄",
+        "en-US": "Tomato"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_bok_choy",
+      "names": {
+        "zh-CN": "小白菜",
+        "en-US": "Bok choy"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_carrot",
+      "names": {
+        "zh-CN": "胡萝卜",
+        "en-US": "Carrot"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_cucumber",
+      "names": {
+        "zh-CN": "黄瓜",
+        "en-US": "Cucumber"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pumpkin",
+      "names": {
+        "zh-CN": "南瓜",
+        "en-US": "Pumpkin"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_broccoli",
+      "names": {
+        "zh-CN": "西兰花",
+        "en-US": "Broccoli"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_ginger",
+      "names": {
+        "zh-CN": "姜",
+        "en-US": "Ginger"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_garlic",
+      "names": {
+        "zh-CN": "蒜",
+        "en-US": "Garlic"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_scallion",
+      "names": {
+        "zh-CN": "葱",
+        "en-US": "Scallion"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_water",
+      "names": {
+        "zh-CN": "水",
+        "en-US": "Water"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_salt",
+      "names": {
+        "zh-CN": "盐",
+        "en-US": "Salt"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_oil",
+      "names": {
+        "zh-CN": "食用油",
+        "en-US": "Cooking oil"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_soy_sauce",
+      "names": {
+        "zh-CN": "酱油",
+        "en-US": "Soy sauce"
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_rice_vinegar",
+      "names": {
+        "zh-CN": "米醋",
+        "en-US": "Rice vinegar"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_yogurt",
+      "names": {
+        "zh-CN": "原味无糖酸奶",
+        "en-US": "Plain unsweetened yogurt"
+      },
+      "allergens": {
+        "milk": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_banana",
+      "names": {
+        "zh-CN": "香蕉",
+        "en-US": "Banana"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wholegrain_bread",
+      "names": {
+        "zh-CN": "全麦面包",
+        "en-US": "Whole-grain bread"
+      },
+      "allergens": {
+        "wheat": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_rice_vermicelli",
+      "names": {
+        "zh-CN": "快煮细米粉",
+        "en-US": "Quick-cooking thin rice vermicelli"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_potato",
+      "names": {
+        "zh-CN": "土豆",
+        "en-US": "Potato"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_milk",
+      "names": {
+        "zh-CN": "牛奶",
+        "en-US": "Milk"
+      },
+      "allergens": {
+        "milk": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pumpkin_seed",
+      "names": {
+        "zh-CN": "南瓜籽仁",
+        "en-US": "Pumpkin seeds"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pear",
+      "names": {
+        "zh-CN": "梨",
+        "en-US": "Pear"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_sesame",
+      "names": {
+        "zh-CN": "白芝麻",
+        "en-US": "Sesame seeds"
+      },
+      "allergens": {
+        "sesame": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_nori",
+      "names": {
+        "zh-CN": "无调味紫菜",
+        "en-US": "Plain dried seaweed"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_flour",
+      "names": {
+        "zh-CN": "小麦面粉",
+        "en-US": "Wheat flour"
+      },
+      "allergens": {
+        "wheat": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tuna",
+      "names": {
+        "zh-CN": "水浸金枪鱼（沥干）",
+        "en-US": "Water-packed tuna, drained"
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_onion",
+      "names": {
+        "zh-CN": "洋葱",
+        "en-US": "Onion"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_beef",
+      "names": {
+        "zh-CN": "薄切牛肉",
+        "en-US": "Thinly sliced beef"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_sugar",
+      "names": {
+        "zh-CN": "白糖",
+        "en-US": "Sugar"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_gochujang",
+      "names": {
+        "zh-CN": "韩式辣酱",
+        "en-US": "Gochujang"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_sesame_oil",
+      "names": {
+        "zh-CN": "芝麻油",
+        "en-US": "Sesame oil"
+      },
+      "allergens": {
+        "sesame": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_honey",
+      "names": {
+        "zh-CN": "蜂蜜",
+        "en-US": "Honey"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_ketchup",
+      "names": {
+        "zh-CN": "番茄酱",
+        "en-US": "Ketchup"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_minced_pork",
+      "names": {
+        "zh-CN": "猪肉末",
+        "en-US": "Ground pork"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_eggplant",
+      "names": {
+        "zh-CN": "茄子",
+        "en-US": "Eggplant"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_green_beans",
+      "names": {
+        "zh-CN": "四季豆",
+        "en-US": "Green beans"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_miso",
+      "names": {
+        "zh-CN": "味噌",
+        "en-US": "Miso"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_salmon",
+      "names": {
+        "zh-CN": "三文鱼柳",
+        "en-US": "Salmon fillet"
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_lemon",
+      "names": {
+        "zh-CN": "柠檬",
+        "en-US": "Lemon"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_soba",
+      "names": {
+        "zh-CN": "荞麦面",
+        "en-US": "Soba noodles"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_edamame",
+      "names": {
+        "zh-CN": "去荚毛豆",
+        "en-US": "Shelled edamame"
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_black_pepper",
+      "names": {
+        "zh-CN": "黑胡椒粉",
+        "en-US": "Black pepper"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_spinach",
+      "names": {
+        "zh-CN": "菠菜",
+        "en-US": "Spinach"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_kimchi",
+      "names": {
+        "zh-CN": "泡菜",
+        "en-US": "Kimchi"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_dried_lentils",
+      "names": {
+        "zh-CN": "干红扁豆",
+        "en-US": "Dried red lentils"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_curry_powder",
+      "names": {
+        "zh-CN": "咖喱粉",
+        "en-US": "Curry powder"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_frozen_dumplings",
+      "names": {
+        "zh-CN": "速冻白菜猪肉水饺",
+        "en-US": "Frozen cabbage and pork dumplings"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_peanut_butter",
+      "names": {
+        "zh-CN": "花生酱",
+        "en-US": "Peanut butter"
+      },
+      "allergens": {
+        "peanut": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_mushroom",
+      "names": {
+        "zh-CN": "口蘑",
+        "en-US": "Button mushrooms"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_zucchini",
+      "names": {
+        "zh-CN": "西葫芦",
+        "en-US": "Zucchini"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_celery",
+      "names": {
+        "zh-CN": "芹菜",
+        "en-US": "Celery"
+      },
+      "allergens": {
+        "celery": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_pressed_tofu",
+      "names": {
+        "zh-CN": "原味香干",
+        "en-US": "Plain pressed tofu"
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_glass_noodles",
+      "names": {
+        "zh-CN": "干粉丝",
+        "en-US": "Dried glass noodles"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wood_ear",
+      "names": {
+        "zh-CN": "预处理木耳",
+        "en-US": "Prepared wood ear mushrooms"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wrap",
+      "names": {
+        "zh-CN": "全麦卷饼皮",
+        "en-US": "Whole-wheat tortilla"
+      },
+      "allergens": {
+        "wheat": {
+          "status": "contains"
+        }
+      }
+    },
+    {
+      "ingredient_id": "ingredient_lettuce",
+      "names": {
+        "zh-CN": "生菜",
+        "en-US": "Lettuce"
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "recipe_id": "recipe_000027",
+      "dish_family_id": "family_000027",
+      "revision": 1,
+      "names": {
+        "zh-CN": "芝麻小米梨粥",
+        "en-US": "Millet pear porridge with sesame"
+      },
+      "meal_types": [
+        "breakfast"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_millet",
+          "quantity": 45.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_pear",
+          "quantity": 120.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_sesame",
+          "quantity": 4.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 420.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "小米淘洗，梨去核切丁。",
+          "用所列水煮小米，小火煮至接近软烂。",
+          "加梨丁煮软，撒芝麻。"
+        ],
+        "en-US": [
+          "Rinse the millet and core and dice the pear.",
+          "Simmer the millet in the listed water until nearly tender.",
+          "Add the pear and simmer until soft, then top with sesame."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 20,
+        "total_minutes": 26
+      },
+      "allergens": {
+        "sesame": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Whole millet varies by batch; check tenderness and label on sesame."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000028",
+      "dish_family_id": "family_000028",
+      "revision": 1,
+      "names": {
+        "zh-CN": "葱香玉米煎饼",
+        "en-US": "Scallion corn pancake"
+      },
+      "meal_types": [
+        "breakfast"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_flour",
+          "quantity": 55.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_corn",
+          "quantity": 60.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 1.0,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 10.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 45.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "葱切碎，面粉、鸡蛋、水和盐搅成糊，拌入玉米粒和葱。",
+          "平底锅加油，摊成两张小薄饼。",
+          "中小火两面煎至饼心凝固、玉米熟透。"
+        ],
+        "en-US": [
+          "Slice the scallion. Mix flour, egg, water and salt, then stir in the corn and scallion.",
+          "Heat oil and spread the batter into two thin pancakes.",
+          "Cook both sides over medium-low heat until set through and the corn is cooked."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 9,
+        "total_minutes": 16,
+        "starting_assumptions": {
+          "zh-CN": "用可直接烹煮的冷冻甜玉米粒。",
+          "en-US": "Use frozen sweetcorn suitable for cooking from frozen."
+        }
+      },
+      "allergens": {
+        "egg": {
+          "status": "contains"
+        },
+        "wheat": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check flour and corn labels; verify pancake thickness and cooking time."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000029",
+      "dish_family_id": "family_000029",
+      "revision": 1,
+      "names": {
+        "zh-CN": "花生酱香蕉吐司",
+        "en-US": "Peanut butter banana toast"
+      },
+      "meal_types": [
+        "breakfast"
+      ],
+      "dish_roles": [
+        "staple"
+      ],
+      "cuisine": "asian_home_cooking",
+      "cooking_methods": [
+        "assemble"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wholegrain_bread",
+          "quantity": 65.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_peanut_butter",
+          "quantity": 20.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_banana",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "全麦面包烤至表面微脆。",
+          "香蕉去皮切片。",
+          "面包抹花生酱，铺香蕉片后对切。"
+        ],
+        "en-US": [
+          "Toast the bread until lightly crisp.",
+          "Peel and slice the banana.",
+          "Spread peanut butter on the toast, top with banana and cut in half."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 3,
+        "total_minutes": 8
+      },
+      "allergens": {
+        "peanut": {
+          "status": "contains"
+        },
+        "wheat": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check bread and peanut butter labels for additional allergens."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000030",
+      "dish_family_id": "family_000030",
+      "revision": 1,
+      "names": {
+        "zh-CN": "牛奶蒸南瓜配南瓜籽",
+        "en-US": "Steamed pumpkin with milk and pumpkin seeds"
+      },
+      "meal_types": [
+        "breakfast"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "steam"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_pumpkin",
+          "quantity": 230.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_milk",
+          "quantity": 180.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_pumpkin_seed",
+          "quantity": 10.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "南瓜去籽切约两厘米块。",
+          "蒸锅另加水，水沸后蒸到南瓜可用筷子轻轻穿透。",
+          "南瓜装盘撒南瓜籽，牛奶另杯搭配。"
+        ],
+        "en-US": [
+          "Seed the pumpkin and cut it into roughly two-centimeter pieces.",
+          "Bring separate steamer water to a boil and steam until a chopstick slips through.",
+          "Serve with pumpkin seeds and a glass of milk."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 16,
+        "total_minutes": 22
+      },
+      "allergens": {
+        "milk": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Use ready-to-eat pumpkin seeds; check milk and seed labels. Steam water is separate."
+      ],
+      "process_water": {
+        "purpose": "steam"
+      }
+    },
+    {
+      "recipe_id": "recipe_000031",
+      "dish_family_id": "family_000031",
+      "revision": 1,
+      "names": {
+        "zh-CN": "紫菜蛋花汤泡饭",
+        "en-US": "Seaweed egg-drop rice soup"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 145.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 1.0,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_nori",
+          "quantity": 4.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 6.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 380.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "水烧开，加熟饭煮到整锅热透。",
+          "撕入无调味紫菜，转微沸，沿锅边倒入打散的鸡蛋。",
+          "蛋花熟透后加盐和葱花。"
+        ],
+        "en-US": [
+          "Bring the water to a boil and simmer the rice until thoroughly hot.",
+          "Tear in plain seaweed, lower to a simmer and pour beaten egg around the edge.",
+          "Cook the egg through, then season with salt and scallion."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 10,
+        "total_minutes": 15,
+        "starting_assumptions": {
+          "zh-CN": "从妥善保存的熟米饭起算，不含煮饭时间。",
+          "en-US": "Start with safely stored cooked rice; cooking rice is excluded."
+        }
+      },
+      "allergens": {
+        "egg": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "licensed_external",
+        "source_reference": "https://github.com/Anduin2017/HowToCook/blob/master/dishes/soup/%E7%B4%AB%E8%8F%9C%E8%9B%8B%E8%8A%B1%E6%B1%A4.md",
+        "attribution": "Anduin2017 and HowToCook contributors",
+        "license_or_permission": "Unlicense (upstream repository LICENSE)",
+        "notes": "MealMind adaptation with original wording, single-serving quantities and revised steps. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check dried seaweed for seasoning and seafood cross-contact; use unseasoned seaweed."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000032",
+      "dish_family_id": "family_000032",
+      "revision": 1,
+      "names": {
+        "zh-CN": "金枪鱼黄瓜三明治",
+        "en-US": "Tuna cucumber sandwich"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "asian_home_cooking",
+      "cooking_methods": [
+        "assemble"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wholegrain_bread",
+          "quantity": 65.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tuna",
+          "quantity": 85.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_cucumber",
+          "quantity": 70.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_yogurt",
+          "quantity": 25.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_black_pepper",
+          "quantity": 0.5,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "金枪鱼沥干，与酸奶、黑胡椒拌开。",
+          "黄瓜切薄片，用干净纸巾吸掉表面水分。",
+          "面包夹入黄瓜与金枪鱼拌料。"
+        ],
+        "en-US": [
+          "Drain tuna and mix with yogurt and black pepper.",
+          "Thinly slice cucumber and blot the surface dry.",
+          "Layer cucumber and the tuna mixture between the bread slices."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 0,
+        "total_minutes": 8,
+        "starting_assumptions": {
+          "zh-CN": "用可直接食用的水浸罐头金枪鱼。",
+          "en-US": "Use ready-to-eat water-packed canned tuna."
+        }
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        },
+        "milk": {
+          "status": "contains"
+        },
+        "wheat": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check canned tuna, yogurt and bread labels."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000034",
+      "dish_family_id": "family_000034",
+      "revision": 1,
+      "names": {
+        "zh-CN": "鸡丝生菜卷饼",
+        "en-US": "Chicken and lettuce breakfast wrap"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "asian_home_cooking",
+      "cooking_methods": [
+        "assemble"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wrap",
+          "quantity": 65.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_chicken",
+          "quantity": 90.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_lettuce",
+          "quantity": 45.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_cucumber",
+          "quantity": 60.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_yogurt",
+          "quantity": 25.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_black_pepper",
+          "quantity": 0.5,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "生菜洗净沥干，黄瓜切条。",
+          "熟鸡肉复热至热透，撕成丝，与酸奶和黑胡椒拌匀；按包装加热饼皮。",
+          "饼皮铺生菜、黄瓜和鸡丝，卷紧后切成两段。"
+        ],
+        "en-US": [
+          "Wash and drain lettuce and cut cucumber into sticks.",
+          "Reheat cooked chicken thoroughly and shred it. Mix with yogurt and black pepper and warm the tortilla as directed.",
+          "Layer lettuce, cucumber and chicken on the tortilla, roll tightly and halve."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 3,
+        "total_minutes": 10,
+        "starting_assumptions": {
+          "zh-CN": "熟鸡肉已备好并妥善保存，饼皮适合直接加热。",
+          "en-US": "Use safely stored cooked chicken and a tortilla suitable for reheating."
+        }
+      },
+      "allergens": {
+        "milk": {
+          "status": "contains"
+        },
+        "wheat": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check tortilla and yogurt labels; reheating time depends on the chicken thickness."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000035",
+      "dish_family_id": "family_000035",
+      "revision": 1,
+      "names": {
+        "zh-CN": "日式洋葱肥牛饭",
+        "en-US": "Japanese-style beef and onion rice bowl"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "japanese_inspired",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 160.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_beef",
+          "quantity": 110.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_onion",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 10.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_sugar",
+          "quantity": 5.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 65.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 5.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "洋葱切丝，与水、酱油和糖煮到变软。",
+          "牛肉片分散下锅煮熟，葱切碎。",
+          "复热米饭至热透，浇牛肉、洋葱和少量锅汁，撒葱。"
+        ],
+        "en-US": [
+          "Slice onion and simmer in water, soy sauce and sugar until tender.",
+          "Separate and simmer the beef slices until cooked through; slice scallion.",
+          "Reheat rice until steaming throughout and top with beef, onion, sauce and scallion."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 13,
+        "total_minutes": 21,
+        "starting_assumptions": {
+          "zh-CN": "熟饭已备好，牛肉薄片已安全解冻。",
+          "en-US": "Have cooked rice and safely thawed thin beef ready."
+        }
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "licensed_external",
+        "source_reference": "https://github.com/Anduin2017/HowToCook/blob/master/dishes/staple/%E6%97%A5%E5%BC%8F%E8%82%A5%E7%89%9B%E4%B8%BC%E9%A5%AD/%E6%97%A5%E5%BC%8F%E8%82%A5%E7%89%9B%E4%B8%BC%E9%A5%AD.md",
+        "attribution": "Anduin2017 and HowToCook contributors",
+        "license_or_permission": "Unlicense (upstream repository LICENSE)",
+        "notes": "MealMind adaptation with original wording, single-serving quantities and revised steps. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check soy sauce for wheat and other ingredients; verify thin beef cooking time."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000036",
+      "dish_family_id": "family_000036",
+      "revision": 1,
+      "names": {
+        "zh-CN": "韩式蘑菇牛肉拌饭",
+        "en-US": "Korean-style beef and mushroom bibimbap"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "korean_inspired",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 155.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_beef",
+          "quantity": 85.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_mushroom",
+          "quantity": 80.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_carrot",
+          "quantity": 65.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_zucchini",
+          "quantity": 80.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_gochujang",
+          "quantity": 12.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_sesame_oil",
+          "quantity": 4.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "胡萝卜和西葫芦切丝，口蘑切片。",
+          "用食用油炒熟牛肉，盛出；原锅炒蔬菜至熟。",
+          "米饭复热至热透，放肉和菜，加辣酱与芝麻油拌匀。"
+        ],
+        "en-US": [
+          "Cut carrot and zucchini into strips and slice mushrooms.",
+          "Cook beef through in the cooking oil and remove; cook the vegetables in the same pan.",
+          "Reheat rice thoroughly, add beef and vegetables, then mix with gochujang and sesame oil."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 10,
+        "cooking_minutes": 13,
+        "total_minutes": 23,
+        "starting_assumptions": {
+          "zh-CN": "熟饭已备好，牛肉已安全解冻；使用包装标明可即食的辣酱。",
+          "en-US": "Have cooked rice and safely thawed beef ready. Use a ready-to-eat gochujang."
+        }
+      },
+      "allergens": {
+        "sesame": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "licensed_external",
+        "source_reference": "https://github.com/Anduin2017/HowToCook/blob/master/dishes/staple/%E9%9F%A9%E5%BC%8F%E6%8B%8C%E9%A5%AD/%E9%9F%A9%E5%BC%8F%E6%8B%8C%E9%A5%AD.md",
+        "attribution": "Anduin2017 and HowToCook contributors",
+        "license_or_permission": "Unlicense (upstream repository LICENSE)",
+        "notes": "MealMind adaptation with original wording, single-serving quantities and revised steps. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check gochujang for wheat, soy and other ingredients; contains sesame oil."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000037",
+      "dish_family_id": "family_000037",
+      "revision": 1,
+      "names": {
+        "zh-CN": "照烧鸡腿配西兰花饭",
+        "en-US": "Teriyaki chicken and broccoli rice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "japanese_inspired",
+      "cooking_methods": [
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 155.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_chicken",
+          "quantity": 130.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_broccoli",
+          "quantity": 110.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 10.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_honey",
+          "quantity": 8.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_ginger",
+          "quantity": 4.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 5.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 40.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "西兰花切小朵，鸡腿切块，处理生肉后清洁手和厨具。姜切末，与酱油、蜂蜜和水混合。",
+          "用油煎鸡腿至两面上色，加西兰花和酱汁，盖锅焖至鸡肉熟透、菜软熟。",
+          "将熟饭复热至热透，盛上照烧鸡、西兰花与锅汁。"
+        ],
+        "en-US": [
+          "Cut broccoli into florets and chicken into pieces; clean hands and utensils after handling raw chicken. Mix minced ginger with soy sauce, honey and water.",
+          "Brown chicken in oil, add broccoli and sauce, cover and cook until chicken is cooked through and broccoli is tender.",
+          "Thoroughly reheat the rice and serve with the chicken, broccoli and pan sauce."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 10,
+        "cooking_minutes": 16,
+        "total_minutes": 26,
+        "starting_assumptions": {
+          "zh-CN": "熟饭和安全解冻的去骨鸡腿肉已备好。",
+          "en-US": "Have cooked rice and safely thawed boneless chicken thigh ready."
+        }
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "licensed_external",
+        "source_reference": "https://github.com/Anduin2017/HowToCook/blob/master/dishes/staple/%E7%85%A7%E7%83%A7%E9%B8%A1%E8%85%BF%E9%A5%AD.md",
+        "attribution": "Anduin2017 and HowToCook contributors",
+        "license_or_permission": "Unlicense (upstream repository LICENSE)",
+        "notes": "MealMind adaptation with original wording, single-serving quantities and revised steps. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check soy sauce for wheat; cook chicken through and allow cleanup time."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000038",
+      "dish_family_id": "family_000038",
+      "revision": 1,
+      "names": {
+        "zh-CN": "番茄酱蛋包饭",
+        "en-US": "Ketchup omurice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "japanese_inspired",
+      "cooking_methods": [
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 155.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 2.0,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_carrot",
+          "quantity": 60.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_corn",
+          "quantity": 45.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_onion",
+          "quantity": 30.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_ketchup",
+          "quantity": 18.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "切洋葱、胡萝卜小丁；用部分油炒熟蔬菜与玉米，加入熟饭炒热，拌入番茄酱。",
+          "将炒饭盛出，余油下锅，倒入打散的蛋液摊薄。",
+          "蛋皮熟透后覆在炒饭上。"
+        ],
+        "en-US": [
+          "Dice onion and carrot. Cook vegetables and corn in part of the oil, reheating the rice thoroughly in the pan before adding ketchup.",
+          "Remove the rice. Add remaining oil and spread beaten eggs into a thin omelet.",
+          "Once fully set, lay the omelet over the rice."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 14,
+        "total_minutes": 22,
+        "starting_assumptions": {
+          "zh-CN": "从妥善保存的熟米饭起算，不含煮饭时间。",
+          "en-US": "Start with safely stored cooked rice; cooking rice is excluded."
+        }
+      },
+      "allergens": {
+        "egg": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "licensed_external",
+        "source_reference": "https://github.com/Anduin2017/HowToCook/blob/master/dishes/staple/%E8%9B%8B%E5%8C%85%E9%A5%AD.md",
+        "attribution": "Anduin2017 and HowToCook contributors",
+        "license_or_permission": "Unlicense (upstream repository LICENSE)",
+        "notes": "MealMind adaptation with original wording, single-serving quantities and revised steps. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check ketchup and any packaged cooked rice; keep the egg sheet fully set."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000039",
+      "dish_family_id": "family_000039",
+      "revision": 1,
+      "names": {
+        "zh-CN": "肉末茄子盖饭",
+        "en-US": "Pork and eggplant rice bowl"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "braise"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 155.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_minced_pork",
+          "quantity": 90.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_eggplant",
+          "quantity": 190.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 5.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 9.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 70.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "茄子切小块，蒜切碎。",
+          "用油炒蒜与肉末至肉熟，加茄子和水盖锅焖软。",
+          "开盖加酱油收汁，浇在热透的熟饭上。"
+        ],
+        "en-US": [
+          "Cube eggplant and mince garlic.",
+          "Cook garlic and pork in oil until the meat is cooked, then cover and braise eggplant with water until tender.",
+          "Uncover, season with soy sauce and spoon the reduced mixture over thoroughly reheated rice."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 9,
+        "cooking_minutes": 16,
+        "total_minutes": 25,
+        "starting_assumptions": {
+          "zh-CN": "从妥善保存的熟米饭起算，不含煮饭时间。",
+          "en-US": "Start with safely stored cooked rice; cooking rice is excluded."
+        }
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check soy sauce for wheat and plain pork for any added ingredients."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000040",
+      "dish_family_id": "family_000040",
+      "revision": 1,
+      "names": {
+        "zh-CN": "姜葱蒸鱼配饭",
+        "en-US": "Ginger scallion steamed fish and rice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "steam"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 155.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_white_fish",
+          "quantity": 135.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_ginger",
+          "quantity": 8.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 10.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "姜切丝、葱切段，放在鱼柳上下；确认没有残骨。",
+          "蒸锅另加水，水开后蒸至鱼肉熟透。",
+          "将熟饭复热至热透，鱼出锅淋酱油，配饭。"
+        ],
+        "en-US": [
+          "Slice ginger and scallion and place around the fish; check for bones.",
+          "Bring separate steamer water to a boil and steam the fish until cooked through.",
+          "Reheat rice thoroughly, season the fish with soy sauce and serve."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 15,
+        "total_minutes": 23,
+        "starting_assumptions": {
+          "zh-CN": "从安全解冻的无骨白鱼柳和熟米饭起算；另备蒸锅用水。",
+          "en-US": "Start with safely thawed boneless white fish and cooked rice; use separate steamer water."
+        }
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        },
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "White fish species and soy sauce ingredients need label review; check for remaining bones."
+      ],
+      "process_water": {
+        "purpose": "steam"
+      }
+    },
+    {
+      "recipe_id": "recipe_000041",
+      "dish_family_id": "family_000041",
+      "revision": 1,
+      "names": {
+        "zh-CN": "香干芹菜肉丝配饭",
+        "en-US": "Pork and celery stir-fry with pressed tofu and rice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "stir_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 155.0,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_pork",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_celery",
+          "quantity": 85.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_pressed_tofu",
+          "quantity": 65.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 7.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "瘦肉、芹菜和香干切条，处理生肉后清洁用具。",
+          "油锅把肉丝炒熟，再加芹菜和香干炒至热透。",
+          "淋酱油，配复热至热透的熟饭。"
+        ],
+        "en-US": [
+          "Slice pork, celery and pressed tofu; clean utensils after handling raw pork.",
+          "Cook pork through in oil, then add celery and pressed tofu and heat through.",
+          "Season with soy sauce and serve with thoroughly reheated rice."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 11,
+        "cooking_minutes": 13,
+        "total_minutes": 24,
+        "starting_assumptions": {
+          "zh-CN": "从熟饭、已安全解冻的瘦猪肉和原味香干起算。",
+          "en-US": "Start with cooked rice, safely thawed lean pork and plain pressed tofu."
+        }
+      },
+      "allergens": {
+        "celery": {
+          "status": "contains"
+        },
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check soy sauce and pressed tofu. Celery is a regulated allergen in some markets."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000042",
+      "dish_family_id": "family_000042",
+      "revision": 1,
+      "names": {
+        "zh-CN": "番茄牛肉米线",
+        "en-US": "Tomato beef rice noodle soup"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice_vermicelli",
+          "quantity": 65.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_beef",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tomato",
+          "quantity": 185.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 440.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 6.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "番茄切丁，加水煮出味。",
+          "下米粉，按包装时间煮软；按剩余时间加入分散的牛肉片并煮熟。",
+          "加盐和葱花，连汤装碗。"
+        ],
+        "en-US": [
+          "Dice tomatoes and simmer in water to make the broth.",
+          "Cook noodles to package directions, adding separated beef slices early enough to cook through.",
+          "Season with salt and sliced scallion and serve with broth."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 9,
+        "cooking_minutes": 16,
+        "total_minutes": 25,
+        "starting_assumptions": {
+          "zh-CN": "用免预泡快煮细米粉和安全解冻的薄牛肉。",
+          "en-US": "Use quick no-presoak rice noodles and safely thawed thin beef."
+        }
+      },
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check noodle label and timing; verify beef cooks thoroughly without overcooking noodles."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000043",
+      "dish_family_id": "family_000043",
+      "revision": 1,
+      "names": {
+        "zh-CN": "酱香四季豆焖面",
+        "en-US": "Braised noodles with green beans"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "braise"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wheat_noodles",
+          "quantity": 80.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_green_beans",
+          "quantity": 160.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_minced_pork",
+          "quantity": 75.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 5.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 10.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 350.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "四季豆去丝切段，另用所列水煮至完全熟透，暂盛出，留煮水。",
+          "油炒蒜和肉末至肉熟，倒回煮水并按包装煮面。",
+          "加入熟豆角和酱油，翻拌收汁。"
+        ],
+        "en-US": [
+          "Trim and cut green beans. Boil in the listed water until thoroughly cooked, remove the beans and reserve the water.",
+          "Cook garlic and pork through in oil, then return the cooking water and cook the noodles to package directions.",
+          "Add cooked beans and soy sauce, toss and reduce the liquid."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 19,
+        "total_minutes": 27
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        },
+        "wheat": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check wheat noodles and soy sauce; cook green beans fully before adding noodles."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000044",
+      "dish_family_id": "family_000044",
+      "revision": 1,
+      "names": {
+        "zh-CN": "芝麻毛豆荞麦凉面",
+        "en-US": "Chilled soba with edamame and sesame"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "japanese_inspired",
+      "cooking_methods": [
+        "boil"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_soba",
+          "quantity": 75.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_edamame",
+          "quantity": 105.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_cucumber",
+          "quantity": 90.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_sesame",
+          "quantity": 5.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_rice_vinegar",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_sesame_oil",
+          "quantity": 4.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "毛豆按包装煮熟，盛出。",
+          "用干净水按包装煮荞麦面，用可饮用冷水过凉后沥干。",
+          "黄瓜切丝，与毛豆、面条及芝麻、酱油、米醋和芝麻油拌匀。"
+        ],
+        "en-US": [
+          "Cook edamame according to the package and set aside.",
+          "Cook soba according to the package, rinse with potable cold water and drain.",
+          "Slice cucumber and toss with edamame, soba, sesame, soy sauce, vinegar and sesame oil."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 12,
+        "total_minutes": 20,
+        "starting_assumptions": {
+          "zh-CN": "另备煮面、煮毛豆的水和可饮用的冷水。",
+          "en-US": "Set aside separate cooking water and potable cold water for rinsing."
+        }
+      },
+      "allergens": {
+        "sesame": {
+          "status": "contains"
+        },
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check soba for wheat and soy sauce for other ingredients. Contains soy and sesame."
+      ],
+      "process_water": {
+        "purpose": "boil"
+      }
+    },
+    {
+      "recipe_id": "recipe_000045",
+      "dish_family_id": "family_000045",
+      "revision": 1,
+      "names": {
+        "zh-CN": "味噌三文鱼豆腐汤",
+        "en-US": "Miso salmon and tofu soup"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "japanese_inspired",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_salmon",
+          "quantity": 120.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tofu",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_mushroom",
+          "quantity": 80.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 80.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_miso",
+          "quantity": 15.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 440.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "口蘑切片，豆腐和鱼切块，小白菜切段。",
+          "水开煮蘑菇和豆腐，再下鱼与菜，煮到鱼熟透。",
+          "盛少量热汤化开味噌，倒回锅拌匀。"
+        ],
+        "en-US": [
+          "Slice mushrooms and cut tofu, salmon and bok choy into bite-size pieces.",
+          "Boil mushrooms and tofu, then add fish and greens and cook until the fish is cooked through.",
+          "Dissolve miso in a little hot broth and stir it back in."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 15,
+        "total_minutes": 23,
+        "starting_assumptions": {
+          "zh-CN": "鱼柳已安全解冻；以切小块的去骨鱼柳起算。",
+          "en-US": "Start with a safely thawed boneless salmon fillet cut into chunks."
+        }
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        },
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Miso ingredients and grains vary; check for soy, barley or other label allergens."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000046",
+      "dish_family_id": "family_000046",
+      "revision": 1,
+      "names": {
+        "zh-CN": "泡菜豆腐粉丝锅",
+        "en-US": "Kimchi tofu vermicelli pot"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "korean_inspired",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_kimchi",
+          "quantity": 110.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tofu",
+          "quantity": 145.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_glass_noodles",
+          "quantity": 55.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_mushroom",
+          "quantity": 70.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 440.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_scallion",
+          "quantity": 7.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "泡菜切段，豆腐切块，口蘑切片。",
+          "泡菜和水煮开，加入豆腐和口蘑煮至热透。",
+          "按包装加入粉丝煮软，撒切好的葱。"
+        ],
+        "en-US": [
+          "Cut kimchi, cube tofu and slice mushrooms.",
+          "Simmer kimchi in water and cook the tofu and mushrooms until hot.",
+          "Cook the vermicelli in the broth to package directions and top with sliced scallion."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 14,
+        "total_minutes": 22,
+        "starting_assumptions": {
+          "zh-CN": "按包装选择可直接煮的粉丝，需泡发的产品另计时间。",
+          "en-US": "Choose vermicelli suitable for direct cooking; allow extra time for varieties that need soaking."
+        }
+      },
+      "allergens": {
+        "soy": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check kimchi for fish or shrimp and vermicelli for blended flours. Tofu contains soy."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000047",
+      "dish_family_id": "family_000047",
+      "revision": 1,
+      "names": {
+        "zh-CN": "咖喱红扁豆南瓜锅",
+        "en-US": "Red lentil and pumpkin curry pot"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "asian_home_cooking",
+      "cooking_methods": [
+        "simmer"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_dried_lentils",
+          "quantity": 75.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_pumpkin",
+          "quantity": 170.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_onion",
+          "quantity": 55.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_curry_powder",
+          "quantity": 5.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 490.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "南瓜切小块、洋葱切丁，红扁豆冲洗。",
+          "油炒软洋葱，再拌入咖喱粉、南瓜、扁豆和水。",
+          "小火煮至扁豆与南瓜都软透，中途搅拌，最后加盐。"
+        ],
+        "en-US": [
+          "Dice pumpkin and onion and rinse lentils.",
+          "Soften onion in oil and stir in curry powder, pumpkin, lentils and water.",
+          "Simmer until squash and lentils are tender, stirring occasionally, then season."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 9,
+        "cooking_minutes": 23,
+        "total_minutes": 32,
+        "starting_assumptions": {
+          "zh-CN": "用无需预泡的去皮分瓣红扁豆。",
+          "en-US": "Use split red lentils that require no presoaking."
+        }
+      },
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check curry powder for mustard and other ingredients; verify lentil tenderness."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000048",
+      "dish_family_id": "family_000048",
+      "revision": 1,
+      "names": {
+        "zh-CN": "白菜猪肉水饺配菠菜",
+        "en-US": "Pork dumplings with spinach broth"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "boil"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_frozen_dumplings",
+          "quantity": 220.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_spinach",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 550.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_rice_vinegar",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "菠菜洗净切段。",
+          "水开后按包装说明煮饺子至馅料熟透。",
+          "饺子捞出后用锅中水煮熟菠菜，连汤盛出，米醋作蘸汁。"
+        ],
+        "en-US": [
+          "Wash spinach and cut into sections.",
+          "Boil dumplings according to the package until the filling is cooked through.",
+          "Remove dumplings, then cook spinach in the remaining water and serve with broth and vinegar for dipping."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 13,
+        "total_minutes": 18,
+        "starting_assumptions": {
+          "zh-CN": "从冷冻起算，选包装说明可直接煮的白菜猪肉水饺。",
+          "en-US": "Start from frozen with cabbage and pork dumplings that can be boiled directly."
+        }
+      },
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Use the actual dumpling package directions; check wheat, egg, soy, sesame and other label ingredients."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000049",
+      "dish_family_id": "family_000049",
+      "revision": 1,
+      "names": {
+        "zh-CN": "柠檬煎三文鱼配土豆",
+        "en-US": "Lemon skillet salmon and potatoes"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "japanese_inspired",
+      "cooking_methods": [
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_salmon",
+          "quantity": 120.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_potato",
+          "quantity": 180.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_broccoli",
+          "quantity": 100.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_lemon",
+          "quantity": 35.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 7.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 90.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "土豆切薄片，西兰花切小朵，柠檬切开。",
+          "锅中加水和土豆盖煮至快软，加西兰花煮软，盛出。",
+          "擦干锅加油煎鱼至熟透，与蔬菜装盘，加盐挤柠檬。"
+        ],
+        "en-US": [
+          "Thinly slice potato, cut broccoli and halve the lemon.",
+          "Cover and simmer potatoes in the water until nearly tender, add broccoli to finish and remove the vegetables.",
+          "Dry the skillet and pan-fry salmon in oil until cooked through; serve with vegetables, salt and lemon."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 18,
+        "total_minutes": 26,
+        "starting_assumptions": {
+          "zh-CN": "三文鱼柳已安全解冻并去骨。",
+          "en-US": "Start with safely thawed boneless salmon."
+        }
+      },
+      "allergens": {
+        "fish": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Fish allergen present; verify potato and fillet thickness during cook-through."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000051",
+      "dish_family_id": "family_000051",
+      "revision": 1,
+      "names": {
+        "zh-CN": "蒜香烤鸡腿南瓜",
+        "en-US": "Garlic roasted chicken and pumpkin"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "roast"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_chicken",
+          "quantity": 140.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_pumpkin",
+          "quantity": 245.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 6.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_black_pepper",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "烤箱预热至 210°C。南瓜去籽切小块，先与一半油拌匀。",
+          "鸡腿肉拌碎蒜、余油、盐和黑胡椒，和南瓜分开放同一烤盘，清洁接触生鸡肉的用具。",
+          "烤至鸡肉熟透且南瓜软熟；若熟成时间不同，先取出熟透的一样。"
+        ],
+        "en-US": [
+          "Preheat the oven to 210°C. Seed and cube pumpkin and coat with half the oil.",
+          "Toss chicken with minced garlic, remaining oil, salt and pepper. Arrange separately on one tray and clean items that touched raw chicken.",
+          "Roast until the chicken is cooked through and pumpkin is tender, removing either first if it finishes ahead."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 12,
+        "cooking_minutes": 27,
+        "total_minutes": 39,
+        "starting_assumptions": {
+          "zh-CN": "鸡腿肉安全解冻、去骨；计时含基础烤箱预热，设备不同会波动。",
+          "en-US": "Start with safely thawed boneless chicken. The estimate includes basic oven preheating and varies by oven."
+        }
+      },
+      "allergens": {},
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Verify oven preheat, chicken doneness and piece size. Use plain unseasoned chicken."
+      ]
+    },
+    {
+      "recipe_id": "recipe_000052",
+      "dish_family_id": "family_000052",
+      "revision": 1,
+      "names": {
+        "zh-CN": "青菜豆腐煎饼配木耳",
+        "en-US": "Tofu and greens skillet patties with wood ear mushrooms"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "dish_roles": [
+        "staple",
+        "protein",
+        "vegetable"
+      ],
+      "cuisine": "chinese_home_cooking",
+      "cooking_methods": [
+        "pan_fry"
+      ],
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_tofu",
+          "quantity": 160.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 90.0,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_wood_ear",
+          "quantity": 40.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_flour",
+          "quantity": 35.0,
+          "unit": "g",
+          "state": "dry",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 1.0,
+          "unit": "piece",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8.0,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1.0,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "木耳和小白菜切细，豆腐压碎；用部分油先炒木耳和菜，盛出稍凉。",
+          "豆腐、菜、蛋、面粉、盐拌匀，压成两张薄饼。",
+          "用余油煎到两面金黄、中心凝固熟透。"
+        ],
+        "en-US": [
+          "Finely chop prepared wood ear and bok choy and mash tofu. Cook the vegetables and mushrooms in part of the oil and set aside to cool slightly.",
+          "Mix tofu, vegetables, egg, flour and salt and form two thin patties.",
+          "Cook both sides in the remaining oil until golden and set through."
+        ]
+      },
+      "servings": 1,
+      "serving_description": {
+        "zh-CN": "一人份，重量按所列可食状态估算。",
+        "en-US": "One serving. Estimated edible amounts in the stated ingredient state."
+      },
+      "times": {
+        "preparation_minutes": 11,
+        "cooking_minutes": 15,
+        "total_minutes": 26,
+        "starting_assumptions": {
+          "zh-CN": "豆腐已沥干，使用可直接烹调的预处理木耳。",
+          "en-US": "Start with drained tofu and ready-to-cook prepared wood ear mushrooms."
+        }
+      },
+      "allergens": {
+        "egg": {
+          "status": "contains"
+        },
+        "soy": {
+          "status": "contains"
+        },
+        "wheat": {
+          "status": "contains"
+        }
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind one-person development draft. No cook-through or packaged ingredient review."
+      },
+      "review": {
+        "status": "draft"
+      },
+      "verification_notes": [
+        "Packaged ingredient labels and cross-contact unverified. Timing and yield require a cook-through.",
+        "Check prepared wood ear and flour labels; verify patty texture and heat through."
+      ]
+    }
+  ]
+}

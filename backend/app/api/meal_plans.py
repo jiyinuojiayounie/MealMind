@@ -1,14 +1,17 @@
 from ipaddress import ip_address
 from typing import Literal
+from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 
+from app.api.food_logs import local_food_log_settings
 from app.schemas.meal_plans import MealPlanRequest, MealPlanResponse
 from app.services.catalog_planning import generate_catalog_plan
 from app.services.meal_composition import NoFeasiblePlan
 from app.services.planning_intent import PlanningBlocked
 from app.services.recipe_catalog import DEVELOPMENT_CATALOG_PATH, CatalogLoadError, load_recipe_catalog
 from app.services.meal_plans import (
+    PlannerConstraintUnverified,
     PlannerFailure,
     PlannerTimeout,
     PlannerUnavailable,
@@ -25,15 +28,44 @@ def _is_loopback(host: str) -> bool:
         return False
 
 
+def _planning_trace(request: Request) -> dict | None:
+    settings = request.app.state.settings
+    if not settings.gemini_diagnostics:
+        return None
+    try:
+        local_food_log_settings(request)
+    except HTTPException:
+        return None
+    return {"request_id": uuid4().hex, "stage": "received", "model": settings.gemini_model}
+
+
+@router.get("/local-traces", include_in_schema=False)
+def local_traces(request: Request, response: Response):
+    settings = request.app.state.settings
+    if settings.environment != "development" or not settings.gemini_diagnostics:
+        raise HTTPException(404)
+    local_food_log_settings(request)
+    response.headers["Cache-Control"] = "no-store"
+    return list(reversed(request.app.state.planning_traces))
+
+
 @router.post("/generate", response_model=MealPlanResponse)
 def generate(
-    payload: MealPlanRequest, request: Request, infer_scope: bool = False,
+    payload: MealPlanRequest, request: Request, response: Response, infer_scope: bool = False,
     planning_mode: Literal["prompt_only", "catalog"] = "prompt_only",
 ) -> MealPlanResponse:
     settings = request.app.state.settings
+    trace = _planning_trace(request) if planning_mode == "prompt_only" else None
+    headers = {"X-Request-ID": trace["request_id"]} if trace is not None else None
     try:
         if planning_mode == "prompt_only":
-            return generate_meal_plan(payload, settings, infer_scope=infer_scope)
+            result = generate_meal_plan(
+                payload, settings, infer_scope=infer_scope, trace=trace, retry_provider_unavailable=True,
+                free_recommendation=True,
+            )
+            if headers:
+                response.headers.update(headers)
+            return result
 
         if not settings.catalog_planning_enabled:
             raise HTTPException(403, {"status": "catalog_disabled"})
@@ -61,9 +93,14 @@ def generate(
                 "status": result.status, "reason": result.reason, "blocked_meals": result.blocked_meals,
             })
         return result
+    except PlannerConstraintUnverified as exc:
+        raise HTTPException(422, {"status": exc.reason}, headers=headers) from None
     except PlannerUnavailable:
-        raise HTTPException(503, "Meal planning is currently unavailable.") from None
+        raise HTTPException(503, "Meal planning is currently unavailable.", headers=headers) from None
     except PlannerTimeout:
-        raise HTTPException(504, "Meal planning timed out. Try again later.") from None
+        raise HTTPException(504, "Meal planning timed out. Try again later.", headers=headers) from None
     except PlannerFailure:
-        raise HTTPException(502, "A meal plan could not be generated. Try again or adjust your requirements.") from None
+        raise HTTPException(502, "A meal plan could not be generated. Try again or adjust your requirements.", headers=headers) from None
+    finally:
+        if trace is not None:
+            request.app.state.planning_traces.append(trace)

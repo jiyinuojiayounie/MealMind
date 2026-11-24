@@ -18,3 +18,10 @@
 - Documented separate frontend and backend startup commands and local environment overrides.
 - Added Gemini-backed meal planning for single meals and full days with structured responses, bilingual output instructions, and server-side ingredient and time checks.
 - Added mocked API tests for request validation, missing configuration, provider failures, and invalid model output.
+
+## v0.2.0-demo.1
+
+- Introduced a static portfolio build with nine selected Blind Box recipes, explicit dietary-restriction handling, and browser-local meal plans.
+- Added a single current daily plan view with separate version history and explicit review of the existing and proposed meals before replacement.
+- Labeled public planning, nutrition and replanning examples. Kept Gemini, food logs and other private endpoints out of the demo deployment.
+- Simplified Smart Planning to one natural-language flow in local development. Planning and Replan expose no recommendation-mode selector. The public demo keeps a labeled sample, and catalog planning remains available for developer testing.

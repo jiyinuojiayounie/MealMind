@@ -1,3 +1,4 @@
+import type { PlanSource } from './mealPlanRepository'
 import { requestJson } from './apiClient'
 import { isMeal, mealTypes, parseMealPlan } from './mealPlans'
 import type { MealPlan, MealType, PlannedMeal, PlanningMode } from './mealPlans'
@@ -18,7 +19,7 @@ export type ReplanRequest = {
   timezone: string
   target_meal_type: MealType
   expected_context_fingerprint: string
-  current_plan?: { plan_id: string; revision: number; date: string; source: PlanningMode; plan: MealPlan }
+  current_plan?: { plan_id: string; revision: number; date: string; source: PlanSource; plan: MealPlan }
   planning_mode: PlanningMode
   constraints: {
     language: 'zh-CN' | 'en-US'

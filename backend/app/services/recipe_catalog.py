@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from app.schemas.recipe_catalog import AllergenAssessment, CatalogRecipe, RecipeCatalog
 
 DEVELOPMENT_CATALOG_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "recipe_catalog" / "catalog-v3.json"
+    Path(__file__).resolve().parents[3] / "data" / "recipe_catalog" / "catalog-v4.json"
 )
 
 

@@ -1,0 +1,890 @@
+{
+  "contentReview": {
+    "status": "owner_selected_for_public_demo",
+    "reference": "docs/BLIND_BOX_REVIEW.md",
+    "cookThrough": "unverified",
+    "allergenEvidence": "unverified"
+  },
+  "ingredients": [
+    {
+      "ingredient_id": "ingredient_rice",
+      "names": {
+        "zh-CN": "大米",
+        "en-US": "Rice"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_oats",
+      "names": {
+        "zh-CN": "燕麦片",
+        "en-US": "Rolled oats"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wheat_noodles",
+      "names": {
+        "zh-CN": "小麦面条",
+        "en-US": "Wheat noodles"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_corn",
+      "names": {
+        "zh-CN": "玉米粒",
+        "en-US": "Corn kernels"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_egg",
+      "names": {
+        "zh-CN": "鸡蛋",
+        "en-US": "Egg"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tofu",
+      "names": {
+        "zh-CN": "北豆腐",
+        "en-US": "Firm tofu"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_chicken",
+      "names": {
+        "zh-CN": "鸡腿肉",
+        "en-US": "Chicken thigh"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_shrimp",
+      "names": {
+        "zh-CN": "虾仁",
+        "en-US": "Peeled shrimp"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_tomato",
+      "names": {
+        "zh-CN": "番茄",
+        "en-US": "Tomato"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_bok_choy",
+      "names": {
+        "zh-CN": "小白菜",
+        "en-US": "Bok choy"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_cabbage",
+      "names": {
+        "zh-CN": "卷心菜",
+        "en-US": "Cabbage"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_carrot",
+      "names": {
+        "zh-CN": "胡萝卜",
+        "en-US": "Carrot"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_cucumber",
+      "names": {
+        "zh-CN": "黄瓜",
+        "en-US": "Cucumber"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_shiitake",
+      "names": {
+        "zh-CN": "鲜香菇",
+        "en-US": "Fresh shiitake"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_broccoli",
+      "names": {
+        "zh-CN": "西兰花",
+        "en-US": "Broccoli"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_garlic",
+      "names": {
+        "zh-CN": "蒜",
+        "en-US": "Garlic"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_water",
+      "names": {
+        "zh-CN": "水",
+        "en-US": "Water"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_salt",
+      "names": {
+        "zh-CN": "盐",
+        "en-US": "Salt"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_oil",
+      "names": {
+        "zh-CN": "食用油",
+        "en-US": "Cooking oil"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_soy_sauce",
+      "names": {
+        "zh-CN": "酱油",
+        "en-US": "Soy sauce"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_yogurt",
+      "names": {
+        "zh-CN": "原味无糖酸奶",
+        "en-US": "Plain unsweetened yogurt"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_banana",
+      "names": {
+        "zh-CN": "香蕉",
+        "en-US": "Banana"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_ready_oats",
+      "names": {
+        "zh-CN": "即食燕麦片（可直接食用）",
+        "en-US": "Ready-to-eat oats"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_wholegrain_bread",
+      "names": {
+        "zh-CN": "全麦面包",
+        "en-US": "Whole-grain bread"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_rice_vermicelli",
+      "names": {
+        "zh-CN": "快煮细米粉",
+        "en-US": "Quick-cooking thin rice vermicelli"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_packed_udon",
+      "names": {
+        "zh-CN": "即食乌冬面（预熟）",
+        "en-US": "Fully cooked packaged udon"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_potato",
+      "names": {
+        "zh-CN": "土豆",
+        "en-US": "Potato"
+      }
+    },
+    {
+      "ingredient_id": "ingredient_cooked_chickpeas",
+      "names": {
+        "zh-CN": "熟鹰嘴豆（罐装沥干）",
+        "en-US": "Cooked chickpeas (canned, drained)"
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "recipe_id": "recipe_000003",
+      "names": {
+        "zh-CN": "玉米燕麦粥",
+        "en-US": "Corn and oat porridge"
+      },
+      "meal_types": [
+        "breakfast",
+        "snack"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 4,
+        "cooking_minutes": 10,
+        "total_minutes": 14,
+        "starting_assumptions": {
+          "zh-CN": "使用快熟燕麦片和无需解冻的冷冻甜玉米粒。",
+          "en-US": "Use quick rolled oats and frozen sweetcorn straight from the freezer."
+        }
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_oats",
+          "quantity": 40,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_corn",
+          "quantity": 60,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 280,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "用小锅煮开列出的水，加入玉米煮到锅里重新沸腾。",
+          "加入快熟燕麦片，按包装时间小火煮软，不时搅拌。确认玉米熟透后盛出。"
+        ],
+        "en-US": [
+          "Bring the listed water to a boil in a small pot. Add corn and return to a boil.",
+          "Add quick rolled oats and simmer according to the packet, stirring occasionally. Serve once the corn is cooked through and the oats are soft."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000016",
+      "names": {
+        "zh-CN": "鸡蛋小白菜炒饭",
+        "en-US": "Egg and bok choy fried rice"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 10,
+        "total_minutes": 16,
+        "starting_assumptions": {
+          "zh-CN": "已有安全保存的熟米饭，不含煮饭时间。",
+          "en-US": "Start with safely stored cooked rice. The estimate excludes cooking rice from dry."
+        }
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 170,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 2,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 100,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 8,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "准备已安全保存的熟米饭并拨散。小白菜修整后按净重称量，梗与叶分开切碎；打散鸡蛋。",
+          "用部分列出的油炒蛋，凝固后盛到干净碗中。用剩余油先炒菜梗，再加入菜叶。",
+          "加入熟米饭和鸡蛋翻炒，确保整锅热透，加盐盛出。"
+        ],
+        "en-US": [
+          "Start with safely stored cooked rice and break up clumps. Trim and weigh the bok choy, chop stems and leaves separately, and beat the eggs.",
+          "Scramble the eggs in part of the listed oil until set, then transfer to a clean bowl. In the remaining oil, fry the stems before adding the leaves.",
+          "Return the eggs and cooked rice to the pan and stir-fry until hot throughout, then season with salt and serve."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000017",
+      "names": {
+        "zh-CN": "虾仁西兰花盖饭",
+        "en-US": "Shrimp and broccoli rice bowl"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 12,
+        "total_minutes": 20,
+        "starting_assumptions": {
+          "zh-CN": "米饭已煮熟并妥善储存，虾仁已解冻去壳去虾线。",
+          "en-US": "Start with safely stored cooked rice and thawed, peeled, deveined shrimp."
+        }
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_rice",
+          "quantity": 170,
+          "unit": "g",
+          "state": "cooked",
+          "primary": true,
+          "required_starting_state": true
+        },
+        {
+          "ingredient_id": "ingredient_shrimp",
+          "quantity": 120,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_broccoli",
+          "quantity": 130,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_garlic",
+          "quantity": 4,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 35,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "确认米饭已煮熟并妥善储存，虾仁已解冻去壳去虾线。西兰花修去硬梗，切小朵，切碎蒜。",
+          "先将熟米饭复热至热透，盛出并加盖。用列出的油炒香蒜，加入西兰花与 35 毫升水，盖锅焖至西兰花开始变软。",
+          "加虾仁翻炒至熟透，拌入酱油，将菜和锅中汁液盖在饭上。"
+        ],
+        "en-US": [
+          "Start with safely stored cooked rice and thawed, peeled, deveined raw shrimp. Trim and weigh the broccoli, cut it into florets, and chop the garlic.",
+          "Reheat the cooked rice until hot throughout and set it aside, covered. Fry the garlic in the listed oil, then add broccoli and the 35 mL of water and cover until the broccoli begins to soften.",
+          "Stir-fry the shrimp until cooked through, mix in the soy sauce, and spoon the topping and pan juices over the rice."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000018",
+      "names": {
+        "zh-CN": "豆腐香菇青菜汤面",
+        "en-US": "Tofu, shiitake, and bok choy noodle soup"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 13,
+        "total_minutes": 21,
+        "starting_assumptions": {
+          "zh-CN": "从冷水起算，使用干面条和沥干豆腐。",
+          "en-US": "Start with cold water, dry noodles, and drained tofu."
+        }
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_wheat_noodles",
+          "quantity": 80,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tofu",
+          "quantity": 140,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_shiitake",
+          "quantity": 55,
+          "unit": "g",
+          "state": "raw",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 100,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 520,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 2,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "香菇修整后切片，豆腐沥干后称量并切块，小白菜修整称重后将梗与叶分开切段。",
+          "将 520 毫升水烧开，加入香菇和豆腐煮。再放干面条，按实际面条种类控制火候。",
+          "面条快熟时先放菜梗，再放菜叶煮至软熟。加盐，将汤和固体一同盛入碗中。"
+        ],
+        "en-US": [
+          "Trim and slice the shiitake, drain and weigh the tofu before cubing, and trim and weigh the bok choy before cutting stems and leaves separately.",
+          "Bring the 520 mL of water to a boil and simmer the mushrooms and tofu. Add the dry noodles and adjust the cooking to the noodle type.",
+          "As the noodles approach doneness, add the bok choy stems before the leaves and cook until tender. Add salt and serve the broth and solids together."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original AI-assisted MealMind development draft. No independent review or reuse clearance recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000021",
+      "names": {
+        "zh-CN": "香蕉酸奶燕麦碗",
+        "en-US": "Banana yogurt and oat bowl"
+      },
+      "meal_types": [
+        "breakfast"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 0,
+        "total_minutes": 5
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_yogurt",
+          "quantity": 180,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_banana",
+          "quantity": 100,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_ready_oats",
+          "quantity": 35,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "香蕉去皮后按净重称量，用勺切成小块。",
+          "将香蕉、原味酸奶和标明可直接食用的燕麦片放进碗里，拌匀即食。"
+        ],
+        "en-US": [
+          "Peel and weigh the banana and cut it into bite-sized pieces with a spoon.",
+          "Combine with plain yogurt and oats labelled ready to eat. Serve immediately."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind development draft. No cook-through, independent review or nutrient validation recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000022",
+      "names": {
+        "zh-CN": "炒蛋全麦面包配黄瓜",
+        "en-US": "Scrambled eggs with whole-grain bread and cucumber"
+      },
+      "meal_types": [
+        "breakfast"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 6,
+        "cooking_minutes": 5,
+        "total_minutes": 11
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 2,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_wholegrain_bread",
+          "quantity": 65,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_cucumber",
+          "quantity": 85,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 4,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 0.5,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "黄瓜洗净切薄片，和可直接食用的全麦面包一起放盘。",
+          "打散鸡蛋加盐，小锅加油转中小火，轻推鸡蛋至完全凝固后盛入同一个盘子。"
+        ],
+        "en-US": [
+          "Wash and thinly slice the cucumber. Plate it with the ready-to-eat bread.",
+          "Beat the eggs with salt. Heat oil in a small pan over medium-low heat and stir gently until the eggs are fully set. Serve on the same plate."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind development draft. No cook-through, independent review or nutrient validation recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000023",
+      "names": {
+        "zh-CN": "鸡蛋小白菜汤米粉",
+        "en-US": "Egg and bok choy rice vermicelli soup"
+      },
+      "meal_types": [
+        "breakfast",
+        "lunch"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 5,
+        "cooking_minutes": 10,
+        "total_minutes": 15,
+        "starting_assumptions": {
+          "zh-CN": "选包装标注可直接下锅、无需预泡的快煮细米粉。",
+          "en-US": "Use quick-cooking thin rice vermicelli that requires no presoak."
+        }
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_egg",
+          "quantity": 1,
+          "unit": "piece",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_bok_choy",
+          "quantity": 90,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_rice_vermicelli",
+          "quantity": 55,
+          "unit": "g",
+          "state": "dry",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 420,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "小锅加水烧开时洗净小白菜，菜梗和叶子分开切。",
+          "水开后加细米粉和菜梗，轻搅并煮至米粉快软。打入鸡蛋，转小火保持微沸，煮至蛋白和蛋黄全熟。",
+          "最后放菜叶煮软，加盐，连汤一起盛出。"
+        ],
+        "en-US": [
+          "While water heats in a small pot, wash the bok choy and cut stems and leaves separately.",
+          "Add thin rice vermicelli and stems to the boiling water. Stir and cook until noodles are nearly tender. Crack in the egg and simmer gently until both white and yolk are set.",
+          "Add leaves and cook until tender. Season with salt and serve with the broth."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind development draft. No cook-through, independent review or nutrient validation recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000025",
+      "names": {
+        "zh-CN": "鸡肉卷心菜炒乌冬",
+        "en-US": "Chicken and cabbage udon skillet"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 8,
+        "cooking_minutes": 11,
+        "total_minutes": 19,
+        "starting_assumptions": {
+          "zh-CN": "从解冻去骨鸡肉和可直接入锅的预熟乌冬开始。",
+          "en-US": "Start with thawed boneless chicken and fully cooked packaged udon."
+        }
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_chicken",
+          "quantity": 110,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_cabbage",
+          "quantity": 130,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_carrot",
+          "quantity": 40,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_packed_udon",
+          "quantity": 175,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_oil",
+          "quantity": 6,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_soy_sauce",
+          "quantity": 7,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 25,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "卷心菜切丝，胡萝卜切细条。解冻后的去骨鸡肉另外切薄片；处理生鸡肉后清洁手和厨具。",
+          "锅加油炒鸡肉至熟透，加入卷心菜和胡萝卜炒到变软。放入预熟乌冬面和水，加盖焖到面热透。",
+          "揭盖拌开面条，加入酱油，拌匀即可。"
+        ],
+        "en-US": [
+          "Shred cabbage and cut carrot into matchsticks. Slice thawed boneless chicken separately, then clean hands and equipment used for the raw chicken.",
+          "Fry chicken in oil until cooked through. Add cabbage and carrot and stir-fry until softened. Add fully cooked udon and water, cover and heat until the noodles are hot throughout.",
+          "Uncover, loosen the noodles, and toss with soy sauce."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind development draft. No cook-through, independent review or nutrient validation recorded."
+      }
+    },
+    {
+      "recipe_id": "recipe_000026",
+      "names": {
+        "zh-CN": "番茄土豆鹰嘴豆炖菜",
+        "en-US": "Tomato potato and chickpea stew"
+      },
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "servings": 1,
+      "times": {
+        "preparation_minutes": 7,
+        "cooking_minutes": 17,
+        "total_minutes": 24
+      },
+      "ingredients": [
+        {
+          "ingredient_id": "ingredient_cooked_chickpeas",
+          "quantity": 140,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_potato",
+          "quantity": 160,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_tomato",
+          "quantity": 150,
+          "unit": "g",
+          "state": "raw",
+          "primary": true
+        },
+        {
+          "ingredient_id": "ingredient_water",
+          "quantity": 175,
+          "unit": "ml",
+          "state": "ready_to_use",
+          "primary": false
+        },
+        {
+          "ingredient_id": "ingredient_salt",
+          "quantity": 1,
+          "unit": "g",
+          "state": "ready_to_use",
+          "primary": false
+        }
+      ],
+      "steps": {
+        "zh-CN": [
+          "土豆去皮切约一厘米小丁，番茄切丁。熟鹰嘴豆倒去罐液、冲洗沥干。",
+          "番茄、土豆和水同锅煮开，加盖小火炖至土豆接近软熟。",
+          "加入熟鹰嘴豆，煮热透且土豆可用叉子轻易压碎，加盐后连汁盛出。"
+        ],
+        "en-US": [
+          "Peel and dice the potato to about one centimeter. Dice the tomato. Drain and rinse the cooked chickpeas.",
+          "Boil tomato, potato and water together, cover and simmer until potato is nearly tender.",
+          "Add cooked chickpeas and simmer until hot throughout and the potato can be crushed with a fork. Season and serve with its sauce."
+        ]
+      },
+      "review": {
+        "status": "draft"
+      },
+      "provenance": {
+        "source_kind": "original_development_draft",
+        "notes": "Original MealMind development draft. No cook-through, independent review or nutrient validation recorded."
+      }
+    }
+  ]
+}

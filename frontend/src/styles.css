@@ -152,10 +152,6 @@
     @apply inline-flex min-h-11 items-center gap-2 font-semibold text-forest underline underline-offset-4;
   }
 
-  .shortcut {
-    @apply flex min-h-20 items-center justify-between gap-2 p-3 font-semibold hover:border-forest sm:p-4;
-  }
-
   .meal-list li {
     @apply flex flex-wrap items-center justify-between gap-1 px-4 py-3;
   }
@@ -183,4 +179,279 @@
   .planning-input[aria-invalid="true"] {
     @apply border-red-800;
   }
+}
+
+@layer components {
+  .blind-intro {
+    @apply grid gap-2 text-center;
+  }
+
+  .blind-intro p {
+    @apply text-muted;
+  }
+
+  .blind-layout {
+    @apply mx-auto grid w-full max-w-xl min-w-0 gap-4;
+  }
+
+  .blind-stage {
+    @apply grid min-w-0 gap-4 p-4 sm:p-5;
+    background: radial-gradient(ellipse at 50% 45%, #fff4dd, var(--color-surface) 72%);
+  }
+
+  .blind-slots {
+    @apply grid grid-cols-3 gap-1 rounded-full bg-paper p-1 text-center;
+  }
+
+  .blind-slots span {
+    @apply grid min-h-11 cursor-pointer place-items-center rounded-full px-1 text-sm font-semibold text-muted;
+  }
+
+  .blind-slots input:checked + span {
+    @apply bg-forest text-white;
+  }
+
+  .blind-slots input:focus-visible + span {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 2px;
+  }
+
+  .blind-wheel {
+    position: relative;
+    isolation: isolate;
+    width: min(100%, 17rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    margin-block: .55rem .15rem;
+  }
+
+  .blind-wheel-disc {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border: 6px solid #fffaf0;
+    border-radius: 50%;
+    box-shadow: 0 9px 20px #4e3a2324, 0 0 0 1px #dac6a6;
+  }
+
+  .blind-wheel-disc.is-spinning {
+    transition: transform 1100ms cubic-bezier(.15,.68,.2,1);
+  }
+
+  .blind-wheel-spoke {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    padding-top: 12%;
+  }
+
+  .blind-wheel-spoke span {
+    align-self: flex-start;
+    font-size: clamp(1.4rem, 5vw, 1.85rem);
+    line-height: 1;
+  }
+
+  .blind-wheel-hub {
+    @apply absolute top-1/2 left-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-surface text-2xl text-forest shadow-md;
+  }
+
+  .blind-primary, .blind-secondary {
+    @apply min-h-11 cursor-pointer rounded-xl px-3 py-2 text-center font-semibold disabled:cursor-not-allowed disabled:opacity-65;
+  }
+
+  .blind-primary {
+    @apply bg-forest text-white;
+  }
+
+  .blind-secondary {
+    @apply border border-border bg-surface text-forest;
+  }
+
+  .blind-restrictions {
+    @apply text-sm text-muted;
+  }
+
+  .blind-restrictions summary {
+    @apply min-h-8 cursor-pointer;
+  }
+
+  .blind-meal {
+    @apply overflow-hidden wrap-anywhere;
+  }
+
+  .blind-result-art {
+    @apply flex min-h-18 items-center justify-center gap-4 text-forest;
+    background: radial-gradient(circle at center, #fff9ea 0 14%, #eab994 15% 23%, transparent 24%), #e3eddb;
+  }
+
+  .blind-result-art span:nth-child(2) {
+    @apply text-3xl;
+  }
+
+  .blind-meta {
+    @apply flex flex-wrap gap-2 text-xs font-semibold text-forest;
+  }
+
+  .blind-meta span {
+    @apply rounded-full bg-sage px-2.5 py-1;
+  }
+
+  .blind-actions {
+    @apply grid grid-cols-2 gap-2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blind-wheel-disc.is-spinning { transition: none; }
+  }
+}
+
+@layer components {
+  .blind-box {
+    @apply grid gap-5;
+  }
+
+  .blind-meal-body {
+    @apply grid gap-3 p-5;
+  }
+
+  .blind-meal-body h2 {
+    @apply text-2xl;
+  }
+
+  .blind-sheet {
+    @apply m-auto w-[min(90%,36rem)] rounded-2xl border border-border bg-surface text-ink shadow-xl;
+    max-height: min(85dvh, 44rem);
+    overscroll-behavior: contain;
+    overflow-y: auto;
+  }
+
+  .blind-sheet::backdrop {
+    background: #202b24a6;
+  }
+
+  .blind-sheet-header {
+    @apply sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3;
+    overflow-wrap: anywhere;
+  }
+
+  .blind-sheet-header button {
+    flex-shrink: 0;
+  }
+
+  .blind-sheet-body {
+    @apply grid gap-3 p-4;
+    overflow-wrap: anywhere;
+  }
+
+  body:has(.blind-sheet[open]) {
+    overflow: hidden;
+  }
+
+  @media (width < 40rem) {
+    .content:has(.blind-box) {
+      padding-top: .75rem;
+    }
+
+    .blind-box {
+      @apply gap-3;
+    }
+
+    .blind-intro {
+      @apply gap-1;
+    }
+
+    .blind-box[data-compact="true"] .blind-intro h1 {
+      @apply text-xl leading-tight;
+    }
+
+    .blind-box[data-compact="true"] .blind-intro p {
+      display: none;
+    }
+
+    .blind-layout {
+      @apply gap-3;
+    }
+
+    .blind-stage {
+      gap: .65rem;
+      padding: .75rem;
+    }
+
+    .blind-wheel {
+      width: min(100%, clamp(11rem, 33dvh, 17rem));
+    }
+
+    .blind-box[data-compact="true"] .blind-stage {
+      @apply grid-cols-[5rem_minmax(0,1fr)] items-center gap-x-3 gap-y-2 p-3;
+    }
+
+    .blind-box[data-compact="true"] .blind-stage fieldset {
+      grid-column: 1 / -1;
+    }
+
+    .blind-box[data-compact="true"] .blind-wheel {
+      grid-row: 2 / span 2;
+      width: 100%;
+      margin-block: 0;
+    }
+
+    .blind-box[data-compact="true"] .blind-wheel-disc {
+      border-width: 3px;
+    }
+
+    .blind-box[data-compact="true"] .blind-wheel-spoke span {
+      font-size: .65rem;
+    }
+
+    .blind-box[data-compact="true"] .blind-wheel-hub {
+      @apply size-4 text-xs;
+    }
+
+    .blind-box[data-compact="true"] .blind-restrictions summary {
+      min-height: auto;
+      overflow-wrap: anywhere;
+    }
+
+    .blind-result-art {
+      display: none;
+    }
+
+    .blind-meal-body {
+      @apply gap-2 p-3 text-sm;
+    }
+
+    .blind-meal-body h2 {
+      @apply text-lg leading-tight;
+    }
+
+    .blind-sheet {
+      @apply inset-x-0 top-auto bottom-0 m-0 w-full max-w-none rounded-b-none;
+      max-height: min(88dvh, 44rem);
+    }
+
+    .blind-sheet-body {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .blind-box[data-compact="true"] .blind-wheel {
+        animation: blind-wheel-settle 220ms ease-out both;
+      }
+
+      .blind-result {
+        animation: blind-reveal 220ms ease-out both;
+      }
+    }
+  }
+}
+
+@keyframes blind-reveal {
+  from { opacity: .65; scale: .94; }
+  to { opacity: 1; scale: 1; }
+}
+
+@keyframes blind-wheel-settle {
+  from { opacity: .75; scale: 1.17; }
+  to { opacity: 1; scale: 1; }
 }

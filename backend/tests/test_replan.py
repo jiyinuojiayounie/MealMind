@@ -73,7 +73,8 @@ def plan(*slots):
     return {
         "title": "Meal fixture", "explanation": "Simple meal", "meals": [{
             "meal_type": slot, "estimated_preparation_minutes": 15,
-            "dishes": [{"name": slot, "ingredients": [{"name": "Rice", "quantity": 1, "unit": "g"}],
+            "dishes": [{"name": slot, "ingredients": [{"name": ingredient, "quantity": 80, "unit": "g"}
+                        for ingredient in ("Rice", "tofu", "bok choy")],
                         "instructions": ["Cook the rice."]}],
         } for slot in slots],
     }
@@ -128,6 +129,7 @@ def test_existing_plan_only_targets_dinner_and_uses_confirmed_variety(tmp_path, 
     assert PRIVATE not in provider["contents"] and "熟长粒糙米" not in provider["contents"]
     assert json.loads(provider["contents"])["earlier_foods_for_variety"] == ["Steamed eggs with scallion"]
     assert json.loads(provider["contents"])["meal_type"] == "dinner"
+    assert json.loads(provider["contents"])["recent_planned_dishes_for_variety"] == ["breakfast", "lunch", "dinner"]
 
 
 def test_draft_and_unspecified_do_not_lock_slot_or_invent_history(tmp_path, gemini):
@@ -206,13 +208,13 @@ def test_prompt_mode_preserves_structured_constraints_and_enforces_exact_target(
     with api(tmp_path / "logs.sqlite3") as client:
         request = payload(client, constraints={
             "restriction_status": "none_declared", "language": "en-US",
-            "ingredient_mode": "existing", "available_ingredients": ["Rice"],
+            "ingredient_mode": "existing", "available_ingredients": ["Rice", "tofu", "bok choy"],
             "cooking_time_limit": 20, "prefer_low_effort": True,
         }, instructions="within 15 minutes")
         response = client.post(PREVIEW, json=request)
         assert response.status_code == 200, response.text
         contents = json.loads(gemini.call_args.kwargs["contents"])
-        assert contents["available_ingredients"] == ["Rice"]
+        assert contents["available_ingredients"] == ["Rice", "tofu", "bok choy"]
         assert contents["cooking_time_limit"] == 15
         assert "简单省事" in contents["user_request"]
 
@@ -273,4 +275,25 @@ def test_replan_routes_preserve_local_access_boundary(tmp_path, gemini, environm
         assert client.get(CONTEXT, params={"date": DATE}).status_code == status
         assert client.post(PREVIEW, json={}).status_code == status
     assert not database.exists()
+    gemini.assert_not_called()
+
+
+def test_catalog_replan_uses_saved_dinner_family_without_touching_confirmed_lunch(tmp_path, gemini):
+    database = tmp_path / "logs.sqlite3"
+    with api(database, catalog_planning_enabled=True, catalog_use_drafts=True) as client:
+        log(client, "lunch", name="米饭")
+        first = client.post(PREVIEW, json=payload(client, planning_mode="catalog")).json()
+        original = first["suggested_plan"]
+        saved = {"plan_id": str(uuid4()), "revision": 1, "date": DATE, "source": "catalog",
+                 "plan": {**original, "meals": [plan("lunch")["meals"][0], *original["meals"]]}}
+        before = database.read_bytes()
+        response = client.post(PREVIEW, json=payload(client, current_plan=saved))
+        assert database.read_bytes() == before
+    assert response.status_code == 200, response.text
+    proposed = response.json()
+    assert proposed["context"]["locked_meal_types"] == proposed["untouched_meal_types"] == ["lunch"]
+    assert proposed["current_meal"] == original["meals"][0]
+    assert {dish["name"] for dish in proposed["suggested_plan"]["meals"][0]["dishes"]}.isdisjoint(
+        dish["name"] for dish in original["meals"][0]["dishes"]
+    )
     gemini.assert_not_called()

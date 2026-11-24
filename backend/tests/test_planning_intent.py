@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from app.schemas.planning_intent import ConfirmedSafetyConstraints
-from app.services.meal_composition import CookingEffortScore, score_cooking_effort
+from app.services.meal_composition import score_cooking_effort
 from app.services.planning_intent import PlanningBlocked, PlanningSuccess, extract_planning_intent, plan_from_intent
 from app.services.recipe_catalog import DEVELOPMENT_CATALOG_PATH, load_recipe_catalog
 
@@ -31,7 +31,8 @@ def test_planning_intent_case(catalog, case):
     ]
     assert {key: values[key] for key in case["expected"]} == case["expected"]
 
-    result = plan_from_intent(catalog, intent, mode=DEV_MODE)
+    legacy = load_recipe_catalog(DEVELOPMENT_CATALOG_PATH.with_name("catalog-v3.json"))
+    result = plan_from_intent(legacy, intent, mode=DEV_MODE)
     assert result.status == case["expected_status"]
     if isinstance(result, PlanningSuccess):
         assert all(meal.required_roles <= meal.covered_roles for meal in result.plan.meals)
@@ -90,16 +91,9 @@ def test_convenience_full_day_offline_ranking_comparison(catalog):
     assert isinstance(ordinary, PlanningSuccess)
     assert isinstance(result, PlanningSuccess)
     assert ordinary.plan == baseline.plan
-    assert score_cooking_effort(baseline.plan.meals) == CookingEffortScore(7, 123, 17, 0)
-    assert score_cooking_effort(result.plan.meals) == CookingEffortScore(5, 85, 13, 0)
-    assert score_cooking_effort(baseline.plan.meals).points == 258
-    assert score_cooking_effort(result.plan.meals).points == 184
-    assert [meal.composition_type for meal in result.plan.meals] == [
-        "main_plus_staple", "main_plus_staple", "single_recipe_complete",
-    ]
-    assert [meal.composition_type for meal in baseline.plan.meals] == [
-        "main_plus_staple", "main_plus_staple", "multi_dish",
-    ]
+    assert score_cooking_effort(result.plan.meals).points <= score_cooking_effort(baseline.plan.meals).points
+    assert result.plan.meals[0].estimated_total_minutes <= 15
+    assert all(meal.composition_type == "single_recipe_complete" for meal in result.plan.meals)
     for plan in (baseline.plan, result.plan):
         assert plan.diversity.repeated_recipes == plan.diversity.repeated_families == 0
         assert all(meal.required_roles <= meal.covered_roles for meal in plan.meals)

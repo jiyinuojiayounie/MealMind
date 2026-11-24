@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { PlanChangeSummary } from '../components/PlanChangeSummary'
+import { publicPlanningExample } from '../services/blindBox'
 import { MealPlanResult } from '../components/MealPlanResult'
 import { ApiError } from '../services/apiClient'
-import { catalogOutcomeKey, catalogPreviewEnabled, generateMealPlan, mealTypes } from '../services/mealPlans'
-import type { MealPlanRequest, PlanningMode } from '../services/mealPlans'
+import { generateMealPlan, mealTypes } from '../services/mealPlans'
+import type { MealPlanRequest } from '../services/mealPlans'
 import { acceptMealPlan, createPlanId, getSavedMealPlan, PlanStorageError } from '../services/mealPlanRepository'
 import type { PlanAcceptance, SavedMealPlan } from '../services/mealPlanRepository'
 import { localDateTimeValue } from '../types/localTime'
@@ -26,7 +28,14 @@ function storageError(error: unknown) {
 function errorKey(error: unknown) {
   if (error instanceof ApiError) {
     switch (error.status) {
-      case 422: return 'invalid'
+      case 422: {
+        const detail = error.detail
+        const status = typeof detail === 'object' && detail !== null && 'status' in detail ? detail.status : undefined
+        if (status === 'dietary_restriction_unverified') return 'dietaryUnverified'
+        if (status === 'ingredient_restriction_unverified') return 'ingredientsUnverified'
+        if (status === 'time_limit_unverified') return 'timeUnverified'
+        return 'invalid'
+      }
       case 429: return 'rateLimit'
       case 502: return 'generation'
       case 503: return 'unavailable'
@@ -43,13 +52,13 @@ export function PlanningPage() {
   const { t, i18n } = useTranslation()
   const [scope, setScope] = useState<MealPlanRequest['scope'] | ''>('')
   const [mode, setMode] = useState<MealPlanRequest['ingredient_mode']>('flexible')
-  const [planningMode, setPlanningMode] = useState<PlanningMode>('prompt_only')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState<PlanAcceptance>()
   const [selection, setSelection] = useState(() => ({ date: localPlanDate() }))
   const [saved, setSaved] = useState<{ selection: typeof selection; record?: SavedMealPlan | null; error?: string }>()
   const [saveError, setSaveError] = useState('')
+  const [confirming, setConfirming] = useState(false)
   const [saving, setSaving] = useState(false)
   const saveInFlight = useRef(false)
   const requirements = useRef<HTMLTextAreaElement>(null)
@@ -59,6 +68,8 @@ export function PlanningPage() {
   const invalidField = error === 'requirements' || error === 'time' || invalidIngredients
   const current = saved?.selection === selection ? saved : undefined
   const accepted = current?.record?.revisions.at(-1)
+  const replacing = Boolean(result?.plan.meals.some((meal) =>
+    accepted?.plan.meals.some((stored) => stored.meal_type === meal.meal_type)))
   const alreadySaved = result && current?.record?.revisions.some((version) => version.acceptanceId === result.acceptanceId)
 
   useEffect(() => () => activeRequest.current?.abort(), [])
@@ -74,12 +85,18 @@ export function PlanningPage() {
   function selectDate(date: string) {
     if (date === selection.date) return
     setResult(undefined)
+    setConfirming(false)
     setSaveError('')
     setSelection({ date })
   }
 
-  async function savePlan() {
+  async function savePlan(confirmed = false) {
     if (!result || alreadySaved || !current || current.record === undefined || saveInFlight.current) return
+    if (replacing && !confirmed) {
+      setConfirming(true)
+      return
+    }
+    setConfirming(false)
     saveInFlight.current = true
     setSaving(true)
     setSaveError('')
@@ -98,7 +115,8 @@ export function PlanningPage() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (activeRequest.current) return
+    if (import.meta.env.PROD || activeRequest.current) return
+    setConfirming(false)
 
     const form = new FormData(event.currentTarget)
     const userRequest = String(form.get('requirements') ?? '').trim()
@@ -147,14 +165,15 @@ export function PlanningPage() {
     activeRequest.current = controller
     setError('')
     setResult(undefined)
+    setConfirming(false)
     setSaveError('')
     setBusy(true)
     try {
       const inferScope = scope === '' && !mealType
-      const plan = await generateMealPlan(payload, controller.signal, inferScope, planningMode)
+      const plan = await generateMealPlan(payload, controller.signal, inferScope)
       if (!controller.signal.aborted) {
         setResult({
-          plan, language, source: planningMode, acceptanceId: createPlanId(),
+          plan, language, source: 'prompt_only', acceptanceId: createPlanId(),
           constraints: {
             scope: payload.scope, meal_type: payload.meal_type, ingredient_mode: payload.ingredient_mode,
             available_ingredients: payload.available_ingredients, cooking_time_limit: payload.cooking_time_limit, inferScope,
@@ -163,8 +182,7 @@ export function PlanningPage() {
       }
     } catch (failure) {
       if (!controller.signal.aborted) {
-        const catalogError = planningMode === 'catalog' ? catalogOutcomeKey(failure) : undefined
-        setError(catalogError ?? errorKey(failure))
+        setError(errorKey(failure))
       }
     } finally {
       activeRequest.current = null
@@ -206,31 +224,8 @@ export function PlanningPage() {
         )}
       </section>
 
-      <form className="card p-5 sm:p-6" onSubmit={(event) => void submit(event)} noValidate>
+      {import.meta.env.DEV ? <form className="card p-5 sm:p-6" onSubmit={(event) => void submit(event)} noValidate>
         <fieldset disabled={busy || saving} className="grid min-w-0 gap-4">
-          {catalogPreviewEnabled && (
-            <div className="grid gap-2 rounded-xl border border-border bg-paper p-3">
-              <label className="planning-field">
-                {t('pages.plan.preview.mode')}
-                <select className="planning-input" value={planningMode}
-                  aria-describedby={planningMode === 'catalog' ? 'catalog-preview-notice' : undefined}
-                  onChange={(event) => {
-                    setPlanningMode(event.target.value === 'catalog' ? 'catalog' : 'prompt_only')
-                    setError('')
-                    setResult(undefined)
-                  }}>
-                  <option value="prompt_only">{t('pages.plan.preview.original')}</option>
-                  <option value="catalog">{t('pages.plan.preview.catalog')}</option>
-                </select>
-              </label>
-              {planningMode === 'catalog' && (
-                <p id="catalog-preview-notice" className="text-sm text-muted">
-                  {t('pages.plan.preview.notice')}
-                </p>
-              )}
-            </div>
-          )}
-
           <label className="planning-field">
             <span className="sr-only">{t('pages.plan.requirements')}</span>
             <textarea ref={requirements} name="requirements" className="planning-input" rows={5} maxLength={2000} required
@@ -309,7 +304,20 @@ export function PlanningPage() {
         </fieldset>
         {error && <p className="mt-3 text-sm font-medium text-red-800" role="alert">{t(`pages.plan.errors.${error}`)}</p>}
         <p className="sr-only" role="status">{busy ? t('pages.plan.loading') : result ? t('pages.plan.ready') : ''}</p>
-      </form>
+      </form> : (
+        <section className="card grid gap-3 p-5">
+          <h2>{t('release.sampleTitle')}</h2>
+          <p>{t('release.planningExample')}</p>
+          {!result && <button type="button" className={planButton} onClick={() => {
+            const language = i18n.resolvedLanguage === 'en' ? 'en-US' : 'zh-CN'
+            setResult({
+              acceptanceId: createPlanId(), language, source: 'blind_box',
+              plan: publicPlanningExample(language, t('release.sampleTitle'), t('release.planningExample'), t('blindBox.serving')),
+              constraints: { scope: 'full_day', ingredient_mode: 'flexible', inferScope: false },
+            })
+          }}>{t('release.loadExample')}</button>}
+        </section>
+      )}
 
       {result && (
         <div className="grid gap-4">
@@ -318,12 +326,21 @@ export function PlanningPage() {
               {t(alreadySaved ? 'pages.plan.saved.accepted' : 'pages.plan.saved.temporary', { date: selection.date })}
             </p>
             {saveError && <p role="alert" className="text-sm text-red-800">{t(`pages.plan.saved.errors.${saveError}`)}</p>}
-            {!alreadySaved && (
+            {!alreadySaved && (confirming ? (
+              <section className="grid w-full gap-3" aria-labelledby="planning-replace-title">
+                <h2 id="planning-replace-title">{t('release.replacePrompt')}</h2>
+                <PlanChangeSummary current={accepted?.plan.meals ?? []} proposed={result.plan.meals} />
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className={planButton} onClick={() => void savePlan(true)}>{t('blindBox.confirmReplace')}</button>
+                  <button type="button" className={planButton} onClick={() => setConfirming(false)}>{t('blindBox.cancel')}</button>
+                </div>
+              </section>
+            ) : (
               <button type="button" className={planButton} disabled={saving || current?.record === undefined}
                 onClick={() => void savePlan()}>
-                {t(saving ? 'pages.plan.saved.saving' : accepted ? 'pages.plan.saved.replace' : 'pages.plan.saved.save')}
+                {t(saving ? 'pages.plan.saved.saving' : replacing ? 'release.reviewReplacement' : 'release.add')}
               </button>
-            )}
+            ))}
           </div>
           <MealPlanResult plan={result.plan} language={result.language} />
         </div>
