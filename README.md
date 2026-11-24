@@ -1,23 +1,72 @@
-# MealMind
+# 🍽️ MealMind
 
-MealMind is a mobile-first, Simplified Chinese and English meal planning assistant for Chinese-speaking students and young professionals living independently. It starts with Chinese food and connects planning, meal logging, nutrition analysis, and replanning.
+**Less deciding, more eating.**
 
-## Project status
+A bilingual, mobile-first **AI-assisted meal decision assistant** designed to make everyday food choices easier for students and young professionals living independently.
 
-The public portfolio build provides a nine-meal Blind Box and a single browser-local daily plan with revision history. Smart Planning shows a fixed labeled example. Nutrition and Replan show example workflows. Food Logging and live Gemini are available in the private local development setup. The public site deploys only the static frontend and does not collect logs or call a model.
+**[Try the live demo](https://mealmind-ao3k.onrender.com/)** · [Product decisions](docs/DECISIONS.md) · [Release notes](docs/PORTFOLIO_RELEASE.md)
 
-[Static deployment and release notes](docs/PORTFOLIO_RELEASE.md) · [Recipe review and provenance](docs/BLIND_BOX_REVIEW.md)
+> **Current public release: v0.2.0-demo.1** — an interactive, static portfolio demo. The live site supports the meal Blind Box and browser-local daily plans. Live Gemini generation, food logging, nutrition analysis, and adaptive replanning are **not enabled on the public site**. See [feature availability](#feature-availability) below.
 
-| Directory | Purpose |
-| --- | --- |
-| `frontend/` | React, TypeScript, Vite, Tailwind CSS, and i18next for the web UI |
-| `backend/` | Python and FastAPI modular monolith for REST, business rules, and AI integration |
-| `supabase/migrations/` | Versioned migrations for Supabase PostgreSQL and access policies |
-| `data/` | Future nutrition and recipe reference data with documented provenance and licensing |
-| `evaluation/` | Future AI evaluation cases, scoring, and reports |
-| `docs/` | Product requirements and decision history |
+## Why MealMind?
 
-Supabase Auth is the planned authentication service. Gemini is the initial multimodal model candidate. The public portfolio release targets Render Static Site and publishes only the frontend assets. The FastAPI service runs separately for private local development.
+“**What should I eat today?**” is a surprisingly repetitive decision. Existing diet tools often emphasize tracking and nutritional targets, while the immediate problem is simply choosing something practical and appealing to eat.
+
+MealMind explores a **decision-first** experience: help people pick a meal quickly, let them plan when they have a specific preference, and connect planning with what they actually eat.
+
+**Target users:** Chinese-speaking students and young professionals cooking or choosing meals for themselves. The interface supports Simplified Chinese and English.
+
+## Explore the public demo
+
+1. Open **[MealMind](https://mealmind-ao3k.onrender.com/today)** on mobile or desktop.
+2. Select breakfast, lunch, or dinner and spin the **Blind Box**.
+3. Explore the suggested meal, ingredients, and cooking steps; redraw if you want another option.
+4. Add it to today's plan, or review a replacement before confirming. Refresh the page to see your saved plan again.
+
+The public Blind Box currently contains **9 curated demo meals**. Recipes are selected for content review, but cooking times, portions, packaged ingredients, and allergen evidence are not all independently verified. If an explicitly declared restriction cannot be verified, the demo conservatively withholds a recommendation.
+
+## Feature availability
+
+| Feature | Public portfolio demo | Private local development |
+| --- | --- | --- |
+| **Meal Blind Box** | Interactive; 9 demo meals, instant redraw | Interactive; larger development candidate pool |
+| **Daily meal plan** | Add/replace, explicit confirmation, one current plan and version history; saved in browser IndexedDB | Available with local workflow integration |
+| **Natural-language AI planning** | Clearly labeled example only; **no live model call** | Gemini integration implemented and tested; live provider reliability is under investigation |
+| **Food logging** | Not available publicly | Local FastAPI/SQLite workflow |
+| **Nutrition analysis** | Example only | Deterministic calculations from traceable reference data, with coverage limitations |
+| **Adaptive replanning** | Example only | Local workflow with validation and tests |
+
+**Privacy and storage:** The public demo has no accounts, deployed FastAPI service, Gemini API key, or hosted food-log database. Accepted plans stay in the current browser for this website; they do not sync between devices, and clearing site data removes them. Public example screens are not presented as real AI-generated results.
+
+## Product decisions and iteration
+
+This project is both a working software prototype and an exercise in **end-to-end AI product development**.
+
+- **Decision-first, not calorie-first.** Prioritized a one-click Blind Box and practical meal suggestions over strict nutritional optimization.
+- **Less interface complexity.** Moved the wheel directly onto Today, made result/redraw usable together on mobile, removed duplicate shortcuts, and retired standalone pantry management.
+- **Explicit user control.** Drawing a meal does not log it as eaten. Saving and replacing meals are separate, confirmed actions; prior plan versions remain available.
+- **Hybrid AI and deterministic logic.** Local recipe selection and plan-storage safeguards do not require a model call; natural-language planning uses a separate Gemini/FastAPI workflow.
+- **Transparent uncertainty.** Unverified allergy evidence blocks restricted recommendations, and incomplete nutrition coverage remains visible rather than producing invented precision.
+
+For detailed rationale, review [the decision record](docs/DECISIONS.md), [product requirements](docs/PRD.md), and [recipe review/provenance](docs/BLIND_BOX_REVIEW.md).
+
+## Architecture and technologies
+
+| Layer | Technology | Role |
+| --- | --- | --- |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, i18next | Mobile-first bilingual interface |
+| Public demo persistence | Browser IndexedDB | Local daily plan and revision history |
+| Local backend | Python, FastAPI | Meal-generation API, validation, food-workflow services |
+| AI integration | Google Gemini API | Natural-language meal planning in private/local development |
+| Local food-log persistence | SQLite | Development-only confirmed food logs |
+| Content and evaluation | Versioned JSON, Python tests, browser tests | Recipes, reference data, validation, and regression checks |
+| Deployment | Render Static Site | Public HTTPS demo, without a deployed API |
+
+The project is a monorepo: `frontend/` contains the UI, `backend/` the private/local APIs and application logic, `data/` the recipe and nutrition references, `evaluation/` test evidence, and `docs/` product and engineering notes. The `supabase/migrations/` folder is a placeholder, **not an active public database**.
+
+## Development and technical documentation
+
+The instructions below are retained for developers who want to run or inspect the private/local workflows. They **do not describe capabilities available on the public static demo**.
 
 ## Manage local development on macOS
 
