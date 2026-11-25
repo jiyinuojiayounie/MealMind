@@ -48,3 +48,9 @@ The following proposals record the approved product direction and the implementa
 | ID | Decision |
 | --- | --- |
 | D021 | Retire the separate Pantry page and manual inventory workflow. This supersedes the pantry-specific portions of D007, D008, and D010. Planning can use ingredients supplied for the current request in text or explicit options. Preserve ingredient data attached to saved plans. Remove Today's shortcuts and use Today, Smart Planning, Food Log, and Profile as the primary navigation. Today opens with Blind Box, followed by the daily plan and analysis. |
+
+## Public AI hosting budget
+
+| ID | Decision |
+| --- | --- |
+| D022 | Public AI planning has a strict US$0 recurring budget. Retain the existing static site and use Render Free with a dedicated Upstash Redis Free quota ledger and an unbilled Gemini Developer API Free project. Require accounts with no automatic charges, and keep public AI off until account settings and hosted acceptance gates are verified. See the [public AI planning release guide](PUBLIC_AI_PLANNING_RELEASE.md). |

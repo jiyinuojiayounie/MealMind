@@ -242,3 +242,49 @@ def test_compact_provider_schema_preserves_required_fields_and_backend_validatio
         provider.return_value = SimpleNamespace(text=RESULT.replace('"title":', '"unexpected":true,"title":'))
         assert client.post(PATH, json=REQUEST).status_code == 502
     assert provider.call_count == 3
+
+
+@pytest.mark.parametrize(("results", "expected"), [
+    ([0, 0], 200),
+    ([0, 60], 429),
+    ([0, -1], 503),
+    ([-1], 503),
+])
+def test_redis_admission_precedes_gemini(fixture, monkeypatch, results, expected):
+    from dataclasses import replace
+    import requests
+
+    _, path, _, provider = fixture
+    config = PublicSettings(
+        True, path, "q" * 32, quota_backend="redis",
+        redis_url="https://fixture.upstash.io", redis_token="fixture-token",
+    )
+    settings = Settings(gemini_api_key="fixture-only-key", gemini_model="gemini-3.5-flash-lite", _env_file=None)
+    post = MagicMock(side_effect=[
+        SimpleNamespace(status_code=200, json=lambda r=result: {"result": r}) for result in results
+    ])
+    monkeypatch.setattr(requests, "post", post)
+    with TestClient(create_public_app(replace(config, enabled=False), planner_settings=settings)) as client:
+        assert client.post(PATH, json=REQUEST).status_code == 503
+        post.assert_not_called()
+    with TestClient(create_public_app(config, planner_settings=settings), client=("192.0.2.10", 5000)) as client:
+        assert client.post(PATH, json=REQUEST).status_code == expected
+    assert post.call_count == len(results)
+    assert provider.call_count == int(expected == 200)
+    assert post.call_args_list[0].kwargs["json"][4] != post.call_args_list[0].kwargs["json"][3]
+    if len(results) == 2:
+        assert post.call_args_list[1].kwargs["json"][4] == post.call_args_list[1].kwargs["json"][3]
+
+
+def test_render_env_requires_redis_and_trusted_proxy(monkeypatch):
+    monkeypatch.setenv("RENDER", "true")
+    monkeypatch.setenv("MEALMIND_PUBLIC_PLANNING_ENABLED", "true")
+    monkeypatch.delenv("MEALMIND_PUBLIC_QUOTA_BACKEND", raising=False)
+    monkeypatch.setenv("MEALMIND_PUBLIC_TRUSTED_PROXIES", " , ")
+    assert not PublicSettings.from_env().enabled
+    assert PublicSettings.from_env().quota_backend == "redis"
+
+    monkeypatch.setenv("MEALMIND_PUBLIC_TRUSTED_PROXIES", " 192.0.2.0/28 ")
+    assert PublicSettings.from_env().enabled
+    monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_BACKEND", "sqlite")
+    assert not PublicSettings.from_env().enabled

@@ -26,13 +26,27 @@ def initialize_quota(path: Path) -> None:
         db.execute("CREATE INDEX events_time ON events(accepted_at)")
 
 
-def reserve(path: Path, subject: str, now: datetime, *, provider: bool = False) -> None:
+def quota_windows(now: datetime, provider: bool):
     timestamp = int(now.timestamp())
     today = now.replace(hour=0, minute=0, second=0, microsecond=0)
     month = today.replace(day=1)
     tomorrow = today + timedelta(days=1)
     next_month = (month + timedelta(days=32)).replace(day=1)
 
+    return (
+        [(int(today.timestamp()), 30, int(tomorrow.timestamp()), "global_quota"),
+         (int(month.timestamp()), 500, int(next_month.timestamp()), "global_quota")]
+        if provider else
+        [(timestamp - 59, 3, None, "rate_limit"),
+         (int(today.timestamp()), 10, int(tomorrow.timestamp()), "rate_limit")]
+    )
+
+
+def reserve(path: Path, subject: str, now: datetime, *, provider: bool = False) -> None:
+    timestamp = int(now.timestamp())
+    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    month = today.replace(day=1)
+    windows = quota_windows(now, provider)
     try:
         with closing(connect(path.resolve().as_uri() + "?mode=rw", uri=True, timeout=1)) as db, db:
             db.execute("BEGIN IMMEDIATE")
@@ -40,13 +54,6 @@ def reserve(path: Path, subject: str, now: datetime, *, provider: bool = False) 
             db.execute("DELETE FROM events WHERE subject = 'provider' AND accepted_at < ?", (int(month.timestamp()),))
             db.execute("DELETE FROM events WHERE subject <> 'provider' AND accepted_at < ?",
                        (min(timestamp - 59, int(today.timestamp())),))
-            windows = (
-                [(int(today.timestamp()), 30, int(tomorrow.timestamp()), "global_quota"),
-                 (int(month.timestamp()), 500, int(next_month.timestamp()), "global_quota")]
-                if provider else
-                [(timestamp - 59, 3, None, "rate_limit"),
-                 (int(today.timestamp()), 10, int(tomorrow.timestamp()), "rate_limit")]
-            )
             for start, limit, end, reason in windows:
                 count, earliest = db.execute(
                     "SELECT COUNT(*), MIN(accepted_at) FROM events WHERE subject = ? AND accepted_at >= ?",

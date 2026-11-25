@@ -3,8 +3,9 @@
 import asyncio
 import logging
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import partial
 from hashlib import sha256
 from hmac import digest
 from ipaddress import ip_address, ip_network
@@ -30,6 +31,7 @@ from app.services.meal_plans import (
     generate_meal_plan,
 )
 from app.storage.planning_quota import QuotaExceeded, QuotaUnavailable, reserve
+from app.storage.planning_quota_redis import reserve_redis
 
 
 ORIGIN = "https://mealmind-ao3k.onrender.com"
@@ -44,14 +46,26 @@ class PublicSettings:
     quota_path: Path = Path("/var/data/planning-quota.sqlite3")
     quota_secret: str = ""
     trusted_proxies: tuple[str, ...] = ()
+    quota_backend: str = "sqlite"
+    redis_url: str = ""
+    redis_token: str = field(default="", repr=False)
 
     @classmethod
     def from_env(cls):
+        render = os.environ.get("RENDER") == "true"
+        backend = os.environ.get("MEALMIND_PUBLIC_QUOTA_BACKEND", "redis" if render else "sqlite")
+        proxies = tuple(filter(None, (
+            cidr.strip() for cidr in os.environ.get("MEALMIND_PUBLIC_TRUSTED_PROXIES", "").split(",")
+        )))
+        enabled = os.environ.get("MEALMIND_PUBLIC_PLANNING_ENABLED") == "true"
         return cls(
-            enabled=os.environ.get("MEALMIND_PUBLIC_PLANNING_ENABLED") == "true",
+            enabled=enabled and (not render or (backend == "redis" and bool(proxies))),
             quota_path=Path(os.environ.get("MEALMIND_PUBLIC_QUOTA_PATH", "/var/data/planning-quota.sqlite3")),
             quota_secret=os.environ.get("MEALMIND_PUBLIC_QUOTA_SECRET", ""),
-            trusted_proxies=tuple(filter(None, os.environ.get("MEALMIND_PUBLIC_TRUSTED_PROXIES", "").split(","))),
+            quota_backend=backend,
+            redis_url=os.environ.get("MEALMIND_PUBLIC_REDIS_URL", ""),
+            redis_token=os.environ.get("MEALMIND_PUBLIC_REDIS_TOKEN", ""),
+            trusted_proxies=proxies,
         )
 
 
@@ -126,6 +140,10 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
         expose_headers=["Retry-After", "X-Request-ID"],
     )
     capacity = asyncio.Semaphore(2)
+    quota_reserve = {
+        "sqlite": partial(reserve, config.quota_path),
+        "redis": partial(reserve_redis, config.redis_url, config.redis_token),
+    }.get(config.quota_backend)
 
     @app.post(PATH, response_model=MealPlanResponse)
     async def generate(request: Request, response: Response):
@@ -136,7 +154,7 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
         status = 200
         try:
             if (
-                not config.enabled or len(config.quota_secret) < 32 or not settings.gemini_api_key
+                not config.enabled or quota_reserve is None or len(config.quota_secret) < 32 or not settings.gemini_api_key
                 or not settings.gemini_api_key.get_secret_value().strip()
                 or settings.gemini_model not in {"gemini-3.1-flash-lite", PUBLIC_COMPACT_SCHEMA_MODEL}
             ):
@@ -146,7 +164,7 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
             except ValueError:
                 raise HTTPException(403, {"status": "client_unverified"}) from None
             subject = digest(config.quota_secret.encode(), ip.packed, sha256).hex()
-            await run_in_threadpool(reserve, config.quota_path, subject, datetime.now(UTC))
+            await run_in_threadpool(quota_reserve, subject, datetime.now(UTC))
             query = request.query_params.multi_items()
             if query not in ([], [("infer_scope", "true")], [("infer_scope", "false")]):
                 raise HTTPException(422, {"status": "invalid_request"})
@@ -157,7 +175,7 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
                 result = await run_in_threadpool(
                     generate_meal_plan, payload, settings, infer_scope=query == [("infer_scope", "true")],
                     trace=trace, free_recommendation=True,
-                    before_provider_call=lambda: reserve(config.quota_path, "provider", datetime.now(UTC), provider=True),
+                    before_provider_call=lambda: quota_reserve("provider", datetime.now(UTC), provider=True),
                 )
             response.headers.update(headers)
             return result
