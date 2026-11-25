@@ -18,23 +18,23 @@ const cookedNames = new Map<string, Record<Language, string>>([
   ['ingredient_chicken', { 'zh-CN': '熟鸡腿肉', 'en-US': 'Cooked chicken thigh' }],
 ])
 
-function demoMealCandidates(mealType: BlindBoxMeal) {
-  return demoRecipes.filter((recipe) =>
+export function reviewedMealCandidates(mealType: MealType, hasRestriction: boolean, includeDevelopment = false) {
+  // Explicit dietary restrictions require evidence that the demo recipes do not provide.
+  if (hasRestriction) return []
+  return (includeDevelopment ? demoRecipes : publicPool.recipes).filter((recipe) =>
     recipe.review.status === 'draft' && recipe.servings === 1 && recipe.meal_types.includes(mealType),
   )
 }
 
 export function drawDemoMeal(mealType: BlindBoxMeal, hasRestriction: boolean, previousId?: string) {
-  // Eligibility for users with explicit restrictions still requires reviewed evidence.
-  if (hasRestriction) return undefined
-  const eligible = demoMealCandidates(mealType)
+  const eligible = reviewedMealCandidates(mealType, hasRestriction, import.meta.env.DEV)
   const alternatives = eligible.filter((recipe) => recipe.recipe_id !== previousId)
   const pool = alternatives.length ? alternatives : eligible
   return pool[Math.floor(Math.random() * pool.length)]
 }
 
 export function demoMealPlan(
-  recipe: NonNullable<ReturnType<typeof drawDemoMeal>>, mealType: BlindBoxMeal,
+  recipe: NonNullable<ReturnType<typeof drawDemoMeal>>, mealType: MealType,
   language: Language, servingLabel: string,
 ): MealPlan {
   const title = recipe.names[language]

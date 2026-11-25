@@ -12,7 +12,7 @@ export type NutrientSubtotal = {
   missing_items: number
 }
 
-type NutritionSummary = {
+export type NutritionSummary = {
   item_count: number
   calculated_item_count: number
   fully_calculated_item_count: number
@@ -20,16 +20,22 @@ type NutritionSummary = {
   nutrients: Record<NutrientKey, NutrientSubtotal>
 }
 
-type NutritionItem = {
+export type NutritionItem = {
   item_index: number
   name: string
   reasons: string[]
   conversion: 'edible_mass' | 'reference_portion' | null
   nutrients: Record<NutrientKey, string | null>
-  provenance: { fdc_id: number } | null
+  provenance: {
+    fdc_id: number
+    food_id?: string
+    state?: string
+    nutrient_source_row_ids?: Partial<Record<NutrientKey, number>>
+    portion_source_row_id?: number
+  } | null
 }
 
-type NutritionLog = {
+export type NutritionLog = {
   log_id: string
   meal_type: (typeof logMealTypes)[number]
   consumed_at: string

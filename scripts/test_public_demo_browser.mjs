@@ -65,7 +65,7 @@ async function browser(origin, run) {
       ws.send(JSON.stringify({ id, method, params }))
     })
     const js = async expression => {
-      const evaluated = await cdp('Runtime.evaluate', { expression, returnByValue: true })
+      const evaluated = await cdp('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })
       if (evaluated.exceptionDetails) throw new Error(evaluated.exceptionDetails.text)
       return evaluated.result.value
     }
@@ -99,6 +99,7 @@ try {
   assert(!/AIza[\w-]{35}|family_000052|全麦卷饼皮/.test(bundle))
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
   const origin = 'http://127.0.0.1:' + server.address().port
+  let previousPlan
   await browser(origin, async ({ js, cdp, visible, click, open, outbound }) => {
     const daily = 'section[aria-labelledby="public-plan-title"]'
     const currentSlots = () => js(`document.querySelector(${JSON.stringify(daily)}).querySelector('.meal-list').innerText`)
@@ -178,11 +179,237 @@ try {
     await open('/today')
     await visible('番茄土豆鹰嘴豆炖菜', daily)
 
+
+    const consumed = 'section[aria-labelledby="today-consumed-title"]'
+    const nutrition = 'section[aria-labelledby="nutrition-title"]'
+    const records = 'section[aria-labelledby="food-log-list"]'
+    await visible('今天还没有已确认的食物记录。', consumed)
+    await visible('当天还没有已确认的食物记录。', nutrition)
+    const savedSlots = await currentSlots()
+    const fill = (selector, value) => js(`(() => {
+      const field = document.querySelector(${JSON.stringify(selector)});
+      Object.getOwnPropertyDescriptor(Object.getPrototypeOf(field), 'value').set.call(field, ${JSON.stringify(value)});
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    })()`)
+    await open('/log')
+    await visible('食物记录仅保存在当前浏览器')
+    assert(await js("!document.querySelector('input[type=file]') && !document.querySelector('#food-recognition-help')"))
+    await setMobile(375,667)
+    assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+    await click('保存草稿')
+    await visible('至少需要一项食物')
+    await fill('form textarea','测试实际食用说明')
+    await fill('form select','dinner')
+    await fill('form input[required][maxlength]','熟长粒糙米')
+    await fill('form input[type=number]','150')
+    await fill('form input[maxlength="120"]:not([required])','g')
+    await click('添加食物')
+    await fill('form fieldset fieldset:last-of-type input[required]','牛肉面')
+    await js("const save = document.querySelector('form [type=submit]'); save.click(); save.click()")
+    await visible('牛肉面', records)
+    await visible('熟长粒糙米 · 150 g', records)
+    await visible('数量未知', records)
+    assert.equal(await js(`document.querySelectorAll(${JSON.stringify(records+' article')}).length`),1)
+    await open('/today')
+    await visible('今天还没有已确认的食物记录。', consumed)
+    await visible('当天还没有已确认的食物记录。', nutrition)
+    assert.equal(await currentSlots(),savedSlots)
+    await open('/log')
+    await visible('熟长粒糙米',records)
+    await click('确认实际吃过',records)
+    await visible('食物记录已确认。',records)
+    await cdp('Page.reload')
+    await visible('测试实际食用说明',records)
+    await visible('已确认',records)
+    await setMobile(390,844)
+    assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+
+    await open('/today')
+    await visible('熟长粒糙米',consumed)
+    await visible('已计算小计 · 仅覆盖部分记录', nutrition)
+    await visible('已计算 1/2 项食物', nutrition)
+    await visible('184.5 千卡', nutrition)
+    assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+    await js(`document.querySelector(${JSON.stringify(nutrition + ' ul details summary')}).click()`)
+    await visible('目录中没有匹配这道混合菜的参考数据', nutrition)
+    await visible('没有记录实际吃了多少', nutrition)
+    assert.equal(await currentSlots(),savedSlots)
+    await until(() => js("document.querySelectorAll('input[name=blind-box-slot]').length === 3"))
+    await js("document.querySelectorAll('input[name=blind-box-slot]')[2].click()")
+    await click('开始抽取')
+    await recipe()
+    await click('加入计划','.blind-meal')
+    await click('检查餐次并保存',save)
+    await visible('这餐已有确认的食用记录',save)
+    assert.equal(await currentSlots(),savedSlots)
+    await click('关闭',save)
+
+    await open('/log')
+    await visible('熟长粒糙米',records)
+    await click('更正记录',records)
+    await fill('form input[required][maxlength]','熟长粒糙米')
+    await fill('form input[type=number]','200')
+    await click('保存更正')
+    await visible('已更新确认食用记录。',records)
+    await visible('熟长粒糙米 · 200 g',records)
+    await open('/today')
+    await visible('熟长粒糙米 200 g',consumed)
+    await visible('246 千卡', nutrition)
+    await cdp('Page.reload')
+    await visible('246 千卡', nutrition)
+    assert.equal(await currentSlots(),savedSlots)
+    await open('/log')
+    await visible('熟长粒糙米',records)
+    await js('window.confirm = () => false')
+    await click('删除记录',records)
+    await visible('熟长粒糙米',records)
+    await js('window.confirm = () => true')
+    await click('删除记录',records)
+    await visible('这一天没有食物记录。',records)
+    await open('/today')
+    await visible('今天还没有已确认的食物记录。',consumed)
+    await visible('当天还没有已确认的食物记录。', nutrition)
+    assert.equal(await currentSlots(),savedSlots)
+
+    const replan = 'section[aria-labelledby="public-replan-title"]'
+    const planData = () => readStore('plans')
+    const logData = () => readStore('food-logs')
+    function readStore(store, mutation = '') {
+      return js(`new Promise((resolve, reject) => {
+        const open = indexedDB.open('mealmind-meal-plans');
+        open.onerror = reject;
+        open.onsuccess = () => {
+          const db = open.result;
+          const tx = db.transaction(${JSON.stringify(store)}, ${JSON.stringify(mutation ? 'readwrite' : 'readonly')});
+          const store = tx.objectStore(${JSON.stringify(store)});
+          const get = store.getAll();
+          get.onsuccess = () => { const rows = get.result; ${mutation} };
+          tx.onabort = reject;
+          tx.oncomplete = () => { db.close(); resolve(get.result); };
+        };
+      })`)
+    }
+    const optionValues = () => js(`[...document.querySelectorAll(${JSON.stringify(replan + ' form select:first-of-type option')})].map(el=>el.value).filter(Boolean).slice(0,3)`)
+    await setMobile(375,667)
+    await visible('管理餐次锁定', replan)
+    assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+    const beforeLocks = (await planData())[0]
+    await js(`document.querySelector(${JSON.stringify(replan + ' details summary')}).click()`)
+    await js(`[...document.querySelectorAll(${JSON.stringify(replan + ' details label')})].find(el=>el.textContent.includes('保留午餐')).querySelector('input').click()`)
+    await click('保存餐次锁定', replan)
+    await visible('你锁定的餐次：午餐', replan)
+    const lockedPlan = (await planData())[0]
+    assert.deepEqual(lockedPlan.lockedMealTypes, ['lunch'])
+    assert.deepEqual(lockedPlan.revisions, beforeLocks.revisions)
+    assert(!((await optionValues()).includes('lunch')))
+
+    // These real local records leave dinner as the sole eligible main meal.
+    for (const [slot, food, quantity] of [['breakfast','熟长粒糙米','100'],['lunch','测试会话隔离餐食',null]]) {
+      await open('/log')
+      await visible('食物记录仅保存在当前浏览器')
+      await fill('form select',slot)
+      await fill('form input[required][maxlength]',food)
+      if (quantity) {
+        await fill('form input[type=number]',quantity)
+        await fill('form input[maxlength="120"]:not([required])','g')
+      }
+      await click('保存草稿')
+      await visible(food,records)
+      await click('确认实际吃过',records)
+      await visible('食物记录已确认。',records)
+    }
+    await open('/today')
+    await setMobile(390,844)
+    await visible('已确认食用：早餐 · 午餐',replan)
+    assert.deepEqual(await js(`[...document.querySelector(${JSON.stringify(replan + ' form select')}).options].map(x=>x.value).filter(Boolean)`),['dinner'])
+    await visible('已计算小计 · 仅覆盖部分记录',nutrition)
+    await visible('123 千卡',nutrition)
+    assert(await js('document.documentElement.scrollWidth <= innerWidth'))
+
+    const choose = async (restriction = 'none_declared') => {
+      await until(() => js(`!!document.querySelector(${JSON.stringify(replan + ' form select')})`))
+      await fill(replan + ' form select','dinner')
+      await fill(replan + ' form label:nth-of-type(2) select',restriction)
+    }
+    const check = (name) => js(`document.querySelector(${JSON.stringify(replan + ' input[name=' + name + ']')}).click()`)
+    const previewNoodles = async () => {
+      await choose()
+      await check('noodles')
+      await click('生成预览',replan)
+      await visible('拟保存餐食：豆腐香菇青菜汤面',replan)
+    }
+    const baselineLogs = await logData()
+    await choose('present')
+    await visible('本预览无法核实关键饮食限制',replan)
+    assert(await js(`document.querySelector(${JSON.stringify(replan + ' form button[type=submit]')}).disabled`))
+    await choose()
+    await check('noodles')
+    await check('quick')
+    await click('生成预览',replan)
+    await visible('目前没有符合这些要求的餐食',replan)
+    await check('quick')
+    await check('avoidRepeat')
+    await click('生成预览',replan)
+    // The current lunch is this noodle dish. Avoiding earlier dishes removes it.
+    await visible('拟保存餐食：鸡肉卷心菜炒乌冬',replan)
+    await visible('其他已规划餐次保持不变：早餐 · 午餐',replan)
+    await click('保留当前餐单',replan)
+    assert.deepEqual(await planData(),[lockedPlan])
+    assert.deepEqual(await logData(),baselineLogs)
+
+    await click('生成预览',replan)
+    await visible('拟保存餐食：鸡肉卷心菜炒乌冬',replan)
+    await readStore('food-logs',"store.put({...rows[0], revision: rows[0].revision + 1});")
+    await click('接受并保存这一餐',replan)
+    await visible('已确认记录、日期或餐单已有变化',replan)
+    assert.deepEqual(await planData(),[lockedPlan])
+
+    await choose()
+    assert(await js(`!document.querySelector(${JSON.stringify(replan + ' input[name=noodles]')}).checked`))
+    await previewNoodles()
+    await readStore('plans',`const plan = rows[0]; const last = plan.revisions.at(-1);
+      store.put({...plan, revision: plan.revision + 1, revisions: [...plan.revisions,
+        {...last, revision: plan.revision + 1, acceptanceId: crypto.randomUUID()}]});`)
+    const afterConcurrentPlan = (await planData())[0]
+    await click('接受并保存这一餐',replan)
+    await visible('已确认记录、日期或餐单已有变化',replan)
+    assert.deepEqual(await planData(),[afterConcurrentPlan])
+
+    await previewNoodles()
+    const beforeAcceptLogs = await logData()
+    await click('接受并保存这一餐',replan)
+    await visible('已保存为当前餐单',replan)
+    const afterAccept = (await planData())[0]
+    assert.equal(afterAccept.revision, afterConcurrentPlan.revision + 1)
+    assert.deepEqual(afterAccept.revisions.slice(0,-1), afterConcurrentPlan.revisions)
+    assert.deepEqual(afterAccept.lockedMealTypes,['lunch'])
+    assert.deepEqual(afterAccept.revisions.at(-1).plan.meals.slice(0,2),afterConcurrentPlan.revisions.at(-1).plan.meals.slice(0,2))
+    assert.deepEqual(await logData(),beforeAcceptLogs)
+    await cdp('Page.reload')
+    await visible('你锁定的餐次：午餐',replan)
+    await visible('豆腐香菇青菜汤面',daily)
+    assert.deepEqual(await planData(),[afterAccept])
+    console.log('PASS production Replan: confirmed and user locks, preferences, no alternatives, cancel, stale logs/plan, accept and reload')
+    console.log('PASS production Food Log: draft, duplicate suppression, unknown amount, confirm/reload, edit, cancel/delete, Today and locked slots')
     for (const path of ['/log', '/profile', '/blind-box', '/pantry']) {
       await open(path)
       await until(() => js(`location.pathname === '${path === '/pantry' ? '/today' : path}' && !!document.querySelector('main h1')`))
-      if (path === '/log') assert(await js("!document.querySelector('main form')"))
+      if (path === '/log') assert(await js("!!document.querySelector('main form')"))
     }
+    previousPlan = await js(`new Promise((resolve, reject) => {
+      const open = indexedDB.open('mealmind-meal-plans');
+      open.onerror = reject;
+      open.onsuccess = () => {
+        const db = open.result;
+        const get = db.transaction('plans').objectStore('plans').getAll();
+        get.onerror = reject;
+        get.onsuccess = () => { db.close(); resolve(get.result[0]); };
+      };
+    })`)
+    assert(previousPlan.revisions.length > 1)
+    delete previousPlan.lockedMealTypes
+    delete previousPlan.lockRevision
     assert.deepEqual(outbound, [])
     assert.deepEqual(apiHits, [])
   })
@@ -195,6 +422,80 @@ try {
     await js("document.querySelector('.blind-stage > button').click()")
     await visible('暂无可推荐餐食')
     assert(await js("!document.querySelector('.blind-meal')"))
+    await visible('今天还没有已确认的食物记录。', 'section[aria-labelledby="today-consumed-title"]')
+    await visible('当天还没有已确认的食物记录。', 'section[aria-labelledby="nutrition-title"]')
+    await visible('该日期还没有保存的餐单', 'section[aria-labelledby="public-replan-title"]')
+    await open('/log')
+    await visible('这一天没有食物记录。')
+  })
+  await browser(origin, async ({ open, js, visible, click, cdp, outbound }) => {
+    await open('/')
+    await until(() => js("!!document.querySelector('main')"))
+    assert(await js(`new Promise((resolve, reject) => {
+      const request = indexedDB.open('mealmind-meal-plans', 1);
+      request.onerror = reject;
+      request.onupgradeneeded = () => {
+        request.result.createObjectStore('plans', { keyPath: 'date' }).add(${JSON.stringify(previousPlan)});
+      };
+      request.onsuccess = () => { request.result.close(); resolve(true); };
+    })`))
+    await open('/today')
+    await visible('豆腐香菇青菜汤面', 'section[aria-labelledby="public-plan-title"]')
+    await visible('历史版本', 'section[aria-labelledby="public-plan-title"]')
+    assert.deepEqual(await js(`new Promise((resolve, reject) => {
+      const request = indexedDB.open('mealmind-meal-plans', 2);
+      request.onerror = reject;
+      request.onsuccess = () => {
+        const db = request.result;
+        const get = db.transaction('plans').objectStore('plans').get(${JSON.stringify(previousPlan.date)});
+        get.onerror = reject;
+        get.onsuccess = () => { db.close(); resolve(get.result); };
+      };
+    })`), previousPlan)
+    await cdp('Emulation.setTimezoneOverride', { timezoneId: 'Asia/Singapore' })
+    await open('/log')
+    await visible('这一天没有食物记录。')
+    await js(`for (const [selector, value] of [['input[type=datetime-local]', '2001-10-10T00:05'], ['input[required][maxlength]', '熟长粒糙米'], ['input[type=number]', '100'], ['input[maxlength="120"]:not([required])','g']]) {
+      const field = document.querySelector(selector);
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(field, value);
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    const mealType = document.querySelector('form select');
+    Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(mealType, 'breakfast');
+    mealType.dispatchEvent(new Event('change', { bubbles: true }));`)
+    await click('保存草稿')
+    await visible('熟长粒糙米 · 100 g')
+    assert.equal(await js("document.querySelector('section[aria-labelledby=food-log-list] input[type=date]').value"),'2001-10-10')
+    assert.match(await js("document.querySelector('section[aria-labelledby=food-log-list] time').dateTime"), /2001-10-10T00:05:00\+08:00/)
+    await click('确认实际吃过')
+    await visible('食物记录已确认。')
+    await open('/today')
+    const nutrition = 'section[aria-labelledby="nutrition-title"]'
+    await visible('当天还没有已确认的食物记录。', nutrition)
+    await js(`(() => {
+      const field = document.querySelector(${JSON.stringify(nutrition + ' input[type=date]')});
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(field,'2001-10-10');
+      field.dispatchEvent(new Event('input',{ bubbles:true }));
+      field.dispatchEvent(new Event('change',{ bubbles:true }));
+    })()`)
+    await visible('123 千卡', nutrition)
+    await visible('已计算 1/1 项食物', nutrition)
+    const replan = 'section[aria-labelledby="public-replan-title"]'
+    await visible('已确认食用：无',replan)
+    await js(`(() => {
+      const field = document.querySelector(${JSON.stringify(replan + ' input[type=date]')});
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(field,'2001-10-10');
+      field.dispatchEvent(new Event('input',{ bubbles:true }));
+      field.dispatchEvent(new Event('change',{ bubbles:true }));
+    })()`)
+    await visible('已确认食用：早餐',replan)
+    assert(await js(`!document.querySelector(${JSON.stringify(replan + ' option[value=breakfast]')})`))
+    await open('/log')
+    await visible('这一天没有食物记录。')
+    await click('English', 'header')
+    await visible('Food records stay in this browser.')
+    assert.deepEqual(outbound, [])
+    console.log('PASS additive IndexedDB upgrade, historical plan equality, local date near midnight, complete nutrition and English')
   })
   const privatePaths = ['/api', '/api/', '/api/v1/health', '/api/v1/food-logs', '/api/v1/nutrition/daily',
     '/api/v1/replan/context', '/api/v1/meal-plans/generate']

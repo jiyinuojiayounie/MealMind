@@ -114,7 +114,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
-function isItem(value: unknown): value is FoodItem {
+export function isItem(value: unknown): value is FoodItem {
   return isRecord(value) && isShortText(value.name)
     && (value.quantity === null || (typeof value.quantity === 'number' && Number.isFinite(value.quantity) && value.quantity > 0))
     && (value.unit === null || isShortText(value.unit))
@@ -172,7 +172,7 @@ export function readBindingError(error: unknown) {
   return { key, index }
 }
 
-function isLog(value: unknown): value is FoodLog {
+export function isLog(value: unknown): value is FoodLog {
   return isRecord(value) && typeof value.id === 'string'
     && logMealTypes.some((type) => type === value.meal_type)
     && (value.status === 'draft' || value.status === 'confirmed')

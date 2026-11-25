@@ -10,6 +10,7 @@ import {
   readBindingError, recognizeFoodImage, recognizeFoodText, referenceSelection, sameFoodItem, saveFoodLog,
 } from '../services/foodLogs'
 import type { FoodItem, FoodLog, FoodLogDraft, FoodRecognition, PortionNote, RecognitionEvidence, RecognitionSource, ReferenceSelection } from '../services/foodLogs'
+import { confirmLocalFoodLog, deleteLocalFoodLog, listLocalFoodLogs, saveLocalFoodLog } from '../services/localFoodLogRepository'
 import { localDateTimeValue, timestampAtLocalTime } from '../types/localTime'
 
 const button = 'min-h-11 cursor-pointer rounded-xl border border-border px-3 py-2 font-semibold text-forest hover:bg-sage disabled:cursor-not-allowed disabled:opacity-50'
@@ -44,7 +45,7 @@ function rowItem(row: ReturnType<typeof foodRow>): FoodItem {
 }
 
 function initialForm() {
-  return { description: '', consumedAt: localDateTimeValue(new Date()), mealType: 'unspecified' as FoodLogDraft['meal_type'],
+  return { creationId: String(crypto.randomUUID()), description: '', consumedAt: localDateTimeValue(new Date()), mealType: 'unspecified' as FoodLogDraft['meal_type'],
     rows: [foodRow()], editing: null as FoodLog | null,
     recognized: null as Pick<FoodRecognition, 'source' | 'description' | 'notes' | 'cooking_evidence'> | null }
 }
@@ -63,9 +64,10 @@ function recognitionError(error: unknown) {
 function errorKey(error: unknown, action: string) {
   if (error instanceof ApiError) {
     if (error.status === 409 || (error.status === 404 && action !== 'list' && action !== 'create')) return 'conflict'
-    if (error.status === 403 || error.status === 404 || error.status === 503) return 'unavailable'
+    if (error.status === 403 || error.status === 404 || error.status === 503) return import.meta.env.PROD ? 'storage' : 'unavailable'
     if (error.status === 422) return 'invalid'
   }
+  if (import.meta.env.PROD) return 'storage'
   if (action === 'create') return 'saveUnknown'
   return 'network'
 }
@@ -78,7 +80,7 @@ export function LogPage() {
         <h1>{t('feature.log')}</h1>
         <p className="intro">{t('pages.log.intro')}</p>
       </header>
-      {import.meta.env.DEV && canUseFoodLogs()
+      {import.meta.env.PROD || canUseFoodLogs()
         ? <LocalFoodLogs />
         : <p className="card p-5 text-muted">{t('pages.log.unavailable')}</p>}
     </div>
@@ -112,7 +114,7 @@ function LocalFoodLogs() {
 
   useEffect(() => {
     const controller = new AbortController()
-    void listFoodLogs(view.date, controller.signal).then(
+    void (import.meta.env.PROD ? listLocalFoodLogs(view.date) : listFoodLogs(view.date, controller.signal)).then(
       (logs) => { if (!controller.signal.aborted) setList({ view, logs }) },
       (error: unknown) => {
         if (!controller.signal.aborted) setList({ view, error: errorKey(error, 'list') })
@@ -174,7 +176,7 @@ function LocalFoodLogs() {
         changePhoto()
         setRecognition({})
       }
-      setFeedback({ notice: kind })
+      setFeedback({ notice: kind === 'update' && result?.status === 'confirmed' ? 'corrected' : kind })
       reload(result?.consumed_at.slice(0, 10))
       listHeading.current?.focus()
     } catch (error) {
@@ -331,12 +333,14 @@ function LocalFoodLogs() {
       consumed_at: consumedAt, meal_type: form.mealType, items,
     }
     const source = form.recognized?.source ?? 'manual_text'
-    void mutate(existing ? 'update' : 'create', (signal) => saveFoodLog(payload, existing, source, signal))
+    void mutate(existing ? 'update' : 'create', (signal) => import.meta.env.PROD
+      ? saveLocalFoodLog(payload, existing, form.creationId)
+      : saveFoodLog(payload, existing, source, signal))
   }
 
   function edit(log: FoodLog) {
     setForm({
-      editing: log, description: log.description ?? '', consumedAt: log.consumed_at.slice(0, 16),
+      creationId: log.id, editing: log, description: log.description ?? '', consumedAt: log.consumed_at.slice(0, 16),
       mealType: log.meal_type,
       rows: log.items.map((item) => {
         const row = foodRow(item)
@@ -362,13 +366,13 @@ function LocalFoodLogs() {
 
   return (
     <>
-      <p className="rounded-xl bg-sage px-4 py-3 text-sm text-forest">{t('pages.log.local')}</p>
+      <p className="rounded-xl bg-sage px-4 py-3 text-sm text-forest">{t(import.meta.env.PROD ? 'pages.log.browserLocal' : 'pages.log.local')}</p>
       <p className="sr-only" role="status">
         {recognizing === 'ai_image' ? t('pages.log.photo.loading')
           : recognizing ? t('pages.log.ai.loading') : busy ? t('pages.log.working') : ''}
       </p>
       <form className="card grid gap-4 p-4 sm:p-6" onSubmit={submit} noValidate>
-        <h2 ref={formHeading} tabIndex={-1}>{t(form.editing ? 'pages.log.editTitle' : 'pages.log.newTitle')}</h2>
+        <h2 ref={formHeading} tabIndex={-1}>{t(form.editing?.status === 'confirmed' ? 'pages.log.editConfirmedTitle' : form.editing ? 'pages.log.editTitle' : 'pages.log.newTitle')}</h2>
         {feedback.error && !feedback.listError && <p id="food-log-error" role="alert" className="break-words text-red-800">{t(`pages.log.errors.${feedback.error}`, { number: feedback.item })}</p>}
         <fieldset disabled={busy} className="grid min-w-0 gap-4">
           <label className="planning-field">
@@ -383,53 +387,57 @@ function LocalFoodLogs() {
                 }))
               }} />
           </label>
-          <div className="grid justify-items-start gap-2">
-            <button type="button" className={button} aria-describedby="food-recognition-help"
-              onClick={() => void recognize('ai_text')}>
-              {t(recognizing === 'ai_text' ? 'pages.log.ai.loading' : 'pages.log.ai.action')}
-            </button>
-            <p id="food-recognition-help" className="text-sm text-muted">{t('pages.log.ai.help')}</p>
-            {recognition.error?.source === 'ai_text' && (
-              <p role="alert" className="text-red-800">{t(`pages.log.ai.errors.${recognition.error.key}`)}</p>
-            )}
-          </div>
+          {import.meta.env.DEV && (
+            <div className="grid justify-items-start gap-2">
+              <button type="button" className={button} aria-describedby="food-recognition-help"
+                onClick={() => void recognize('ai_text')}>
+                {t(recognizing === 'ai_text' ? 'pages.log.ai.loading' : 'pages.log.ai.action')}
+              </button>
+              <p id="food-recognition-help" className="text-sm text-muted">{t('pages.log.ai.help')}</p>
+              {recognition.error?.source === 'ai_text' && (
+                <p role="alert" className="text-red-800">{t(`pages.log.ai.errors.${recognition.error.key}`)}</p>
+              )}
+            </div>
+          )}
         </fieldset>
-        <fieldset disabled={busy && recognizing !== 'ai_image'} className="grid min-w-0 gap-2 border-t border-border pt-3">
-          <label className="planning-field">
-            {t('pages.log.photo.label')}
-            <input type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-              aria-describedby="photo-recognition-help"
-              className="w-full min-w-0 text-sm text-muted file:mr-2 file:min-h-11 file:cursor-pointer file:rounded-xl file:border file:border-border file:bg-surface file:px-3 file:font-semibold file:text-forest"
-              onChange={(event) => {
-                const file = event.currentTarget.files?.[0]
-                if (file) changePhoto(file)
-                event.currentTarget.value = ''
-              }} />
-          </label>
-          <p id="photo-recognition-help" className="text-sm text-muted">{t('pages.log.photo.help')}</p>
-          {photo && (
-            <>
-              <img key={photo.url} src={photo.url} alt={t('pages.log.photo.preview')}
-                className="max-h-36 max-w-full rounded-xl object-contain"
-                onError={() => {
-                  if (previewUrl.current !== photo.url) return
-                  changePhoto()
-                  setRecognition((previous) => ({ ...previous, error: { source: 'ai_image', key: 'corrupt' } }))
+        {import.meta.env.DEV && (
+          <fieldset disabled={busy && recognizing !== 'ai_image'} className="grid min-w-0 gap-2 border-t border-border pt-3">
+            <label className="planning-field">
+              {t('pages.log.photo.label')}
+              <input type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                aria-describedby="photo-recognition-help"
+                className="w-full min-w-0 text-sm text-muted file:mr-2 file:min-h-11 file:cursor-pointer file:rounded-xl file:border file:border-border file:bg-surface file:px-3 file:font-semibold file:text-forest"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0]
+                  if (file) changePhoto(file)
+                  event.currentTarget.value = ''
                 }} />
-              <div className="flex flex-wrap gap-2">
-                <button type="button" className={button} disabled={busy} onClick={() => void recognize('ai_image')}>
-                  {t(recognizing === 'ai_image' ? 'pages.log.photo.loading' : 'pages.log.photo.action')}
-                </button>
-                <button type="button" className={button} onClick={() => changePhoto()}>{t('pages.log.photo.remove')}</button>
-              </div>
-            </>
-          )}
-          {recognition.error?.source === 'ai_image' && (
-            <p role="alert" className="text-red-800">
-              {t(`pages.log.ai.errors.${recognition.error.key}`)}
-            </p>
-          )}
-        </fieldset>
+            </label>
+            <p id="photo-recognition-help" className="text-sm text-muted">{t('pages.log.photo.help')}</p>
+            {photo && (
+              <>
+                <img key={photo.url} src={photo.url} alt={t('pages.log.photo.preview')}
+                  className="max-h-36 max-w-full rounded-xl object-contain"
+                  onError={() => {
+                    if (previewUrl.current !== photo.url) return
+                    changePhoto()
+                    setRecognition((previous) => ({ ...previous, error: { source: 'ai_image', key: 'corrupt' } }))
+                  }} />
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className={button} disabled={busy} onClick={() => void recognize('ai_image')}>
+                    {t(recognizing === 'ai_image' ? 'pages.log.photo.loading' : 'pages.log.photo.action')}
+                  </button>
+                  <button type="button" className={button} onClick={() => changePhoto()}>{t('pages.log.photo.remove')}</button>
+                </div>
+              </>
+            )}
+            {recognition.error?.source === 'ai_image' && (
+              <p role="alert" className="text-red-800">
+                {t(`pages.log.ai.errors.${recognition.error.key}`)}
+              </p>
+            )}
+          </fieldset>
+        )}
         <fieldset disabled={busy} className="grid min-w-0 gap-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="planning-field">
@@ -591,9 +599,9 @@ function LocalFoodLogs() {
             <button type="button" className={`${button} justify-self-start`} disabled={form.rows.length >= 50}
               onClick={() => setForm({ ...form, rows: [...form.rows, foodRow()] })}>{t('pages.log.add')}</button>
           </div>
-          <FoodMatchingReview key={matchingKey} entries={matchingEntries} buttonClass={button} onBindingAction={changeReference} onClear={clearReference} />
+          {import.meta.env.DEV && <FoodMatchingReview key={matchingKey} entries={matchingEntries} buttonClass={button} onBindingAction={changeReference} onClear={clearReference} />}
           <div className="flex flex-wrap gap-2">
-            <button type="submit" className={primaryButton}>{t('pages.log.save')}</button>
+            <button type="submit" className={primaryButton}>{t(import.meta.env.PROD && form.editing?.status === 'confirmed' ? 'pages.log.saveCorrection' : 'pages.log.save')}</button>
             {form.editing && (
               <button type="button" className={button} onClick={() => {
                 setForm(initialForm())
@@ -648,20 +656,21 @@ function LocalFoodLogs() {
                 </li>
               ))}
             </ul>
-            {log.status === 'confirmed' && <p className="text-sm text-muted">{t('pages.log.locked')}</p>}
+            {import.meta.env.DEV && log.status === 'confirmed' && <p className="text-sm text-muted">{t('pages.log.locked')}</p>}
             {form.editing?.id === log.id && <p className="text-sm text-muted">{t('pages.log.editing')}</p>}
             <div className="flex flex-wrap gap-2">
+              {(import.meta.env.PROD || log.status === 'draft') && (
+                <button type="button" className={button} disabled={busy}
+                  onClick={() => edit(log)}>{t(log.status === 'confirmed' ? 'pages.log.correctConfirmed' : 'pages.log.correct')}</button>
+              )}
               {log.status === 'draft' && (
-                <>
-                  <button type="button" className={button} disabled={busy}
-                    onClick={() => edit(log)}>{t('pages.log.correct')}</button>
-                  <button type="button" className={primaryButton} disabled={busy || form.editing?.id === log.id}
-                    onClick={() => void mutate('confirm', (signal) => confirmFoodLog(log, signal))}>{t('pages.log.confirm')}</button>
-                </>
+                <button type="button" className={primaryButton} disabled={busy || form.editing?.id === log.id}
+                  onClick={() => void mutate('confirm', (signal) => import.meta.env.PROD
+                    ? confirmLocalFoodLog(log) : confirmFoodLog(log, signal))}>{t('pages.log.confirm')}</button>
               )}
               <button type="button" className={`${button} text-red-800`} disabled={busy || form.editing?.id === log.id}
                 onClick={() => {
-                  if (window.confirm(t('pages.log.confirmDelete'))) void mutate('delete', (signal) => deleteFoodLog(log, signal))
+                  if (window.confirm(t('pages.log.confirmDelete'))) void mutate('delete', (signal) => import.meta.env.PROD ? deleteLocalFoodLog(log) : deleteFoodLog(log, signal))
                 }}>{t('pages.log.delete')}</button>
             </div>
           </article>

@@ -1,4 +1,4 @@
-import { ApiError, requestJson } from './apiClient'
+import { ApiError, requestJson, requestPublicMealPlan } from './apiClient'
 
 export const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'] as const
 export type PlanningMode = 'prompt_only' | 'catalog'
@@ -87,6 +87,7 @@ export function catalogOutcomeKey(error: unknown) {
 export function generateMealPlan(
   payload: MealPlanRequest, signal: AbortSignal, inferScope: boolean, mode: PlanningMode = 'prompt_only',
 ): Promise<MealPlan> {
+  if (import.meta.env.PROD) return requestPublicMealPlan(payload, parseMealPlan, signal, inferScope)
   const query = new URLSearchParams()
   if (inferScope) query.set('infer_scope', 'true')
   if (catalogPreviewEnabled && mode === 'catalog') query.set('planning_mode', 'catalog')

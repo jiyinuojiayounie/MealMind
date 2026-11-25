@@ -6,7 +6,7 @@ A bilingual, mobile-first **AI-assisted meal decision assistant** designed to ma
 
 **[Try the live demo](https://mealmind-ao3k.onrender.com/)** · [Product decisions](docs/DECISIONS.md) · [Release notes](docs/PORTFOLIO_RELEASE.md)
 
-> **Current public release: v0.2.0-demo.1** — an interactive, static portfolio demo. The live site supports the meal Blind Box and browser-local daily plans. Live Gemini generation, food logging, nutrition analysis, and adaptive replanning are **not enabled on the public site**. See [feature availability](#feature-availability) below.
+> **Current public release: v0.2.1** — a browser-local MVP covering Plan → Log → Analyze → Replan. The public site includes the Blind Box, saved meal plans, manual food logs, deterministic nutrition estimates, and local replanning. Smart Planning shows a labeled example. Live Gemini planning remains available in private development.
 
 ## Why MealMind?
 
@@ -22,6 +22,8 @@ MealMind explores a **decision-first** experience: help people pick a meal quick
 2. Select breakfast, lunch, or dinner and spin the **Blind Box**.
 3. Explore the suggested meal, ingredients, and cooking steps; redraw if you want another option.
 4. Add it to today's plan, or review a replacement before confirming. Refresh the page to see your saved plan again.
+5. In **Food Log**, enter the food and any known quantities, save a draft, then confirm what you actually ate.
+6. In **Today**, review nutritional coverage for confirmed foods and preview a replacement for an eligible meal. Accept it to create a new plan revision.
 
 The public Blind Box currently contains **9 curated demo meals**. Recipes are selected for content review, but cooking times, portions, packaged ingredients, and allergen evidence are not all independently verified. If an explicitly declared restriction cannot be verified, the demo conservatively withholds a recommendation.
 
@@ -31,12 +33,12 @@ The public Blind Box currently contains **9 curated demo meals**. Recipes are se
 | --- | --- | --- |
 | **Meal Blind Box** | Interactive; 9 demo meals, instant redraw | Interactive; larger development candidate pool |
 | **Daily meal plan** | Add/replace, explicit confirmation, one current plan and version history; saved in browser IndexedDB | Available with local workflow integration |
-| **Natural-language AI planning** | Clearly labeled example only; **no live model call** | Gemini integration implemented and tested; live provider reliability is under investigation |
-| **Food logging** | Not available publicly | Local FastAPI/SQLite workflow |
-| **Nutrition analysis** | Example only | Deterministic calculations from traceable reference data, with coverage limitations |
-| **Adaptive replanning** | Example only | Local workflow with validation and tests |
+| **Natural-language AI planning** | Clearly labeled example only; **no live model call** | Gemini integration with a successful isolated browser verification |
+| **Food logging** | Manual records, draft and confirmation, browser-local | Local FastAPI/SQLite workflow |
+| **Nutrition analysis** | USDA-based estimates from confirmed browser-local logs; partial coverage shown | Deterministic calculations from traceable reference data, with coverage limitations |
+| **Adaptive replanning** | Deterministic suggestions from nine local candidates; confirmed and user-locked meals are protected | Local workflow with validation and tests |
 
-**Privacy and storage:** The public demo has no accounts, deployed FastAPI service, Gemini API key, or hosted food-log database. Accepted plans stay in the current browser for this website; they do not sync between devices, and clearing site data removes them. Public example screens are not presented as real AI-generated results.
+**Privacy and storage:** The public demo has no accounts, deployed FastAPI service, Gemini API key, or hosted food-log database. Plans and confirmed food records stay in the current browser for this site. They do not sync between devices, and clearing site data removes them. The Smart Planning example is explicitly labeled.
 
 ## Product decisions and iteration
 
@@ -55,7 +57,7 @@ For detailed rationale, review [the decision record](docs/DECISIONS.md), [produc
 | Layer | Technology | Role |
 | --- | --- | --- |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, i18next | Mobile-first bilingual interface |
-| Public demo persistence | Browser IndexedDB | Local daily plan and revision history |
+| Public demo persistence | Browser IndexedDB | Local daily plans, revision history, meal locks and food logs |
 | Local backend | Python, FastAPI | Meal-generation API, validation, food-workflow services |
 | AI integration | Google Gemini API | Natural-language meal planning in private/local development |
 | Local food-log persistence | SQLite | Development-only confirmed food logs |
@@ -239,3 +241,5 @@ The [environment template](.env.example) documents local overrides and reserved 
 ### Local food log API
 
 The food log endpoints are available only in local development. See the [food log API guide](docs/FOOD_LOGS.md) for the loopback startup command, draft and confirmation requests, and storage migration notes.
+
+The opt-in v0.2.1 planner deployment and its activation gates are documented in [Public AI Planning Release](docs/PUBLIC_AI_PLANNING_RELEASE.md).

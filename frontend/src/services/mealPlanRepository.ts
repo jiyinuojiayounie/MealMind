@@ -1,8 +1,9 @@
 import { mealTypes, parseMealPlan } from './mealPlans'
 import type { MealPlan, MealPlanRequest, MealType, PlanningMode } from './mealPlans'
 
-const databaseName = 'mealmind-meal-plans'
-const storeName = 'plans'
+import { foodLogStore, openLocalMealDatabase, planStore } from './localMealDatabase'
+import { confirmedLocalRecords, confirmedLogFingerprint, confirmedMealSlots, readLocalFoodLogs } from './localFoodLogRepository'
+
 const schemaVersion = 1
 
 export type PlanConstraints = Pick<MealPlanRequest,
@@ -27,16 +28,17 @@ export type PlanAcceptance = PlanSettings & {
 }
 
 export type PlanRevision = PlanAcceptance & { revision: number; savedAt: string }
-export type PlanIdentity = { planId: string; revision: number }
+export type PlanIdentity = { planId: string; revision: number; lockRevision?: number }
 
 export type SavedMealPlan = PlanIdentity & {
   schemaVersion: typeof schemaVersion
   date: string
   revisions: PlanRevision[]
+  lockedMealTypes?: MealType[]
 }
 
 export class PlanStorageError extends Error {
-  readonly code: 'unavailable' | 'invalid' | 'stale'
+  readonly code: 'unavailable' | 'invalid' | 'stale' | 'locked'
 
   constructor(code: PlanStorageError['code']) {
     super(`Meal plan storage: ${code}`)
@@ -146,47 +148,42 @@ function parseSavedPlan(value: unknown, date: string): SavedMealPlan {
     ids.add(accepted.acceptanceId)
     return { ...accepted, revision: snapshot.revision, savedAt: snapshot.savedAt }
   })
-  return { schemaVersion, date, planId: value.planId, revision: revisions.length, revisions }
+  const saved: SavedMealPlan = { schemaVersion, date, planId: value.planId, revision: revisions.length, revisions }
+  if (value.lockedMealTypes !== undefined || value.lockRevision !== undefined) {
+    if (!Array.isArray(value.lockedMealTypes) || typeof value.lockRevision !== 'number'
+      || !Number.isSafeInteger(value.lockRevision) || value.lockRevision < 1
+      || new Set(value.lockedMealTypes).size !== value.lockedMealTypes.length
+      || !value.lockedMealTypes.every((slot: unknown) => revisions.at(-1)?.plan.meals.some((meal) => meal.meal_type === slot))) {
+      throw new PlanStorageError('invalid')
+    }
+    saved.lockedMealTypes = value.lockedMealTypes
+    saved.lockRevision = value.lockRevision
+  }
+  return saved
 }
 
-function openDatabase(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = window.indexedDB.open(databaseName, schemaVersion)
-    let blocked = false
-    request.onupgradeneeded = () => request.result.createObjectStore(storeName, { keyPath: 'date' })
-    request.onblocked = () => {
-      blocked = true
-      reject(new PlanStorageError('unavailable'))
-    }
-    request.onerror = () => reject(new PlanStorageError('unavailable'))
-    request.onsuccess = () => {
-      const database = request.result
-      database.onversionchange = () => database.close()
-      if (blocked) database.close()
-      else resolve(database)
-    }
-  })
-}
-
-async function withPlan(
+async function withPlan<T>(
   date: string, mode: IDBTransactionMode,
-  perform: (store: IDBObjectStore, current: SavedMealPlan | null) => SavedMealPlan | null,
+  perform: (store: IDBObjectStore, current: SavedMealPlan | null, logs: unknown[]) => T,
+  includeLogs = false,
 ) {
   if (!isPlanDate(date)) throw new PlanStorageError('invalid')
   let database: IDBDatabase | undefined
   try {
-    database = await openDatabase()
+    database = await openLocalMealDatabase()
     const opened = database
-    return await new Promise<SavedMealPlan | null>((resolve, reject) => {
-      const transaction = opened.transaction(storeName, mode)
-      const store = transaction.objectStore(storeName)
+    return await new Promise<T>((resolve, reject) => {
+      const checkLocks = includeLogs || (import.meta.env.PROD && mode === 'readwrite')
+      const transaction = opened.transaction(checkLocks ? [planStore, foodLogStore] : planStore, mode)
+      const store = transaction.objectStore(planStore)
+      const logs = checkLocks ? readLocalFoodLogs(transaction.objectStore(foodLogStore), date) : undefined
       const request = store.get(date)
-      let result: SavedMealPlan | null = null
+      let result: T
       let error: unknown
       request.onsuccess = () => {
         try {
           const current = request.result === undefined ? null : parseSavedPlan(request.result, date)
-          result = perform(store, current)
+          result = perform(store, current, logs?.result ?? [])
         } catch (failure) {
           error = failure
           transaction.abort()
@@ -204,6 +201,30 @@ async function withPlan(
 
 export function getSavedMealPlan(date: string) {
   return withPlan(date, 'readonly', (_store, current) => current)
+}
+
+export function getLocalReplanSnapshot(date: string) {
+  return withPlan(date, 'readonly', (_store, record, logs) => ({
+    record, logs: confirmedLocalRecords(logs), fingerprint: confirmedLogFingerprint(logs),
+  }), true)
+}
+
+function requirePlanVersion(current: SavedMealPlan | null, expected: PlanIdentity | null) {
+  if ((current?.planId ?? null) !== (expected?.planId ?? null)
+    || (current?.revision ?? null) !== (expected?.revision ?? null)
+    || (current?.lockRevision ?? 0) !== (expected?.lockRevision ?? 0)) throw new PlanStorageError('stale')
+}
+
+export function savePlanLocks(date: string, expected: PlanIdentity, lockedMealTypes: MealType[]) {
+  return withPlan(date, 'readwrite', (store, current) => {
+    if (!current) throw new PlanStorageError('stale')
+    requirePlanVersion(current, expected)
+    const planned = current.revisions.at(-1)?.plan.meals ?? []
+    if (lockedMealTypes.some((slot) => !planned.some((meal) => meal.meal_type === slot))) throw new PlanStorageError('invalid')
+    const next = { ...current, lockedMealTypes: [...new Set(lockedMealTypes)], lockRevision: (current.lockRevision ?? 0) + 1 }
+    store.put(next)
+    return next
+  })
 }
 
 export function settingsForMeal(snapshot: PlanAcceptance, slot: MealType): PlanSettings {
@@ -234,16 +255,21 @@ function mergeMealSlots(current: PlanRevision | undefined, choice: PlanAcceptanc
   }
 }
 
-export function acceptMealPlan(date: string, choice: PlanAcceptance, expected: PlanIdentity | null) {
-  return withPlan(date, 'readwrite', (store, current) => {
+export function acceptMealPlan(date: string, choice: PlanAcceptance, expected: PlanIdentity | null, expectedLogs?: string) {
+  return withPlan(date, 'readwrite', (store, current, logs) => {
     const accepted = parseAcceptance(choice)
     if (current?.revisions.some((version) => version.acceptanceId === accepted.acceptanceId)) return current
-    if ((current?.planId ?? null) !== (expected?.planId ?? null)
-      || (current?.revision ?? null) !== (expected?.revision ?? null)) throw new PlanStorageError('stale')
+    requirePlanVersion(current, expected)
+    if (expectedLogs !== undefined && confirmedLogFingerprint(logs) !== expectedLogs) throw new PlanStorageError('stale')
+    const locked = confirmedMealSlots(logs)
+    if (accepted.plan.meals.some((meal) => locked.has(meal.meal_type) || current?.lockedMealTypes?.includes(meal.meal_type))) {
+      throw new PlanStorageError('locked')
+    }
     const revision = (current?.revision ?? 0) + 1
     const merged = mergeMealSlots(current?.revisions.at(-1), accepted)
     const next: SavedMealPlan = {
       schemaVersion, date, planId: current?.planId ?? createPlanId(), revision,
+      ...(current?.lockRevision !== undefined && { lockRevision: current.lockRevision, lockedMealTypes: current.lockedMealTypes }),
       revisions: [...(current?.revisions ?? []), { ...merged, revision, savedAt: new Date().toISOString() }],
     }
     store.put(next)

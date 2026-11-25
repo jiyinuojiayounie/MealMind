@@ -7,6 +7,7 @@ import type { BlindBoxMeal } from '../services/blindBox'
 import { canUseFoodLogs } from '../services/foodLogs'
 import { acceptMealPlan, createPlanId, getSavedMealPlan, PlanStorageError } from '../services/mealPlanRepository'
 import type { PlanAcceptance, SavedMealPlan } from '../services/mealPlanRepository'
+import { confirmedMealSlots, listLocalFoodLogs } from '../services/localFoodLogRepository'
 import { getReplanContext } from '../services/replan'
 import { localDateTimeValue } from '../types/localTime'
 
@@ -63,7 +64,7 @@ export default function BlindBoxPage({ onSaved }: { onSaved?: () => void }) {
       await action()
     } catch (error) {
       setPreview(undefined)
-      setMessage(error instanceof PlanStorageError && error.code === 'stale' ? 'stale' : 'saveFailed')
+      setMessage(error instanceof PlanStorageError && (error.code === 'stale' || error.code === 'locked') ? error.code : 'saveFailed')
     } finally {
       inFlight.current = false
       setBusy(false)
@@ -80,8 +81,11 @@ export default function BlindBoxPage({ onSaved }: { onSaved?: () => void }) {
       constraints: { scope: 'single_meal', meal_type: saveSlot, ingredient_mode: 'flexible', inferScope: false, onePerson: true },
     }
     void runSave(async () => {
-      const [record, context] = await Promise.all([getSavedMealPlan(date), import.meta.env.DEV ? getReplanContext(date) : undefined])
-      if (context?.locked_meal_types.includes(saveSlot)) {
+      const [record, context, logs] = await Promise.all([
+        getSavedMealPlan(date), import.meta.env.DEV ? getReplanContext(date) : undefined,
+        import.meta.env.PROD ? listLocalFoodLogs(date) : [],
+      ])
+      if (context?.locked_meal_types.includes(saveSlot) || confirmedMealSlots(logs).has(saveSlot) || record?.lockedMealTypes?.includes(saveSlot)) {
         setMessage('locked')
         return
       }

@@ -1,5 +1,5 @@
 {
-  "release": {"checkingPlan": "Checking your local plan…", "stalePlan": "The plan changed. Review the slot again before saving.", "saveFailed": "This browser could not save the plan.", "confirmAdd": "Confirm add to plan", "browserOnly": "Plans stay in this browser and do not sync across devices. Plans do not record consumption.", "cookNotice": "Portfolio demo. Recipe timing is estimated. Packaged ingredient and allergen evidence is unverified.", "add": "Add to plan", "replaceSlot": "Replace", "replacePrompt": "Confirm which meals to replace", "currentMeal": "Current meal: {{meal}}", "proposedMeal": "Proposed meal: {{meal}}", "reviewReplacement": "Review replacements", "planDetails": "View current recipes", "history": "Version history", "version": "Version {{revision}}", "sampleTitle": "Sample full-day plan", "planningExample": "This public demo uses a fixed sample and does not call AI. Preview the meals and save them in this browser.", "loadExample": "View sample plan", "nutritionExample": "Example: nutrition estimates use confirmed food logs with verifiable portions. The public demo does not read personal logs or calculate live nutrition.", "replanExample": "Example: a confirmed lunch is locked; a replacement dinner can be previewed. This demo does not generate replans."},
+  "release": {"checkingPlan": "Checking your local plan…", "stalePlan": "The plan changed. Review the slot again before saving.", "saveFailed": "This browser could not save the plan.", "confirmAdd": "Confirm add to plan", "browserOnly": "Plans stay in this browser and do not sync across devices. Plans do not record consumption.", "cookNotice": "Portfolio demo. Recipe timing is estimated. Packaged ingredient and allergen evidence is unverified.", "add": "Add to plan", "replaceSlot": "Replace", "replacePrompt": "Confirm which meals to replace", "currentMeal": "Current meal: {{meal}}", "proposedMeal": "Proposed meal: {{meal}}", "reviewReplacement": "Review replacements", "planDetails": "View current recipes", "history": "Version history", "version": "Version {{revision}}", "sampleTitle": "Sample full-day plan", "planningExample": "This public demo uses a fixed sample and does not call AI. Preview the meals and save them in this browser.", "loadExample": "View sample plan"},
   "blindBox": {"closePanel": "Close", "title": "What to Eat? Blind Box", "slot": "Choose a meal", "draw": "Start draw", "redraw": "Draw again", "demo": "Meals, portions, and times are awaiting verification.", "restrictions": "Allergies and dietary restrictions (optional)", "declare": "I have an allergy or dietary restriction that needs checking", "unverified": "No meal can be recommended because the demo lacks reviewed ingredient or allergen evidence.", "empty": "No candidates for this meal. Try another meal type.", "noApproved": "No approved blind-box meals are available yet.", "serving": "One serving. Gram amounts are estimates for the ingredient state described in the steps.", "saveTitle": "Save to meal plan", "date": "Date", "replace": "Current meal: {{meal}}. Replace this meal?", "confirmNew": "Add this meal to the selected slot?", "confirmReplace": "Confirm replacement", "confirmSave": "Confirm save", "cancel": "Cancel", "reviewSave": "Review slot and save", "checking": "Checking meal plans and confirmed logs…", "stale": "The plan or food logs changed. Review the slot again before saving.", "locked": "This slot has a confirmed food log and cannot be replaced.", "saved": "Saved to your meal plan.", "saveFailed": "Saving requires the local backend and browser plan storage to be available.", "heading": "What should I eat today?", "intro": "Choose a meal and give the wheel a spin.", "spinning": "Spinning…", "viewRecipe": "View recipe", "addToPlan": "Add to plan", "oneServing": "One serving", "lanSave": "Draw meals and view recipes on your phone. Use MealMind on your Mac to save a plan.", "meals": {"recipe_000003": {"description": "Sweetcorn brings a gentle sweetness to this warm, light porridge."}, "recipe_000016": {"description": "Egg and bok choy bring savory flavor and crunch to cooked rice."}, "recipe_000017": {"description": "Garlicky shrimp and broccoli with their pan juices over hot rice."}, "recipe_000018": {"description": "Shiitake, tofu and bok choy in a light noodle broth."}, "recipe_000021": {"description": "Sweet banana, plain yogurt and ready-to-eat oats in one bowl."}, "recipe_000022": {"description": "Soft scrambled eggs, whole-grain bread and crisp cucumber."}, "recipe_000023": {"description": "Fine rice noodles, egg and bok choy in a warm, clear broth."}, "recipe_000025": {"description": "Savory chicken thigh, tender cabbage and chewy udon."}, "recipe_000026": {"description": "Tangy tomato, soft potato and chickpeas in a warm stew."}, "recipe_000027": {"description": "Soft pear sweetens the porridge and sesame adds a toasty finish."}, "recipe_000028": {"description": "Two small skillet pancakes with sweetcorn and scallion."}, "recipe_000029": {"description": "Crisp toast with creamy peanut butter and sweet banana."}, "recipe_000030": {"description": "Soft pumpkin, crunchy seeds and a glass of milk."}, "recipe_000031": {"description": "Seaweed and ribbons of egg warm up a bowl of rice."}, "recipe_000032": {"description": "Yogurt-dressed tuna with crisp cucumber in whole-grain bread."}, "recipe_000034": {"description": "Shredded chicken, crisp greens and cucumber rolled in a warm tortilla."}, "recipe_000035": {"description": "Tender onion and sliced beef in a lightly sweet sauce over rice."}, "recipe_000036": {"description": "Beef and three vegetables tossed with sweet-hot Korean chili paste."}, "recipe_000037": {"description": "Sweet-savory glaze coats chicken thigh and broccoli."}, "recipe_000038": {"description": "A thin omelet drapes over tangy ketchup rice."}, "recipe_000039": {"description": "Soft eggplant and garlicky ground pork make a saucy rice topping."}, "recipe_000040": {"description": "Gently steamed fish with ginger, scallion and its cooking juices."}, "recipe_000041": {"description": "Tender pork, crisp celery and chewy pressed tofu over rice."}, "recipe_000042": {"description": "Thin beef and rice noodles in a bright tomato broth."}, "recipe_000043": {"description": "Green beans and pork tossed into soy-braised noodles."}, "recipe_000044": {"description": "Cool soba with crisp cucumber, edamame and nutty sesame."}, "recipe_000045": {"description": "Salmon and tofu in a savory miso broth."}, "recipe_000046": {"description": "Sour-spicy kimchi broth with tofu, mushrooms and glass noodles."}, "recipe_000047": {"description": "Pumpkin softens into a gently spiced red lentil stew."}, "recipe_000048": {"description": "One pot for dumplings and spinach, with a little vinegar for dipping."}, "recipe_000049": {"description": "Lemony skillet salmon with sliced potatoes and broccoli."}, "recipe_000051": {"description": "Garlicky chicken thigh and browned pumpkin off one tray."}, "recipe_000052": {"description": "Golden tofu patties with a little crunch from wood ear mushrooms."}}},
   "language": "Interface language",
   "backend": {"loading": "Checking API connection…", "connected": "API connected", "unavailable": "API unavailable", "retry": "Retry API connection"},
@@ -64,6 +64,19 @@
     "suggestion": "Suggested replacement",
     "accept": "Accept and save this meal",
     "keep": "Keep the current plan",
+    "local": {
+      "intro": "Choose one meal to change using the content-reviewed local recipe pool. Nutrition estimates do not set targets.",
+      "consumed": "Confirmed eaten: {{slots}}.",
+      "userLocked": "Locked by you: {{slots}}.",
+      "manageLocks": "Manage meal locks",
+      "keepSlot": "Keep {{slot}} unchanged",
+      "saveLocks": "Save meal locks",
+      "locksSaved": "Meal locks saved.",
+      "noodles": "Noodles",
+      "quick": "At most {{minutes}} minutes",
+      "avoidRepeat": "Avoid repeating earlier dish names",
+      "unchanged": "Other planned meals stay unchanged: {{slots}}."
+    },
     "errors": {
       "stale": "Confirmed logs, the date, or your saved plan changed. Review the latest information and generate a fresh preview.",
       "storage": "The browser couldn’t read or save your plan. No new version was accepted.",
@@ -99,6 +112,7 @@
     "recordedOnly": "Estimates cover confirmed records only. Other food eaten that day may be missing.",
     "logEstimate": "Estimate for this recorded meal",
     "logPartial": "Calculated subtotal for this record",
+    "edibleMass": "Recorded weight is treated as edible weight in the matched food state.",
     "estimatedPortion": "Portion weight is estimated from a matching reference serving.",
     "itemSource": "View USDA reference",
     "sources": "About these estimates",
@@ -116,6 +130,7 @@
       "all_logged_items_calculated": "Estimates for confirmed records"
     },
     "errors": {
+      "storage": "Could not read the food records stored in this browser.",
       "network": "Couldn’t reach the local nutrition service. Check the connection and try again.",
       "unavailable": "Nutrition analysis is unavailable. Check that the local backend is running in development mode.",
       "invalid": "The nutrition response could not be read. Try again."
@@ -154,6 +169,8 @@
   "back": "Back to Today",
   "pages": {
     "plan": {
+      "liveTitle": "Live AI planning",
+      "livePrivacy": "Gemini processes the request you submit. Leave out sensitive personal information. Saved plans stay in this browser.",
       "saved": {
         "heading": "Saved meal plan",
         "date": "Plan date",
@@ -166,7 +183,7 @@
         "saving": "Saving plan…",
         "accepted": "Saved on this device for {{date}}.",
         "temporary": "Suggestion for {{date}} · not saved.",
-        "errors": {
+      "errors": {
           "unavailable": "Couldn’t access saved plans on this browser. You can still use the suggestion here.",
         "invalid": "This plan could not be read or saved safely. Existing entries were kept.",
           "stale": "The saved plan changed in another tab. Review the active plan before saving again."
@@ -218,6 +235,9 @@
         "ingredientsUnverified": "The ingredient restriction could not be verified. List allowed foods in More options using Existing ingredients only.",
         "timeUnverified": "The time limit could not be applied safely. Set a time limit per meal in More options.",
         "invalid": "Check your meal requirements, ingredients, and time limit, then try again.",
+        "globalQuota": "The public demo has reached its generation limit. Try again later.",
+        "serviceBusy": "The demo is busy generating other plans. Try again in a moment.",
+        "payloadTooLarge": "This request is too long. Shorten the description or ingredient list.",
         "rateLimit": "Too many requests. Wait a moment, then try again.",
         "generation": "We couldn’t generate a plan. Try again or adjust your requirements.",
         "unavailable": "Meal planning is temporarily unavailable. Try again later.",
@@ -229,6 +249,13 @@
       }
     },
     "log": {
+      "browserLocal": "Food records stay in this browser. Save a draft, then confirm what you actually ate.",
+      "editConfirmedTitle": "Correct confirmed record",
+      "correctConfirmed": "Correct record",
+      "saveCorrection": "Save correction",
+      "consumedTitle": "Confirmed food today",
+      "consumedEmpty": "No confirmed food records today.",
+      "openLog": "Open Food Log",
       "moveUp": "Move up",
       "moveDown": "Move down",
       "moveUpNumber": "Move food item {{number}} up",
@@ -319,6 +346,7 @@
           "image_needs_review": "Some foods in the photo were unclear. Review the suggested items."
         },
         "errors": {
+          "locked": "This meal slot has a confirmed food record and cannot be changed.",
           "input": "Enter a food description of up to 2,000 characters, then try recognition again.",
           "unavailable": "AI recognition is unavailable. Check the local backend and its Gemini configuration, or enter foods manually.",
           "provider": "AI recognition couldn’t produce a valid proposal. Try again or enter foods manually.",
@@ -375,12 +403,14 @@
         "snack": "Snack"
       },
       "notices": {
+        "corrected": "Confirmed record updated.",
         "create": "Draft saved. Review it below and confirm once it reflects what you ate.",
         "update": "Draft corrected. Review it below before confirming.",
         "confirm": "Food log confirmed.",
         "delete": "Food log deleted."
       },
       "errors": {
+        "storage": "The browser could not access your local food records.",
         "bindingVersion": "The catalog version for food item {{number}} is unavailable. Open the draft, review matches again, or clear its reference.",
         "bindingChanged": "Food item {{number}} has changed. Review its match again or clear the reference.",
         "bindingInvalid": "The reference for food item {{number}} could not be verified. Review the match or clear its reference.",

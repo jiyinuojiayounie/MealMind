@@ -1,5 +1,5 @@
 {
-  "release": {"checkingPlan": "正在检查本地餐单…", "stalePlan": "餐单已更新，请重新检查餐次后再保存。", "saveFailed": "此浏览器暂时无法保存餐单。", "confirmAdd": "确认加入计划", "browserOnly": "餐单仅保存在此浏览器，不会跨设备同步。计划不记录实际食用。", "cookNotice": "作品集演示 · 食谱已选入演示，耗时为估算，包装成分与过敏原尚未核验。", "add": "加入计划", "replaceSlot": "替换", "replacePrompt": "请确认要替换的餐次", "currentMeal": "当前餐食：{{meal}}", "proposedMeal": "拟保存餐食：{{meal}}", "reviewReplacement": "查看替换内容", "planDetails": "查看当前餐单做法", "history": "历史版本", "version": "第 {{revision}} 版", "sampleTitle": "示例三餐", "planningExample": "公开演示使用固定示例，不调用 AI。可预览餐单并保存到此浏览器。", "loadExample": "查看示例餐单", "nutritionExample": "示例：已确认食用且份量可核实的食物才纳入估算。公开演示不读取个人记录或计算实时营养。", "replanExample": "示例：午餐一旦确认吃过便锁定，晚餐可预览替换。公开演示不生成新的重新规划结果。"},
+  "release": {"checkingPlan": "正在检查本地餐单…", "stalePlan": "餐单已更新，请重新检查餐次后再保存。", "saveFailed": "此浏览器暂时无法保存餐单。", "confirmAdd": "确认加入计划", "browserOnly": "餐单仅保存在此浏览器，不会跨设备同步。计划不记录实际食用。", "cookNotice": "作品集演示 · 食谱已选入演示，耗时为估算，包装成分与过敏原尚未核验。", "add": "加入计划", "replaceSlot": "替换", "replacePrompt": "请确认要替换的餐次", "currentMeal": "当前餐食：{{meal}}", "proposedMeal": "拟保存餐食：{{meal}}", "reviewReplacement": "查看替换内容", "planDetails": "查看当前餐单做法", "history": "历史版本", "version": "第 {{revision}} 版", "sampleTitle": "示例三餐", "planningExample": "公开演示使用固定示例，不调用 AI。可预览餐单并保存到此浏览器。", "loadExample": "查看示例餐单"},
   "blindBox": {"closePanel": "关闭", "title": "吃什么盲盒", "slot": "选一餐", "draw": "开始抽取", "redraw": "再抽一次", "demo": "候选餐、用量和耗时仍待核验。", "restrictions": "过敏与饮食限制（可选）", "declare": "我有需要核验的食物过敏或饮食限制", "unverified": "演示候选缺少已审核的食材或过敏原证据，暂无可推荐餐食。", "empty": "这个餐次暂时没有可抽的候选，试试其他餐次。", "noApproved": "暂无已审核的盲盒餐食。", "serving": "一人份，克重按步骤所列食材状态估算。", "saveTitle": "保存到餐单", "date": "日期", "replace": "当前餐食：{{meal}}。要替换这一餐吗？", "confirmNew": "将这份餐食加入所选餐次？", "confirmReplace": "确认替换", "confirmSave": "确认保存", "cancel": "取消", "reviewSave": "检查餐次并保存", "checking": "正在检查餐单和食用记录…", "stale": "餐单或食用记录已更新，请重新检查后再保存。", "locked": "这餐已有确认的食用记录，无法替换。", "saved": "已保存到餐单。", "saveFailed": "无法安全保存：请确认本地后端及浏览器餐单存储可用。", "heading": "今天吃什么？", "intro": "挑个餐次，转一圈就知道。", "spinning": "转盘转动中…", "viewRecipe": "查看做法", "addToPlan": "加入计划", "oneServing": "一人份", "lanSave": "手机预览可抽取和查看做法。请在 Mac 本机加入计划。", "meals": {"recipe_000003": {"description": "甜玉米带一点自然甜味，煮成一碗热乎的轻早餐。"}, "recipe_000016": {"description": "蛋香裹着熟米饭，小白菜添一口清脆。"}, "recipe_000017": {"description": "蒜香虾仁和西兰花，连锅汁一起浇在热饭上。"}, "recipe_000018": {"description": "鲜香菇、北豆腐和青菜，煮成一锅清鲜热汤面。"}, "recipe_000021": {"description": "香蕉的甜味配原味酸奶，拌一碗就能开吃。"}, "recipe_000022": {"description": "软嫩炒蛋、全麦面包和脆黄瓜，简单就能装盘。"}, "recipe_000023": {"description": "细米粉、鸡蛋和小白菜，一锅煮成清汤早餐。"}, "recipe_000025": {"description": "咸香鸡腿肉配脆嫩卷心菜和弹口乌冬。"}, "recipe_000026": {"description": "酸香番茄、软糯土豆和鹰嘴豆，热乎又有嚼劲。"}, "recipe_000027": {"description": "梨丁煮软后带一点甜，白芝麻添香。"}, "recipe_000028": {"description": "葱香配甜玉米，两张小饼一锅煎。"}, "recipe_000029": {"description": "烤吐司上抹花生酱，香蕉自然带甜。"}, "recipe_000030": {"description": "软甜南瓜配脆籽和一杯奶。"}, "recipe_000031": {"description": "清鲜紫菜、嫩蛋花和热饭，一碗吃完。"}, "recipe_000032": {"description": "酸奶拌金枪鱼，夹上清脆黄瓜。"}, "recipe_000034": {"description": "撕好的鸡丝夹进软饼，生菜黄瓜保留脆口。"}, "recipe_000035": {"description": "软甜洋葱与肥牛一起煮，锅汁拌热饭。"}, "recipe_000036": {"description": "三样蔬菜配牛肉，拌入韩式甜辣酱。"}, "recipe_000037": {"description": "甜咸照烧汁挂在鸡腿和西兰花上。"}, "recipe_000038": {"description": "番茄酱带微酸甜味，外面是一张薄蛋皮。"}, "recipe_000039": {"description": "茄子焖到软糯，和蒜香肉末一起拌饭。"}, "recipe_000040": {"description": "清蒸鱼柳留住汁水，姜葱提香。"}, "recipe_000041": {"description": "肉丝鲜香，芹菜脆、香干有嚼劲。"}, "recipe_000042": {"description": "番茄煮出微酸汤底，牛肉米线热腾腾。"}, "recipe_000043": {"description": "四季豆和肉末裹上酱汁，面条一起吸味。"}, "recipe_000044": {"description": "凉面带芝麻香，黄瓜清脆，毛豆有嚼劲。"}, "recipe_000045": {"description": "鲜鱼和豆腐吸入味噌汤的咸鲜。"}, "recipe_000046": {"description": "酸辣泡菜煮成汤底，豆腐和粉丝一起吸汁。"}, "recipe_000047": {"description": "南瓜慢煮变甜，红扁豆把咖喱汤收浓。"}, "recipe_000048": {"description": "一锅煮饺子和菠菜，蘸一点米醋。"}, "recipe_000049": {"description": "煎鱼上挤柠檬，配片状土豆和西兰花。"}, "recipe_000051": {"description": "蒜香烤鸡腿和焦边南瓜，一盘出炉。"}, "recipe_000052": {"description": "豆腐饼外面带焦香，木耳增脆。"}}},
   "language": "界面语言",
   "backend": {"loading": "正在检查 API 连接…", "connected": "API 已连接", "unavailable": "API 当前不可用", "retry": "重试 API 连接"},
@@ -62,6 +62,19 @@
     "suggestion": "建议替换餐食",
     "accept": "接受并保存这一餐",
     "keep": "保留当前餐单",
+    "local": {
+      "intro": "从本地已审核的候选餐食中替换一餐。营养估算不用于设定目标。",
+      "consumed": "已确认食用：{{slots}}。",
+      "userLocked": "你锁定的餐次：{{slots}}。",
+      "manageLocks": "管理餐次锁定",
+      "keepSlot": "保留{{slot}}不变",
+      "saveLocks": "保存餐次锁定",
+      "locksSaved": "餐次锁定已保存。",
+      "noodles": "面食",
+      "quick": "最多 {{minutes}} 分钟",
+      "avoidRepeat": "避免重复先前的菜名",
+      "unchanged": "其他已规划餐次保持不变：{{slots}}。"
+    },
     "errors": {
       "stale": "已确认记录、日期或餐单已有变化。请核对最新信息后重新生成预览。",
       "storage": "浏览器无法读取或保存餐单，未接受新版本。",
@@ -96,6 +109,7 @@
     "recordedOnly": "估算仅涵盖已确认的记录，当天其他摄入可能尚未记录。",
     "logEstimate": "该条记录的营养估算",
     "logPartial": "该条记录的已计算小计",
+    "edibleMass": "记录重量按匹配食物状态的可食重量估算。",
     "estimatedPortion": "份量重量来自匹配的参考份量，属于估算。",
     "itemSource": "查看 USDA 参考来源",
     "sources": "估算与来源说明",
@@ -113,6 +127,7 @@
       "all_logged_items_calculated": "已确认记录的营养估算"
     },
     "errors": {
+      "storage": "无法读取此浏览器中的本地食物记录。",
       "network": "无法连接本地营养分析服务，请检查连接后重试。",
       "unavailable": "营养分析暂不可用。请检查本地后端是否以开发模式运行。",
       "invalid": "无法读取返回的营养分析结果，请重试。"
@@ -151,6 +166,8 @@
   "back": "返回今日",
   "pages": {
     "plan": {
+      "liveTitle": "实时 AI 规划",
+      "livePrivacy": "提交的餐食请求将由 Gemini 处理，请勿填写敏感个人信息。保存的餐单仅保存在当前浏览器。",
       "saved": {
         "heading": "已保存餐单",
         "date": "餐单日期",
@@ -163,7 +180,7 @@
         "saving": "正在保存餐单…",
         "accepted": "已在此设备上保存 {{date}} 的餐单。",
         "temporary": "{{date}} 的餐单建议 · 尚未保存。",
-        "errors": {
+      "errors": {
           "unavailable": "当前浏览器无法访问已保存餐单。你仍可在此页使用临时建议。",
         "invalid": "无法安全读取或保存此餐单，原有内容仍保留。",
           "stale": "其他标签页已更新餐单。请核对当前版本后再保存。"
@@ -215,6 +232,9 @@
         "ingredientsUnverified": "无法核验食材限制。请在更多选项中选择仅用现有食材，并列出允许使用的食材。",
         "timeUnverified": "无法确认时间上限适用于哪一餐。请在更多选项中设置每餐的时间上限。",
         "invalid": "请检查餐食需求、食材和时间上限后重试。",
+        "globalQuota": "公开演示的生成额度已用完，请稍后再试。",
+        "serviceBusy": "演示正在生成其他餐单，请稍后重试。",
+        "payloadTooLarge": "请求过长，请缩短描述或食材清单。",
         "rateLimit": "请求过于频繁，请稍等片刻后重试。",
         "generation": "暂时无法生成餐单，请重试或调整需求。",
         "unavailable": "餐食规划服务暂不可用，请稍后重试。",
@@ -226,6 +246,13 @@
       }
     },
     "log": {
+      "browserLocal": "食物记录仅保存在当前浏览器。先保存草稿，再确认实际吃过的食物。",
+      "editConfirmedTitle": "更正已确认记录",
+      "correctConfirmed": "更正记录",
+      "saveCorrection": "保存更正",
+      "consumedTitle": "今日已确认食用",
+      "consumedEmpty": "今天还没有已确认的食物记录。",
+      "openLog": "打开食物记录",
       "moveUp": "上移",
       "moveDown": "下移",
       "moveUpNumber": "上移第 {{number}} 项食物",
@@ -316,6 +343,7 @@
           "image_needs_review": "照片中有些食物不易辨认，请核对建议。"
         },
         "errors": {
+          "locked": "该餐次已有确认食用记录，无法更改餐单。",
           "input": "请输入不超过 2,000 字符的食物描述，再试一次。",
           "unavailable": "AI 识别暂不可用。请检查本地后端和 Gemini 配置，或手动录入。",
           "provider": "AI 未能生成有效的识别建议。请重试或手动录入。",
@@ -372,12 +400,14 @@
         "snack": "加餐"
       },
       "notices": {
+        "corrected": "已更新确认食用记录。",
         "create": "草稿已保存。请在下方核对实际吃过的食物，再确认。",
         "update": "草稿已更新，请在下方核对后确认。",
         "confirm": "食物记录已确认。",
         "delete": "食物记录已删除。"
       },
       "errors": {
+        "storage": "当前浏览器无法访问本地食物记录。",
         "bindingVersion": "第 {{number}} 项食物的参考目录版本不可用。请打开草稿重新匹配，或清除该参考。",
         "bindingChanged": "第 {{number}} 项食物已修改。请重新匹配或清除该参考。",
         "bindingInvalid": "无法验证第 {{number}} 项食物的参考。请重新匹配或清除该参考。",

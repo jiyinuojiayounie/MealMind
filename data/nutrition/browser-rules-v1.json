@@ -1,0 +1,144 @@
+{
+  "household_units": [
+    "bowl",
+    "bowls",
+    "cup",
+    "cups",
+    "handful",
+    "handfuls",
+    "ml",
+    "piece",
+    "pieces",
+    "serving",
+    "servings",
+    "tablespoon",
+    "tbsp",
+    "teaspoon",
+    "tsp",
+    "个",
+    "份",
+    "勺",
+    "块",
+    "小把",
+    "把",
+    "杯",
+    "枚",
+    "根",
+    "毫升",
+    "汤匙",
+    "片",
+    "碗",
+    "茶匙"
+  ],
+  "mass_factors": {
+    "g": 1.0,
+    "gram": 1.0,
+    "grams": 1.0,
+    "kg": 1000.0,
+    "kilogram": 1000.0,
+    "kilograms": 1000.0,
+    "mg": 0.001,
+    "milligram": 0.001,
+    "milligrams": 0.001,
+    "克": 1.0,
+    "公克": 1.0,
+    "公斤": 1000.0,
+    "千克": 1000.0,
+    "毫克": 0.001
+  },
+  "max_edible_grams": 100000,
+  "mixed_dishes": [
+    "beef noodle soup",
+    "egg fried rice",
+    "fried rice",
+    "kung pao chicken",
+    "mapo tofu",
+    "宫保鸡丁",
+    "炒饭",
+    "牛肉面",
+    "番茄炒蛋",
+    "蛋炒饭",
+    "西红柿炒鸡蛋",
+    "麻婆豆腐"
+  ],
+  "portion_units": {
+    "usda large egg": {
+      "whole_egg_hard_boiled": 92500,
+      "whole_egg_raw": 88374
+    },
+    "usda medium banana": {
+      "banana_raw": 93515
+    },
+    "美标中等香蕉": {
+      "banana_raw": 93515
+    },
+    "美标大号鸡蛋": {
+      "whole_egg_hard_boiled": 92500,
+      "whole_egg_raw": 88374
+    }
+  },
+  "preparations": {
+    "as sold": "as_sold",
+    "baked": "baked",
+    "boiled": "boiled",
+    "cooked": "cooked",
+    "dry": "dry",
+    "hard-boiled": "hard-boiled",
+    "poached": "poached",
+    "raw": "raw",
+    "roast": "roasted",
+    "roasted": "roasted",
+    "stewed": "stewed",
+    "uncooked": "raw",
+    "全熟水煮": "hard-boiled",
+    "干": "dry",
+    "未烹调": "raw",
+    "水煮": "boiled",
+    "水煮荷包": "poached",
+    "炖": "stewed",
+    "烘烤": "baked",
+    "烤": "roasted",
+    "煮": "boiled",
+    "熟": "cooked",
+    "熟的": "cooked",
+    "生": "raw",
+    "生的": "raw"
+  },
+  "qualified_foods": {
+    "rice noodles": {
+      "cooked": "rice_noodles_cooked",
+      "dry": "rice_noodles_dry"
+    },
+    "skinless boneless chicken breast": {
+      "raw": "chicken_breast_skinless_boneless_raw",
+      "roasted": "chicken_breast_meat_roasted",
+      "stewed": "chicken_breast_meat_stewed"
+    },
+    "去皮去骨鸡胸肉": {
+      "raw": "chicken_breast_skinless_boneless_raw",
+      "roasted": "chicken_breast_meat_roasted",
+      "stewed": "chicken_breast_meat_stewed"
+    },
+    "长粒糙米": {
+      "cooked": "brown_rice_long_grain_cooked",
+      "raw": "brown_rice_long_grain_raw"
+    }
+  },
+  "states": [
+    "as_sold",
+    "cooked",
+    "dry",
+    "raw"
+  ],
+  "unspecified_state": [
+    "brown rice",
+    "chicken breast",
+    "egg",
+    "eggs",
+    "土豆",
+    "白米",
+    "红薯",
+    "鸡胸肉",
+    "鸡蛋"
+  ]
+}

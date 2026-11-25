@@ -21,7 +21,7 @@ function localDate() {
 }
 
 function errorKey(error: unknown) {
-  if (error instanceof ApiError) return 'unavailable'
+  if (error instanceof ApiError) return import.meta.env.PROD ? 'storage' : 'unavailable'
   if (error instanceof DOMException && error.name === 'TimeoutError') return 'network'
   return error instanceof TypeError ? 'network' : 'invalid'
 }
@@ -31,9 +31,9 @@ export function TodayNutrition() {
   return (
     <section className="card grid min-w-0 gap-4 p-4 sm:p-6" aria-labelledby="nutrition-title">
       <h2 id="nutrition-title">{t('nutrition.title')}</h2>
-      {import.meta.env.DEV && canUseFoodLogs()
+      {import.meta.env.PROD || canUseFoodLogs()
         ? <LocalNutrition />
-        : <p className="text-sm text-muted">{t(import.meta.env.PROD ? 'release.nutritionExample' : 'nutrition.localOnly')}</p>}
+        : <p className="text-sm text-muted">{t('nutrition.localOnly')}</p>}
     </section>
   )
 }
@@ -47,12 +47,22 @@ function LocalNutrition() {
 
   useEffect(() => {
     const controller = new AbortController()
-    void getDailyNutrition(query.date, controller.signal).then(
+    const analysis = import.meta.env.PROD
+      ? import('../services/localNutrition').then(({ getLocalNutrition }) => getLocalNutrition(query.date))
+      : getDailyNutrition(query.date, controller.signal)
+    void analysis.then(
       (data) => { if (!controller.signal.aborted) setResult({ query, data }) },
       (error: unknown) => { if (!controller.signal.aborted) setResult({ query, error: errorKey(error) }) },
     )
     return () => controller.abort()
   }, [query])
+
+  useEffect(() => {
+    if (!import.meta.env.PROD) return
+    const refresh = () => setQuery((previous) => ({ ...previous }))
+    window.addEventListener('focus', refresh)
+    return () => window.removeEventListener('focus', refresh)
+  }, [])
 
   function estimate(value: string, unit: 'kcal' | 'g') {
     const amount = Number(value)
@@ -146,6 +156,7 @@ function LocalNutrition() {
                                 {t(`nutrition.reasons.${knownReasons.includes(reason) ? reason : 'unknown'}`)}
                               </p>
                             ))}
+                            {import.meta.env.PROD && item.conversion === 'edible_mass' && <p className="text-muted">{t('nutrition.edibleMass')}</p>}
                             {item.conversion === 'reference_portion' && <p className="text-muted">{t('nutrition.estimatedPortion')}</p>}
                             {nutrientKeys.some((key) => item.nutrients[key] !== null) && (
                               <p className="flex flex-wrap gap-x-3 text-muted">

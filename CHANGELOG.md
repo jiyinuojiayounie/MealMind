@@ -19,6 +19,12 @@
 - Added Gemini-backed meal planning for single meals and full days with structured responses, bilingual output instructions, and server-side ingredient and time checks.
 - Added mocked API tests for request validation, missing configuration, provider failures, and invalid model output.
 
+## v0.2.1
+
+- Completed the public browser-local Plan → Log → Analyze → Replan workflow. Manual food logs separate drafts from confirmed consumption, and nutrition reports verified estimates with coverage information.
+- Added deterministic local meal replacement from the nine reviewed candidates, with explicit acceptance, meal locks, stale-state checks and plan history.
+- Prepared the opt-in Gemini 3.5 Flash-Lite planning service with a successful isolated real-model browser test. Public AI activation remains off.
+
 ## v0.2.0-demo.1
 
 - Introduced a static portfolio build with nine selected Blind Box recipes, explicit dietary-restriction handling, and browser-local meal plans.

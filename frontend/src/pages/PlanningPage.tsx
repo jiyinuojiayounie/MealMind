@@ -5,7 +5,7 @@ import { Link } from 'react-router'
 import { PlanChangeSummary } from '../components/PlanChangeSummary'
 import { publicPlanningExample } from '../services/blindBox'
 import { MealPlanResult } from '../components/MealPlanResult'
-import { ApiError } from '../services/apiClient'
+import { ApiError, publicPlanningEnabled } from '../services/apiClient'
 import { generateMealPlan, mealTypes } from '../services/mealPlans'
 import type { MealPlanRequest } from '../services/mealPlans'
 import { acceptMealPlan, createPlanId, getSavedMealPlan, PlanStorageError } from '../services/mealPlanRepository'
@@ -36,7 +36,12 @@ function errorKey(error: unknown) {
         if (status === 'time_limit_unverified') return 'timeUnverified'
         return 'invalid'
       }
-      case 429: return 'rateLimit'
+      case 413: return 'payloadTooLarge'
+      case 429: {
+        const status = typeof error.detail === 'object' && error.detail !== null && 'status' in error.detail
+          ? error.detail.status : undefined
+        return status === 'global_quota' ? 'globalQuota' : status === 'service_busy' ? 'serviceBusy' : 'rateLimit'
+      }
       case 502: return 'generation'
       case 503: return 'unavailable'
       case 504: return 'timeout'
@@ -115,7 +120,7 @@ export function PlanningPage() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (import.meta.env.PROD || activeRequest.current) return
+    if ((!import.meta.env.DEV && !publicPlanningEnabled) || activeRequest.current) return
     setConfirming(false)
 
     const form = new FormData(event.currentTarget)
@@ -224,12 +229,18 @@ export function PlanningPage() {
         )}
       </section>
 
-      {import.meta.env.DEV ? <form className="card p-5 sm:p-6" onSubmit={(event) => void submit(event)} noValidate>
+      {(import.meta.env.DEV || publicPlanningEnabled) ? <form className="card p-5 sm:p-6" onSubmit={(event) => void submit(event)} noValidate>
         <fieldset disabled={busy || saving} className="grid min-w-0 gap-4">
+          {publicPlanningEnabled && (
+            <div className="grid gap-1 text-sm text-muted" id="public-planning-privacy">
+              <h2 className="text-base font-semibold text-forest">{t('pages.plan.liveTitle')}</h2>
+              <p>{t('pages.plan.livePrivacy')}</p>
+            </div>
+          )}
           <label className="planning-field">
             <span className="sr-only">{t('pages.plan.requirements')}</span>
             <textarea ref={requirements} name="requirements" className="planning-input" rows={5} maxLength={2000} required
-              placeholder={t('pages.plan.requirementsExample')} aria-invalid={error === 'requirements'} />
+              aria-describedby={publicPlanningEnabled ? 'public-planning-privacy' : undefined} placeholder={t('pages.plan.requirementsExample')} aria-invalid={error === 'requirements'} />
           </label>
 
           <div className="flex flex-wrap gap-2" role="group" aria-label={t('pages.plan.examplesLabel')}>

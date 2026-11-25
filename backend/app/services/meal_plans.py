@@ -3,6 +3,7 @@ import json
 import logging
 import re
 import unicodedata
+from collections.abc import Callable
 from time import sleep
 from typing import TypeVar
 
@@ -26,6 +27,8 @@ from app.services.planning_intent import ALLERGY, CLAUSE_SEPARATOR, DIETARY, INV
 
 
 logger = logging.getLogger(__name__)
+PUBLIC_PROVIDER_INPUT_BYTES = 16_384
+PUBLIC_COMPACT_SCHEMA_MODEL = "gemini-3.5-flash-lite"
 PROVIDER_SCHEMA_BOUNDS = ("minItems", "maxItems", "minimum", "maximum", "minLength", "maxLength")
 
 
@@ -42,6 +45,26 @@ def _provider_schema(model: type[BaseModel] = GeneratedMealPlan) -> dict:
         elif isinstance(node, list):
             pending.extend(node)
     return schema
+
+
+def _compact_provider_schema(schema: dict) -> dict:
+    """Inline the planner's acyclic definitions and omit provider-only metadata."""
+    definitions = schema["$defs"]
+
+    def inline(node):
+        if isinstance(node, list):
+            return [inline(item) for item in node]
+        if not isinstance(node, dict):
+            return node
+        if "$ref" in node:
+            return inline(definitions[node["$ref"].rsplit("/", 1)[-1]])
+        return {
+            key: inline(value) for key, value in node.items()
+            if key not in {"$defs", "additionalProperties"}
+            and not (key == "title" and isinstance(value, str))
+        }
+
+    return inline(schema)
 
 
 def _safe_upstream_message(message: str) -> str:
@@ -69,6 +92,10 @@ class PlannerUnavailable(Exception):
 
 
 class PlannerTimeout(Exception):
+    pass
+
+
+class PlannerInputTooLarge(Exception):
     pass
 
 
@@ -105,12 +132,21 @@ def generate_structured(
     trace: dict | None = None,
     fixture_capture: dict | None = None,
     retry_provider_unavailable: bool = False,
+    before_provider_call: Callable[[], None] | None = None,
 ) -> ResponseModel:
     _record(trace, "configuration", provider_attempts=0)
     key = settings.gemini_api_key
     if key is None or not key.get_secret_value().strip():
         raise PlannerUnavailable
 
+    schema = _provider_schema(response_model)
+    if before_provider_call is not None:
+        if settings.gemini_model == PUBLIC_COMPACT_SCHEMA_MODEL:
+            schema = _compact_provider_schema(schema)
+        # Public requests bound all model inputs, including instructions and the response grammar.
+        size = len(json.dumps([contents, instructions, schema], ensure_ascii=False, separators=(",", ":")).encode())
+        if size > PUBLIC_PROVIDER_INPUT_BYTES:
+            raise PlannerInputTooLarge
     try:
         with genai.Client(
             api_key=key.get_secret_value().strip(),
@@ -118,16 +154,20 @@ def generate_structured(
             http_options=types.HttpOptions(
                 timeout=25_000,
                 retry_options=types.HttpRetryOptions(attempts=1),
+                client_args={"follow_redirects": False} if before_provider_call else None,
             ),
         ) as client:
             config = types.GenerateContentConfig(
                 system_instruction=instructions,
                 response_mime_type="application/json",
-                response_json_schema=_provider_schema(response_model),
+                response_json_schema=schema,
+                thinking_config=types.ThinkingConfig(thinking_level="MINIMAL") if before_provider_call else None,
                 max_output_tokens=max_output_tokens,
             )
             attempts_allowed = 2 if retry_provider_unavailable else 1
             for attempt in range(1, attempts_allowed + 1):
+                if before_provider_call is not None:
+                    before_provider_call()
                 _record(trace, "provider_call", provider_attempts=attempt)
                 try:
                     result = client.models.generate_content(
@@ -140,6 +180,11 @@ def generate_structured(
                     _record(trace, "provider_backoff", provider_retry_status=503)
                     sleep(0.5)
             _record(trace, "response_schema")
+            if trace is not None and (usage := getattr(result, "usage_metadata", None)) is not None:
+                for field in ("prompt_token_count", "candidates_token_count", "thoughts_token_count", "total_token_count"):
+                    value = getattr(usage, field, None)
+                    if isinstance(value, int):
+                        trace[field] = value
             raw = result.text or ""
             if fixture_capture is not None:
                 fixture_capture["provider_response"] = raw[:18000]
@@ -159,7 +204,7 @@ def generate_structured(
                 exc.code,
                 reason,
             )
-        if retry_provider_unavailable and exc.code == 503:
+        if (retry_provider_unavailable and exc.code == 503) or (before_provider_call is not None and exc.code in (429, 503)):
             raise PlannerUnavailable from None
         raise PlannerFailure from None
     except httpx2.HTTPError:
@@ -225,6 +270,7 @@ def generate_meal_plan(
     trace: dict | None = None,
     fixture_capture: dict | None = None,
     retry_provider_unavailable: bool = False,
+    before_provider_call: Callable[[], None] | None = None,
 ) -> MealPlanResponse:
     allow_inferred_scope = infer_scope and request.scope == "single_meal" and request.meal_type is None
     full_day_required = request.scope == "full_day" or (
@@ -273,7 +319,7 @@ def generate_meal_plan(
     plan = generate_structured(
         settings, contents=contents, instructions=instructions,
         response_model=GeneratedMealPlan, trace=trace, fixture_capture=fixture_capture,
-        retry_provider_unavailable=retry_provider_unavailable,
+        retry_provider_unavailable=retry_provider_unavailable, before_provider_call=before_provider_call,
     )
     meal_types = [meal.meal_type for meal in plan.meals]
     _record(trace, "scope_validation", returned_slots=meal_types)
