@@ -6,9 +6,6 @@ import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import partial
-from hashlib import sha256
-from hmac import digest
-from ipaddress import ip_address, ip_network
 from pathlib import Path
 from time import monotonic
 from uuid import uuid4
@@ -30,7 +27,7 @@ from app.services.meal_plans import (
     PlannerUnavailable,
     generate_meal_plan,
 )
-from app.storage.planning_quota import QuotaExceeded, QuotaUnavailable, reserve
+from app.storage.planning_quota import MAX_QUOTAS, QuotaExceeded, QuotaUnavailable, reserve
 from app.storage.planning_quota_redis import reserve_redis
 
 
@@ -44,9 +41,8 @@ LOGGER = logging.getLogger("uvicorn.error")
 class PublicSettings:
     enabled: bool = False
     quota_path: Path = Path("/var/data/planning-quota.sqlite3")
-    quota_secret: str = ""
-    trusted_proxies: tuple[str, ...] = ()
     quota_backend: str = "sqlite"
+    limits: tuple[int, int, int] = MAX_QUOTAS
     redis_url: str = ""
     redis_token: str = field(default="", repr=False)
 
@@ -54,18 +50,18 @@ class PublicSettings:
     def from_env(cls):
         render = os.environ.get("RENDER") == "true"
         backend = os.environ.get("MEALMIND_PUBLIC_QUOTA_BACKEND", "redis" if render else "sqlite")
-        proxies = tuple(filter(None, (
-            cidr.strip() for cidr in os.environ.get("MEALMIND_PUBLIC_TRUSTED_PROXIES", "").split(",")
-        )))
+        limits = []
+        for window, ceiling in zip(("MINUTE", "DAY", "MONTH"), MAX_QUOTAS):
+            raw = os.environ.get(f"MEALMIND_PUBLIC_QUOTA_{window}", "" if render else str(ceiling))
+            limits.append(int(raw) if raw.isascii() and raw.isdecimal() and len(raw) <= 3 else 0)
         enabled = os.environ.get("MEALMIND_PUBLIC_PLANNING_ENABLED") == "true"
         return cls(
-            enabled=enabled and (not render or (backend == "redis" and bool(proxies))),
+            enabled=enabled and (not render or backend == "redis"),
+            limits=(limits[0], limits[1], limits[2]),
             quota_path=Path(os.environ.get("MEALMIND_PUBLIC_QUOTA_PATH", "/var/data/planning-quota.sqlite3")),
-            quota_secret=os.environ.get("MEALMIND_PUBLIC_QUOTA_SECRET", ""),
             quota_backend=backend,
             redis_url=os.environ.get("MEALMIND_PUBLIC_REDIS_URL", ""),
             redis_token=os.environ.get("MEALMIND_PUBLIC_REDIS_TOKEN", ""),
-            trusted_proxies=proxies,
         )
 
 
@@ -76,30 +72,6 @@ class PlanningCORS(CORSMiddleware):
             await super().__call__(scope, receive, send)
         else:
             await self.app(scope, receive, send)
-
-def _ip(value: str):
-    address = ip_address(value.strip())
-    return getattr(address, "ipv4_mapped", None) or address
-
-
-def _client_address(request: Request, trusted):
-    if not request.client:
-        raise ValueError("missing client")
-    address = _ip(request.client.host)
-    if any(address in network for network in trusted):
-        hops = request.headers.getlist("x-forwarded-for")
-        if len(hops) != 1 or len(hops[0]) > 1024:
-            raise ValueError("invalid proxy chain")
-        for hop in reversed(hops[0].split(",")):
-            address = _ip(hop)
-            if all(address not in network for network in trusted):
-                return address
-        raise ValueError("missing visitor IP")
-    if trusted:
-        # In proxy mode the service accepts generation only via configured ingress.
-        raise ValueError("untrusted peer")
-    return address
-
 
 async def _read_payload(request: Request) -> MealPlanRequest:
     if request.headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/json":
@@ -131,9 +103,6 @@ async def _read_payload(request: Request) -> MealPlanRequest:
 def create_public_app(config: PublicSettings | None = None, *, planner_settings: Settings | None = None) -> FastAPI:
     config = config or PublicSettings.from_env()
     settings = planner_settings if planner_settings is not None else Settings(gemini_diagnostics=False, _env_file=None)
-    trusted = tuple(ip_network(cidr.strip()) for cidr in config.trusted_proxies)
-    if any(network.prefixlen == 0 for network in trusted):
-        raise ValueError("Public planner requires specific trusted proxy networks")
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, redirect_slashes=False)
     app.add_middleware(
         PlanningCORS, allow_origins=[ORIGIN], allow_methods=["POST"], allow_headers=["Content-Type"],
@@ -145,6 +114,8 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
         "redis": partial(reserve_redis, config.redis_url, config.redis_token),
     }.get(config.quota_backend)
 
+    limits_valid = all(0 < limit <= maximum for limit, maximum in zip(config.limits, MAX_QUOTAS, strict=True))
+
     @app.post(PATH, response_model=MealPlanResponse)
     async def generate(request: Request, response: Response):
         request_id = uuid4().hex
@@ -154,17 +125,11 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
         status = 200
         try:
             if (
-                not config.enabled or quota_reserve is None or len(config.quota_secret) < 32 or not settings.gemini_api_key
+                not config.enabled or quota_reserve is None or not limits_valid or not settings.gemini_api_key
                 or not settings.gemini_api_key.get_secret_value().strip()
                 or settings.gemini_model not in {"gemini-3.1-flash-lite", PUBLIC_COMPACT_SCHEMA_MODEL}
             ):
                 raise HTTPException(503, {"status": "service_unavailable"})
-            try:
-                ip = _client_address(request, trusted)
-            except ValueError:
-                raise HTTPException(403, {"status": "client_unverified"}) from None
-            subject = digest(config.quota_secret.encode(), ip.packed, sha256).hex()
-            await run_in_threadpool(quota_reserve, subject, datetime.now(UTC))
             query = request.query_params.multi_items()
             if query not in ([], [("infer_scope", "true")], [("infer_scope", "false")]):
                 raise HTTPException(422, {"status": "invalid_request"})
@@ -175,7 +140,7 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
                 result = await run_in_threadpool(
                     generate_meal_plan, payload, settings, infer_scope=query == [("infer_scope", "true")],
                     trace=trace, free_recommendation=True,
-                    before_provider_call=lambda: quota_reserve("provider", datetime.now(UTC), provider=True),
+                    before_provider_call=lambda: quota_reserve(datetime.now(UTC), limits=config.limits),
                 )
             response.headers.update(headers)
             return result

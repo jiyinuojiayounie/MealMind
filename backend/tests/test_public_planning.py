@@ -39,9 +39,9 @@ def fixture(tmp_path, monkeypatch):
         prompt_token_count=1500, candidates_token_count=250, thoughts_token_count=5, total_token_count=1755,
     ))
 
-    def app(*, enabled=True, proxies=(), model="gemini-3.1-flash-lite"):
+    def app(*, enabled=True, model="gemini-3.1-flash-lite"):
         return create_public_app(
-            PublicSettings(enabled, path, "q" * 32, proxies),
+            PublicSettings(enabled, path),
             planner_settings=Settings(gemini_api_key="fixture-only-key", gemini_model=model, _env_file=None),
         )
     return app, path, sdk, provider
@@ -113,27 +113,20 @@ def test_model_input_budget_is_checked_before_attempt(fixture, monkeypatch):
         assert db.execute("SELECT COUNT(*) FROM events WHERE subject = 'provider'").fetchone() == (0,)
 
 
-def test_admission_and_spoofed_proxy_headers(fixture):
+def test_direct_clients_share_one_quota_regardless_of_headers(fixture, monkeypatch):
     app, _, _, provider = fixture
+    monkeypatch.setattr(public_planning, "datetime", SimpleNamespace(now=lambda _: NOW))
     with TestClient(app(), client=("192.0.2.10", 5000)) as client:
-        for number in range(3):
-            assert client.post(PATH, json=REQUEST, headers={"X-Forwarded-For": f"198.51.100.{number}"}).status_code == 200
-        limited = client.post(PATH, json=REQUEST, headers={"X-Forwarded-For": "203.0.113.9"})
-        assert limited.status_code == 429 and int(limited.headers["Retry-After"]) >= 1
-
-    with TestClient(app(proxies=("10.0.0.0/24",)), client=("10.0.0.30", 5000)) as client:
-        for number in range(3):
-            response = client.post(PATH, json=REQUEST, headers={
-                "X-Forwarded-For": f"198.51.100.{number}, 203.0.113.10, 10.0.0.31",
-            })
-            assert response.status_code == 200
-        assert client.post(PATH, json=REQUEST, headers={"X-Forwarded-For": "198.51.100.7, 203.0.113.10"}).status_code == 429
-        assert client.post(PATH, json=REQUEST, headers={"X-Forwarded-For": "not-an-ip"}).status_code == 403
-        assert client.post(PATH, json=REQUEST, headers={"X-Forwarded-For": "203.0.113.11"}).status_code == 200
-
-    with TestClient(app(proxies=("10.0.0.0/24",)), client=("192.0.2.11", 5000)) as client:
-        assert client.post(PATH, json=REQUEST, headers={"X-Forwarded-For": "203.0.113.11"}).status_code == 403
-    assert provider.call_count == 7
+        for _ in range(5):
+            assert client.post(PATH, json=REQUEST).status_code == 200
+    with TestClient(app(), client=("192.0.2.11", 5000)) as client:
+        limited = client.post(PATH, json=REQUEST, headers={
+            "CF-Connecting-IP": "198.51.100.1", "X-Forwarded-For": "198.51.100.2",
+        })
+        assert limited.status_code == 429
+        assert limited.json() == {"detail": {"status": "global_quota"}}
+        assert limited.headers["Retry-After"] == "60"
+    assert provider.call_count == 5
 
 
 def test_streaming_size_and_validation(fixture):
@@ -162,42 +155,23 @@ def test_switch_and_storage_fail_closed(fixture):
     provider.assert_not_called()
 
 
-def test_atomic_daily_and_monthly_quota_and_ip_day(fixture, monkeypatch):
+def test_global_quota_retains_limits_across_new_app(fixture, monkeypatch):
     app, path, _, provider = fixture
-
-    def worker(_):
-        try:
-            reserve(path, "provider", NOW, provider=True)
-            return True
-        except QuotaExceeded:
-            return False
-
-    with ThreadPoolExecutor(max_workers=12) as executor:
-        assert sum(executor.map(worker, range(45))) == 30
-    monkeypatch.setattr(public_planning, "datetime", SimpleNamespace(now=lambda _: NOW))
-    with TestClient(app(), client=("192.0.2.10", 5000)) as client:
+    for minute in range(6):
+        with ThreadPoolExecutor(max_workers=12) as executor:
+            def worker(_):
+                try:
+                    reserve(path, NOW + timedelta(minutes=minute))
+                    return True
+                except QuotaExceeded:
+                    return False
+            assert sum(executor.map(worker, range(12))) == 5
+    monkeypatch.setattr(public_planning, "datetime", SimpleNamespace(now=lambda _: NOW + timedelta(minutes=6)))
+    with TestClient(app()) as client:
         response = client.post(PATH, json=REQUEST)
         assert response.status_code == 429
         assert response.json() == {"detail": {"status": "global_quota"}}
-    # New app and connections do not reset the daily or monthly quota.
-    with TestClient(app(), client=("192.0.2.11", 5000)) as client:
-        assert client.post(PATH, json=REQUEST).status_code == 429
     provider.assert_not_called()
-
-    monthly = path.with_name("monthly.sqlite3")
-    initialize_quota(monthly)
-    for day in range(1, 21):
-        for _ in range(25):
-            reserve(monthly, "provider", NOW.replace(day=day), provider=True)
-    with pytest.raises(QuotaExceeded) as exc:
-        reserve(monthly, "provider", NOW.replace(day=25), provider=True)
-    assert exc.value.retry_after == int((NOW.replace(month=12, day=1, hour=0) - NOW.replace(day=25)).total_seconds())
-    reserve(monthly, "provider", NOW.replace(month=12, day=1), provider=True)
-
-    for minute in range(10):
-        reserve(path, "ip", NOW + timedelta(minutes=minute))
-    with pytest.raises(QuotaExceeded):
-        reserve(path, "ip", NOW + timedelta(minutes=10))
 
 
 def test_only_two_provider_calls_in_flight(fixture):
@@ -245,9 +219,8 @@ def test_compact_provider_schema_preserves_required_fields_and_backend_validatio
 
 
 @pytest.mark.parametrize(("results", "expected"), [
-    ([0, 0], 200),
-    ([0, 60], 429),
-    ([0, -1], 503),
+    ([0], 200),
+    ([60], 429),
     ([-1], 503),
 ])
 def test_redis_admission_precedes_gemini(fixture, monkeypatch, results, expected):
@@ -256,7 +229,7 @@ def test_redis_admission_precedes_gemini(fixture, monkeypatch, results, expected
 
     _, path, _, provider = fixture
     config = PublicSettings(
-        True, path, "q" * 32, quota_backend="redis",
+        True, path, quota_backend="redis",
         redis_url="https://fixture.upstash.io", redis_token="fixture-token",
     )
     settings = Settings(gemini_api_key="fixture-only-key", gemini_model="gemini-3.5-flash-lite", _env_file=None)
@@ -271,20 +244,27 @@ def test_redis_admission_precedes_gemini(fixture, monkeypatch, results, expected
         assert client.post(PATH, json=REQUEST).status_code == expected
     assert post.call_count == len(results)
     assert provider.call_count == int(expected == 200)
-    assert post.call_args_list[0].kwargs["json"][4] != post.call_args_list[0].kwargs["json"][3]
-    if len(results) == 2:
-        assert post.call_args_list[1].kwargs["json"][4] == post.call_args_list[1].kwargs["json"][3]
+    assert post.call_args.kwargs["json"][2:4] == ["1", "{mealmind:planning:v1}:provider"]
 
 
-def test_render_env_requires_redis_and_trusted_proxy(monkeypatch):
+def test_render_env_requires_redis_and_rejects_invalid_limits(monkeypatch, fixture):
     monkeypatch.setenv("RENDER", "true")
     monkeypatch.setenv("MEALMIND_PUBLIC_PLANNING_ENABLED", "true")
     monkeypatch.delenv("MEALMIND_PUBLIC_QUOTA_BACKEND", raising=False)
-    monkeypatch.setenv("MEALMIND_PUBLIC_TRUSTED_PROXIES", " , ")
-    assert not PublicSettings.from_env().enabled
-    assert PublicSettings.from_env().quota_backend == "redis"
-
-    monkeypatch.setenv("MEALMIND_PUBLIC_TRUSTED_PROXIES", " 192.0.2.0/28 ")
     assert PublicSettings.from_env().enabled
+    assert PublicSettings.from_env().quota_backend == "redis"
+    assert PublicSettings.from_env().limits == (0, 0, 0)
+    monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_MINUTE", "5")
+    monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_MONTH", "500")
+    monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_DAY", "12")
+    assert PublicSettings.from_env().limits == (5, 12, 500)
+
+    _, _, _, provider = fixture
+    settings = Settings(gemini_api_key="fixture-only-key", gemini_model="gemini-3.5-flash-lite", _env_file=None)
+    for invalid in ("6", "0", "-1", "invalid"):
+        monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_MINUTE", invalid)
+        with TestClient(create_public_app(planner_settings=settings)) as client:
+            assert client.post(PATH, json=REQUEST).status_code == 503
+    provider.assert_not_called()
     monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_BACKEND", "sqlite")
     assert not PublicSettings.from_env().enabled

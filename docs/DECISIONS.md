@@ -54,3 +54,4 @@ The following proposals record the approved product direction and the implementa
 | ID | Decision |
 | --- | --- |
 | D022 | Public AI planning has a strict US$0 recurring budget. Retain the existing static site and use Render Free with a dedicated Upstash Redis Free quota ledger and an unbilled Gemini Developer API Free project. Require accounts with no automatic charges, and keep public AI off until account settings and hosted acceptance gates are verified. See the [public AI planning release guide](PUBLIC_AI_PLANNING_RELEASE.md). |
+| D023 | Apply one shared portfolio-demo generation quota across all visitors: at most five attempts per rolling minute, 30 per Pacific calendar day, and 500 per UTC calendar month. Use lower limits when required by the verified Gemini Free Tier project. Remove the per-IP quota and proxy identity dependency. |

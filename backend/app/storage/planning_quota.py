@@ -4,6 +4,7 @@ from contextlib import closing
 from datetime import datetime, timedelta
 from pathlib import Path
 from sqlite3 import Error as SQLiteError, connect
+from zoneinfo import ZoneInfo
 
 
 class QuotaUnavailable(Exception):
@@ -26,42 +27,38 @@ def initialize_quota(path: Path) -> None:
         db.execute("CREATE INDEX events_time ON events(accepted_at)")
 
 
-def quota_windows(now: datetime, provider: bool):
-    timestamp = int(now.timestamp())
-    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    month = today.replace(day=1)
-    tomorrow = today + timedelta(days=1)
-    next_month = (month + timedelta(days=32)).replace(day=1)
+MAX_QUOTAS = (5, 30, 500)
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
+
+def quota_windows(now: datetime, limits: tuple[int, int, int]):
+    timestamp = int(now.timestamp())
+    day = now.astimezone(PACIFIC).replace(hour=0, minute=0, second=0, microsecond=0)
+    month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    next_month = (month + timedelta(days=32)).replace(day=1)
     return (
-        [(int(today.timestamp()), 30, int(tomorrow.timestamp()), "global_quota"),
-         (int(month.timestamp()), 500, int(next_month.timestamp()), "global_quota")]
-        if provider else
-        [(timestamp - 59, 3, None, "rate_limit"),
-         (int(today.timestamp()), 10, int(tomorrow.timestamp()), "rate_limit")]
+        (timestamp - 59, limits[0], None),
+        (int(day.timestamp()), limits[1], int((day + timedelta(days=1)).timestamp())),
+        (int(month.timestamp()), limits[2], int(next_month.timestamp())),
     )
 
 
-def reserve(path: Path, subject: str, now: datetime, *, provider: bool = False) -> None:
+def reserve(path: Path, now: datetime, *, limits=MAX_QUOTAS) -> None:
     timestamp = int(now.timestamp())
-    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    month = today.replace(day=1)
-    windows = quota_windows(now, provider)
+    windows = quota_windows(now, limits)
     try:
         with closing(connect(path.resolve().as_uri() + "?mode=rw", uri=True, timeout=1)) as db, db:
             db.execute("BEGIN IMMEDIATE")
-            # Date boundaries and rate windows are evaluated in UTC by the caller.
-            db.execute("DELETE FROM events WHERE subject = 'provider' AND accepted_at < ?", (int(month.timestamp()),))
-            db.execute("DELETE FROM events WHERE subject <> 'provider' AND accepted_at < ?",
-                       (min(timestamp - 59, int(today.timestamp())),))
-            for start, limit, end, reason in windows:
+            db.execute("DELETE FROM events WHERE subject = 'provider' AND accepted_at < ?",
+                       (min(start for start, _, _ in windows),))
+            for start, limit, end in windows:
                 count, earliest = db.execute(
-                    "SELECT COUNT(*), MIN(accepted_at) FROM events WHERE subject = ? AND accepted_at >= ?",
-                    (subject, start),
+                    "SELECT COUNT(*), MIN(accepted_at) FROM events WHERE subject = 'provider' AND accepted_at >= ?",
+                    (start,),
                 ).fetchone()
                 if count >= limit:
-                    raise QuotaExceeded(reason, max(1, (end if end is not None else earliest + 60) - timestamp))
-            db.execute("INSERT INTO events VALUES (?, ?)", (subject, timestamp))
+                    raise QuotaExceeded("global_quota", max(1, (end if end is not None else earliest + 60) - timestamp))
+            db.execute("INSERT INTO events VALUES ('provider', ?)", (timestamp,))
     except (SQLiteError, OSError, ValueError) as exc:
         raise QuotaUnavailable from exc
 

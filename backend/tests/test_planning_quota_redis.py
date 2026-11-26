@@ -13,7 +13,7 @@ from app.storage.planning_quota import QuotaExceeded, QuotaUnavailable
 from app.storage.planning_quota_redis import LEDGER_KEY, reserve_redis
 
 URL = "https://fixture.upstash.io"
-NOW = datetime(2040, 1, 1, 23, 59, tzinfo=UTC)
+NOW = datetime(2040, 1, 1, 10, 0, tzinfo=UTC)
 
 
 @pytest.mark.parametrize("status, data", [
@@ -25,7 +25,7 @@ def test_redis_errors_fail_closed(monkeypatch, status, data):
     post = Mock(return_value=Mock(status_code=status, **{"json.return_value": data}))
     monkeypatch.setattr(requests, "post", post)
     with pytest.raises(QuotaUnavailable):
-        reserve_redis(URL, "fixture-token", "provider", NOW, provider=True)
+        reserve_redis(URL, "fixture-token", NOW)
     post.assert_called_once()
     assert post.call_args.kwargs["allow_redirects"] is False
 
@@ -34,7 +34,7 @@ def test_transport_error_has_no_retry(monkeypatch):
     post = Mock(side_effect=requests.Timeout)
     monkeypatch.setattr(requests, "post", post)
     with pytest.raises(QuotaUnavailable):
-        reserve_redis(URL, "fixture-token", "provider", NOW, provider=True)
+        reserve_redis(URL, "fixture-token", NOW)
     post.assert_called_once()
 
 
@@ -85,9 +85,9 @@ def test_atomic_redis_windows_and_restart(local_redis, monkeypatch):
 
     monkeypatch.setattr(requests, "post", eval_on_redis)
 
-    def attempt(now, subject="provider", provider=True):
+    def attempt(now):
         try:
-            reserve_redis(URL, "fixture-token", subject, now, provider=provider)
+            reserve_redis(URL, "fixture-token", now)
         except QuotaExceeded as exc:
             return exc.retry_after
         return None
@@ -97,20 +97,15 @@ def test_atomic_redis_windows_and_restart(local_redis, monkeypatch):
     assert run("ZADD", LEDGER_KEY, "NX", "-1", "initialized") == "1"
     with ThreadPoolExecutor(max_workers=12) as pool:
         results = list(pool.map(attempt, [NOW] * 42))
-    assert results.count(None) == 30
-    assert results.count(60) == 12
+    assert results.count(None) == 5
+    assert results.count(60) == 37
     restart()
     assert attempt(NOW) == 60
-    for day in range(1, 17):
-        assert all(attempt(NOW + timedelta(days=day)) is None for _ in range(29))
-    assert all(attempt(NOW + timedelta(days=17)) is None for _ in range(6))
-    assert attempt(NOW + timedelta(days=17)) == 13 * 86400 + 60
+    for day in range(17):
+        for minute in range(1 if day == 0 else 0, 6 if day < 16 else 4):
+            instant = NOW + timedelta(days=day, minutes=minute)
+            assert all(attempt(instant) is None for _ in range(5))
+        if day == 0:
+            assert attempt(NOW + timedelta(minutes=6)) == 22 * 3600 - 360
+    assert attempt(NOW + timedelta(days=17)) == 13 * 86400 + 14 * 3600
     assert attempt(NOW + timedelta(days=31)) is None
-
-    for _ in range(3):
-        assert attempt(NOW + timedelta(seconds=45), "visitor", False) is None
-    assert attempt(NOW + timedelta(seconds=60), "visitor", False) == 45
-    assert attempt(NOW + timedelta(seconds=105), "visitor", False) is None
-    for minute in range(2, 11):
-        assert attempt(NOW + timedelta(minutes=minute), "visitor", False) is None
-    assert attempt(NOW + timedelta(minutes=11), "visitor", False) == 86400 - 600
