@@ -109,22 +109,3 @@ def test_atomic_redis_windows_and_restart(local_redis, monkeypatch):
             assert attempt(NOW + timedelta(minutes=6)) == 22 * 3600 - 360
     assert attempt(NOW + timedelta(days=17)) == 13 * 86400 + 14 * 3600
     assert attempt(NOW + timedelta(days=31)) is None
-
-
-def test_cloud_once_claim_survives_restart(local_redis, monkeypatch):
-    run, restart = local_redis
-
-    def eval_on_redis(_url, *, json, **_kwargs):
-        return Mock(status_code=200, **{"json.return_value": {"result": int(run(*json))}})
-
-    monkeypatch.setattr(requests, "post", eval_on_redis)
-    assert run("ZADD", LEDGER_KEY, "NX", "-1", "initialized") == "1"
-    reserve_redis(URL, "fixture-token", NOW, verification="mock")
-    assert run("ZCARD", LEDGER_KEY) == "1"
-    with pytest.raises(QuotaUnavailable):
-        reserve_redis(URL, "fixture-token", NOW, verification="missing")
-    reserve_redis(URL, "fixture-token", NOW, verification="once")
-    restart()
-    with pytest.raises(QuotaUnavailable):
-        reserve_redis(URL, "fixture-token", NOW + timedelta(minutes=1), verification="once")
-    assert run("ZCARD", LEDGER_KEY) == "2"

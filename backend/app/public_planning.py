@@ -6,9 +6,6 @@ import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import partial
-from hashlib import sha256
-from hmac import compare_digest
-from resource import RUSAGE_SELF, getrusage
 from pathlib import Path
 from time import monotonic
 from uuid import uuid4
@@ -36,7 +33,6 @@ from app.storage.planning_quota_redis import reserve_redis
 
 ORIGIN = "https://mealmind-ao3k.onrender.com"
 PATH = "/api/v1/meal-plans/generate"
-VERIFY_PATH = "/api/v1/internal/verification/{mode}"
 BODY_LIMIT = 16 * 1024
 LOGGER = logging.getLogger("uvicorn.error")
 
@@ -120,44 +116,8 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
 
     limits_valid = all(0 < limit <= maximum for limit, maximum in zip(config.limits, MAX_QUOTAS, strict=True))
 
-    verification_digest = os.environ.get("MEALMIND_CLOUD_VERIFY_SHA256", "")
-    verification_real = os.environ.get("MEALMIND_CLOUD_VERIFY_REAL") == "true"
-
-    def verify_access(request: Request):
-        auth = request.headers.getlist("authorization")
-        if (
-            config.enabled or config.quota_backend != "redis" or len(verification_digest) != 64
-            or len(auth) != 1 or not auth[0].startswith("Bearer ") or len(auth[0]) != 71
-            or not compare_digest(sha256(auth[0][7:].encode()).hexdigest(), verification_digest)
-        ):
-            raise HTTPException(404, {"status": "not_found"})
-
-    @app.post(VERIFY_PATH, response_model=None, include_in_schema=False)
-    async def verify(request: Request, response: Response, mode: str):
-        verify_access(request)
-        if mode == "real" and verification_real and settings.gemini_model == PUBLIC_COMPACT_SCHEMA_MODEL:
-            return await run_generation(request, response, verification=True)
-        if mode not in {"mock", "missing"} or request.query_params:
-            raise HTTPException(404, {"status": "not_found"})
-        if request.headers.get("content-length", "0") != "0" or "transfer-encoding" in request.headers:
-            raise HTTPException(400, {"status": "no_body_expected"})
-        if capacity.locked():
-            raise HTTPException(429, {"status": "service_busy"})
-        async with capacity:
-            try:
-                await run_in_threadpool(quota_reserve, datetime.now(UTC), limits=(5, 5, 500), verification=mode)
-            except QuotaUnavailable:
-                raise HTTPException(503, {"status": "service_unavailable"}) from None
-            except QuotaExceeded as exc:
-                raise HTTPException(429, {"status": exc.reason}) from None
-            await asyncio.sleep(2)
-            return {"status": "mock_completed", "peak_rss_kib": getrusage(RUSAGE_SELF).ru_maxrss}
-
     @app.post(PATH, response_model=MealPlanResponse)
     async def generate(request: Request, response: Response):
-        return await run_generation(request, response)
-
-    async def run_generation(request: Request, response: Response, *, verification: bool = False):
         request_id = uuid4().hex
         trace: dict = {"provider_attempts": 0, "stage": "admission"}
         headers = {"X-Request-ID": request_id, "Cache-Control": "no-store"}
@@ -165,7 +125,7 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
         status = 200
         try:
             if (
-                (not config.enabled and not verification) or quota_reserve is None or not limits_valid or not settings.gemini_api_key
+                not config.enabled or quota_reserve is None or not limits_valid or not settings.gemini_api_key
                 or not settings.gemini_api_key.get_secret_value().strip()
                 or settings.gemini_model not in {"gemini-3.1-flash-lite", PUBLIC_COMPACT_SCHEMA_MODEL}
             ):
@@ -180,9 +140,7 @@ def create_public_app(config: PublicSettings | None = None, *, planner_settings:
                 result = await run_in_threadpool(
                     generate_meal_plan, payload, settings, infer_scope=query == [("infer_scope", "true")],
                     trace=trace, free_recommendation=True,
-                    before_provider_call=lambda: quota_reserve(
-                        datetime.now(UTC), limits=config.limits, **({"verification": "once"} if verification else {}),
-                    ),
+                    before_provider_call=lambda: quota_reserve(datetime.now(UTC), limits=config.limits),
                 )
             response.headers.update(headers)
             return result
