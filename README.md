@@ -6,7 +6,7 @@ A bilingual, mobile-first **AI-assisted meal decision assistant** designed to ma
 
 **[Try the live demo](https://mealmind-ao3k.onrender.com/)** · [Product decisions](docs/DECISIONS.md) · [Release notes](docs/PORTFOLIO_RELEASE.md)
 
-> **Current public release: v0.2.1** — a browser-local MVP covering Plan → Log → Analyze → Replan. The public site includes the Blind Box, saved meal plans, manual food logs, deterministic nutrition estimates, and local replanning. Smart Planning shows a labeled example. Live Gemini planning remains available in private development.
+> **Current public release: v0.2.1** — an AI meal planner with browser-local Log, Analyze and Replan. The public site includes live Gemini Smart Planning, the Blind Box, saved meal plans, manual food logs, deterministic nutrition estimates, and local replanning.
 
 ## Why MealMind?
 
@@ -33,12 +33,12 @@ The public Blind Box currently contains **9 curated demo meals**. Recipes are se
 | --- | --- | --- |
 | **Meal Blind Box** | Interactive; 9 demo meals, instant redraw | Interactive; larger development candidate pool |
 | **Daily meal plan** | Add/replace, explicit confirmation, one current plan and version history; saved in browser IndexedDB | Available with local workflow integration |
-| **Natural-language AI planning** | Clearly labeled example only; **no live model call** | Gemini integration with a successful isolated browser verification |
+| **Natural-language AI planning** | Live Gemini generation with shared request quotas | Gemini integration with a successful isolated browser verification |
 | **Food logging** | Manual records, draft and confirmation, browser-local | Local FastAPI/SQLite workflow |
 | **Nutrition analysis** | USDA-based estimates from confirmed browser-local logs; partial coverage shown | Deterministic calculations from traceable reference data, with coverage limitations |
 | **Adaptive replanning** | Deterministic suggestions from nine local candidates; confirmed and user-locked meals are protected | Local workflow with validation and tests |
 
-**Privacy and storage:** The public demo has no accounts, deployed FastAPI service, Gemini API key, or hosted food-log database. Plans and confirmed food records stay in the current browser for this site. They do not sync between devices, and clearing site data removes them. The Smart Planning example is explicitly labeled.
+**Privacy and storage:** The public demo has no accounts or hosted food-log database. Smart Planning sends the submitted meal request to Google Gemini through the dedicated HTTPS API. Gemini credentials stay on the server. Avoid sensitive personal information in planning prompts. Plans and confirmed food records stay in the current browser for this site. They do not sync between devices, and clearing site data removes them.
 
 ## Product decisions and iteration
 
@@ -59,10 +59,10 @@ For detailed rationale, review [the decision record](docs/DECISIONS.md), [produc
 | Frontend | React, TypeScript, Vite, Tailwind CSS, i18next | Mobile-first bilingual interface |
 | Public demo persistence | Browser IndexedDB | Local daily plans, revision history, meal locks and food logs |
 | Local backend | Python, FastAPI | Meal-generation API, validation, food-workflow services |
-| AI integration | Google Gemini API | Natural-language meal planning in private/local development |
+| AI integration | Google Gemini API | Natural-language meal planning on the public site and in local development |
 | Local food-log persistence | SQLite | Development-only confirmed food logs |
 | Content and evaluation | Versioned JSON, Python tests, browser tests | Recipes, reference data, validation, and regression checks |
-| Deployment | Render Static Site | Public HTTPS demo, without a deployed API |
+| Deployment | Render Static Site + Render Free Web Service | Public HTTPS frontend and isolated Gemini planning API |
 
 The project is a monorepo: `frontend/` contains the UI, `backend/` the private/local APIs and application logic, `data/` the recipe and nutrition references, `evaluation/` test evidence, and `docs/` product and engineering notes. The `supabase/migrations/` folder is a placeholder, **not an active public database**.
 

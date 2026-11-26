@@ -1,5 +1,11 @@
 # Changelog
 
+## November 26, 2026 · Public AI Planning
+
+- Enabled live Gemini Smart Planning on the public portfolio site through a dedicated Render Free API with shared Redis quotas.
+- Verified Chinese meal generation, explicit browser-local save, and persistence after refreshing Today. Food logging, nutrition analysis and replanning remain browser-local.
+
+
 ## Unreleased
 
 ### Added
