@@ -268,3 +268,26 @@ def test_render_env_requires_redis_and_rejects_invalid_limits(monkeypatch, fixtu
     provider.assert_not_called()
     monkeypatch.setenv("MEALMIND_PUBLIC_QUOTA_BACKEND", "sqlite")
     assert not PublicSettings.from_env().enabled
+
+
+def test_cloud_verification_is_dark_and_mock_uses_isolated_ledger(fixture, monkeypatch):
+    from hashlib import sha256
+    from unittest.mock import Mock
+
+    token = "f" * 64
+    monkeypatch.setenv("MEALMIND_CLOUD_VERIFY_SHA256", sha256(token.encode()).hexdigest())
+    monkeypatch.delenv("MEALMIND_CLOUD_VERIFY_REAL", raising=False)
+    reserve_mock = Mock()
+    monkeypatch.setattr(public_planning, "reserve_redis", reserve_mock)
+    _, _, _, provider = fixture
+    config = PublicSettings(quota_backend="redis")
+    auth = {"Authorization": f"Bearer {token}"}
+    with TestClient(create_public_app(config)) as client:
+        assert client.post("/api/v1/internal/verification/mock").status_code == 404
+        assert client.post("/api/v1/internal/verification/real", headers=auth).status_code == 404
+        assert client.post(PATH, json=REQUEST, headers=auth).status_code == 503
+        response = client.post("/api/v1/internal/verification/mock", headers=auth)
+        assert response.status_code == 200
+        assert response.json()["peak_rss_kib"] > 0
+    assert reserve_mock.call_args.kwargs["verification"] == "mock"
+    provider.assert_not_called()
